@@ -130,12 +130,17 @@ func (that * Throttle) Init(increment Ticks, limit Ticks, now Ticks) {
 	that.Reset(now)
 }
 
+func (that * Throttle) Fini() {
+	// Do nothing.
+}
+
 /*******************************************************************************
  * CONSTRUCTORS
  ******************************************************************************/
 
-func New(increment Ticks, limit Ticks, now Ticks) Throttle {
-	throttle := Throttle{0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false}
+func New(increment Ticks, limit Ticks, now Ticks) * Throttle {
+	throttle := new(Throttle)
+	defer throttle.Fini()
 	throttle.Init(increment, limit, now)
 	return throttle
 }
@@ -241,12 +246,4 @@ func (that * Throttle) Admit(now Ticks) bool {
 
 func (that * Throttle) Update(now Ticks) bool {
 	return that.Admits(now, 0)
-}
-
-/*******************************************************************************
- * DESTRUCTORS
- ******************************************************************************/
-
-func (that * Throttle) Fini() {
-	// Do nothing.
 }
