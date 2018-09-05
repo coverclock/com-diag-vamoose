@@ -27,5 +27,13 @@ Wheat Ridge CO 80033
 
 ## Abstract
 
+## Repositories
+
+<https://github.com/coverclock/com-diag-vamoose>
+
+## Articles
+
 ## References
+
+<https://golang.org/doc/>
 
