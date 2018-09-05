@@ -106,7 +106,7 @@ func (that * Throttle) Error() error {
 }
 
 /*******************************************************************************
- * SETTORS
+ * SETTERS
  ******************************************************************************/
 
 func (that * Throttle) Reset(now Ticks) {
@@ -130,7 +130,11 @@ func (that * Throttle) Init(increment Ticks, limit Ticks, now Ticks) {
 	that.Reset(now)
 }
 
-func (that * Throttle) Fini() {
+/*******************************************************************************
+ * DESTRUCTORS
+ ******************************************************************************/
+
+func (that * Throttle) fini() {
 	// Do nothing.
 }
 
@@ -140,13 +144,13 @@ func (that * Throttle) Fini() {
 
 func New(increment Ticks, limit Ticks, now Ticks) * Throttle {
 	throttle := new(Throttle)
-	defer throttle.Fini()
+	defer throttle.fini()
 	throttle.Init(increment, limit, now)
 	return throttle
 }
 
 /*******************************************************************************
- * STATIC STATE GETTORS
+ * GETTERS
  ******************************************************************************/
 
 func (that * Throttle) IsEmpty() bool {
@@ -162,7 +166,7 @@ func (that * Throttle) IsAlarmed() bool {
 }
 
 /*******************************************************************************
- * DYNAMIC STATE GETTORS
+ * SENSORS
  ******************************************************************************/
 
 func (that * Throttle) Emptied() bool {
@@ -182,7 +186,7 @@ func (that * Throttle) Cleared() bool {
 }
 
 /*******************************************************************************
- * MUTATORS
+ * ACTIONS
  ******************************************************************************/
 
 func (that * Throttle) Request(now Ticks) Ticks {
@@ -211,6 +215,8 @@ func (that * Throttle) Request(now Ticks) Ticks {
 
 	return delay
 }
+
+/******************************************************************************/
 
 func (that * Throttle) Commits(events uint) bool {
 	that.then = that.now
