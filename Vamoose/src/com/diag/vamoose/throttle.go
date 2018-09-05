@@ -10,6 +10,8 @@ package throttle
  * Chip Overclock <coverclock@diag.com><BR>
  * https://github.com/coverclock/com-diag-vamoose<BR>
  *
+ * ABSTRACT
+ *
  * Implements a Generic Cell Rate Algorithm (GCRA) using a Virtual Scheduler.
  * This can in turn be used to implement a variety of traffic shaping and rate
  * control algorithms. The VS works by monitoring the inter-arrival interval of
@@ -41,6 +43,8 @@ package throttle
  *
  * Chip Overclock, "Traffic Contracts", 2007-01,
  * http://coverclock.blogspot.com/2007/01/traffic-contracts.html
+ *
+ * Chip Overclock, Diminuto, https://github.com/coverclock/com-diag-diminuto
  */
 
 import (
@@ -54,9 +58,19 @@ const (
 	FREQUENCY Ticks = 1000000000
 )
 
+func Frequency() Ticks {
+	return Ticks(FREQUENCY)
+}
+
+var now time.Time = time.Now()
+
+func Now() Ticks {
+	return Ticks(time.Now().Sub(now))
+}
+
 type Throttle struct {
-	now			Ticks				//
-	then		Ticks				//
+	now			Ticks				// Current timestamp
+	then		Ticks				// Prior timestamp
 	increment	Ticks				// GCRA i
 	limit		Ticks				// GCRA l
 	expected	Ticks				// GCRA x
@@ -71,48 +85,148 @@ type Throttle struct {
 	alarmed2	bool				// The throttle was alarmed.
 }
 
-var NOW time.Time = time.Now()
+/*******************************************************************************
+ * SETTORS
+ ******************************************************************************/
 
-func (that * Throttle) Reset() {
+func (that * Throttle) Reset(now Ticks) {
+	that.now = now
+	that.then = that.now - that.increment
+	that.expected = that.increment
+	that.actual = 0
+	that.full0 = false
+	that.full1 = false
+	that.full2 = false
+	that.empty0 = true
+	that.empty1 = true
+	that.empty2 = true
+	that.alarmed1 = false
+	that.alarmed2 = false
+}
+
+func (that * Throttle) Init(increment Ticks, limit Ticks, now Ticks) {
+	that.increment = increment
+	that.limit = limit
+	that.Reset(now)
+}
+
+/*******************************************************************************
+ * CONSTRUCTORS
+ ******************************************************************************/
+
+func Factory(increment Ticks, limit Ticks, now Ticks) Throttle {
+	throttle := Throttle(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+	throttle.Init(increment, limit, now)
+	return throttle
+}
+
+/*******************************************************************************
+ * STATIC STATE GETTORS
+ ******************************************************************************/
+
+func (that * Throttle) IsEmpty() bool {
+	return that.empty1
+}
+
+func (that * Throttle) IsFull() bool {
+	return that.full1
+}
+
+func (that * Throttle) IsAlarmed() bool {
+	return that.alarmed1
+}
+
+/*******************************************************************************
+ * DYNAMIC STATE GETTORS
+ ******************************************************************************/
+
+func (that * Throttle) Emptied() bool {
+	return (that.empty1 && (!that.empty2))
+}
+
+func (that * Throttle) Filled() bool {
+	return (that.full1 && (!that.full2))
+}
+
+func (that * Throttle) Alarmed() bool {
+	return (that.alarmed1 && (!that.alarmed2))
+}
+
+func (that * Throttle) Cleared() bool {
+	return ((!that.alarmed1) && that.alarmed2)
+}
+
+/*******************************************************************************
+ * MUTATORS
+ ******************************************************************************/
+
+func (that * Throttle) Request(now Ticks) Ticks {
+	var delay Ticks
+	var elapsed Ticks
 	
+	that.now = now
+	elapsed = that.now - that.then
+	if (that.expected <= elapsed) {
+		that.actual = 0
+		that.full0 = false
+		that.empty0 = true
+		delay = 0
+	} else {
+		that.actual = that.expected - elapsed
+		if (that.actual <= that.limit) {
+			that.full0 = false
+			that.empty0 = false
+			delay = 0
+		} else {
+			that.full0 = true
+			that.empty0 = false
+			delay = that.actual - that.limit
+		}
+	}
+
+	return delay
 }
 
-func (that * Throttle) Init() {
-	
+func (that * Throttle) Commits(events uint) bool {
+	that.then = that.now
+	that.expected = that.actual + (that.increment * Ticks(events))
+	that.full2 = that.full1
+	that.full1 = that.full0
+	that.empty2 = that.empty1
+	that.empty1 = that.empty0
+	that.alarmed2 = that.alarmed1
+	if (that.Emptied()) {
+		that.alarmed1 = false
+	} else if (that.Filled()) {
+		that.alarmed1 = true
+	} else {
+		// Do nothing.
+	}
+
+	return that.full1
 }
 
-func (that * Throttle) Frequency() Ticks {
-	return Ticks(FREQUENCY)
+func (that * Throttle) Commit() bool {
+	return that.Commits(1)
 }
 
-func (that * Throttle) Now() Ticks {
-	return Ticks(time.Now().Sub(NOW))
+func (that * Throttle) Admits(now Ticks, events uint) bool {
+	that.Request(now)
+	return that.Commits(events)
 }
 
-func (that * Throttle) Request() {
-	
+func (that * Throttle) Admit(now Ticks) bool {
+	return that.Admits(now, 1)
 }
 
-func (that * Throttle) Commits() {
-	
+func (that * Throttle) Update(now Ticks) bool {
+	return that.Admits(now, 0)
 }
 
-func (that * Throttle) Commit() {
-	
-}
-
-func (that * Throttle) Admits() {
-	
-}
-
-func (that * Throttle) Admit() {
-	
-}
-
-func (that * Throttle) Update() {
-	
-}
+/*******************************************************************************
+ * DESTRUCTORS
+ ******************************************************************************/
 
 func (that * Throttle) Fini() {
-	
+	// Do nothing.
 }
