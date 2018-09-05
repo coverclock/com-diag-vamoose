@@ -50,7 +50,12 @@ package throttle
 import (
 	"fmt"
 	"time"
+	"unsafe"
 )
+
+/*******************************************************************************
+ * DECLARATIONS
+ ******************************************************************************/
 
 type Ticks time.Duration
 
@@ -58,15 +63,7 @@ const (
 	FREQUENCY Ticks = 1000000000
 )
 
-func Frequency() Ticks {
-	return Ticks(FREQUENCY)
-}
-
 var now time.Time = time.Now()
-
-func Now() Ticks {
-	return Ticks(time.Now().Sub(now))
-}
 
 type Throttle struct {
 	now			Ticks				// Current timestamp
@@ -83,6 +80,29 @@ type Throttle struct {
 	empty2		bool				// The leaky bucket was emptied.
 	alarmed1	bool				// The throttle is alarmed.
 	alarmed2	bool				// The throttle was alarmed.
+}
+
+/*******************************************************************************
+ * HELPERS
+ ******************************************************************************/
+
+func Frequency() Ticks {
+	return Ticks(FREQUENCY)
+}
+
+func Now() Ticks {
+	return Ticks(time.Now().Sub(now))
+}
+
+func (that * Throttle) Error() error {
+	return fmt.Errorf("Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
+		uintptr(unsafe.Pointer(that)), unsafe.Sizeof(that),
+		that.now - that.then,
+		that.increment, that.limit, that.expected, that.actual,
+		that.full0, that.full1, that.full2,
+		that.empty0, that.empty1, that.empty2,
+		that.alarmed1, that.alarmed2);
+
 }
 
 /*******************************************************************************
@@ -114,8 +134,8 @@ func (that * Throttle) Init(increment Ticks, limit Ticks, now Ticks) {
  * CONSTRUCTORS
  ******************************************************************************/
 
-func Factory(increment Ticks, limit Ticks, now Ticks) Throttle {
-	throttle := Throttle(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+func New(increment Ticks, limit Ticks, now Ticks) Throttle {
+	throttle := Throttle{0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false}
 	throttle.Init(increment, limit, now)
 	return throttle
 }
