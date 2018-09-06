@@ -658,57 +658,57 @@ func TestThrottleN(t * testing.T) {
     // SUSTAINED
     
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     stuff = that.String()
@@ -727,52 +727,52 @@ func TestThrottleN(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
       
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
      
     stuff = that.String()
@@ -791,7 +791,7 @@ func TestThrottleN(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) - 2
     if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (that.Commits(size)) {} else { t.Error("FAILED!") }
      
     stuff = that.String()
@@ -810,7 +810,7 @@ func TestThrottleN(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (that.Commits(size)) {} else { t.Error("FAILED!") }
      
     stuff = that.String()
@@ -827,7 +827,7 @@ func TestThrottleN(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
      
     stuff = that.String()
@@ -852,7 +852,7 @@ func TestThrottleN(t * testing.T) {
       
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
  
     stuff = that.String()
@@ -873,7 +873,7 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
     
     now = now + 2 
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Admits(now, size)) {} else { t.Error("FAILED!") }
  
     stuff = that.String()
@@ -909,57 +909,57 @@ func TestThrottleN(t * testing.T) {
         
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    size = Events(rand.Int63n(BLOCKSIZE))
+    size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
     
     stuff = that.String()
@@ -974,5 +974,55 @@ func TestThrottleN(t * testing.T) {
     if (!that.Alarmed()) {} else { t.Error("FAILED!") }
     if (!that.Cleared()) {} else { t.Error("FAILED!") }
 
+}
+
+func TestThrottleLoop(t * testing.T) {
+    const BANDWIDTH ticks.Ticks = 1024 // Bytes per second.
+    const OPERATIONS int = 1000000
+	const BLOCKSIZE int64 = 32768
+	const MARGIN ticks.Ticks = 200
+	var frequency ticks.Ticks = 0
+	var increment ticks.Ticks = 0
+	var now ticks.Ticks = 0
+    var delay ticks.Ticks = 0
+    var duration ticks.Ticks = 0
+    var bandwidth ticks.Ticks = 0  
+    var measured ticks.Ticks = 0
+    var delta ticks.Ticks = 0
+    var margin ticks.Ticks = 0
+	var size Events = 10;
+    var total Events = 0
+    var inadmissable bool = false
+    
+    frequency = ticks.Frequency()
+    increment = frequency / BANDWIDTH
+   
+	that := New(increment, ticks.Ticks(0), now)
+	t.Log(that.String())
+	
+	for iops := 0; iops < OPERATIONS; iops += 1 {
+	    delay = that.Request(now)
+	    now += delay
+	    duration += delay
+	    delay = that.Request(now)
+	    if (delay == 0) {} else { t.Error("FAILED!") }
+        size = Events(rand.Int63n(BLOCKSIZE)) + 1
+	    if (0 < size) {} else { t.Error("FAILED!") }
+	    if (size <= Events(BLOCKSIZE)) {} else { t.Error("FAILED!") }
+	    total += size
+	    inadmissable = that.Commits(size)
+	    if (!inadmissable) {} else { t.Error("FAILED!") }
+	}
+	
+	if (total > 0) {} else { t.Error("FAILED!") }
+	if (duration > frequency) {} else { t.Error("FAILED!") }
+	bandwidth = duration / frequency
+	measured = ticks.Ticks(total) / bandwidth
+	delta = measured - BANDWIDTH
+	if (delta < 0) { delta = -delta }
+    margin = BANDWIDTH / MARGIN
+	t.Logf("BANDWIDTH=%dbps total=%dbytes duration=%dticks=%dseconds measured=%dbps delta=%dbps margin=%dbps\n", BANDWIDTH, total, duration, bandwidth, measured, delta, margin)
+	if (delta < margin) {} else { t.Error("FAILED!") }
+    
 }
 
