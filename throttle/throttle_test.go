@@ -200,5 +200,125 @@ func TestThrottle(t * testing.T) {
     if (!that.Alarmed()) {} else { t.Error() }
     if (!that.Cleared()) {} else { t.Error() }
     
+    // REQUEST, RE-REQUEST, COMMIT
+    
+    now = now + increment - 1
+    if (that.Request(now) == 2) {} else { t.Error() }
+    
+    now = now + 1
+    if (that.Request(now) == 1) {} else { t.Error() }
+      
+    now = now + 1
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+ 
+    stuff = that.String()
+    if (len(stuff) > 0) {} else { t.Error() }
+    t.Log(stuff)
+
+    if (!that.IsEmpty()) {} else { t.Error() }
+    if (!that.IsFull()) {} else { t.Error() }
+    if (that.IsAlarmed()) {} else { t.Error() }
+    if (!that.Emptied()) {} else { t.Error() }
+    if (!that.Filled()) {} else { t.Error() }
+    if (!that.Alarmed()) {} else { t.Error() }
+    if (!that.Cleared()) {} else { t.Error() }
+    
+    // REQUEST, DELAY, ADMIT
+    
+    now = now + increment - 2
+    if (that.Request(now) == 2) {} else { t.Error() }
+    
+    now = now + 2 
+    if (!that.Admit(now)) {} else { t.Error() }
+ 
+    stuff = that.String()
+    if (len(stuff) > 0) {} else { t.Error() }
+    t.Log(stuff)
+
+    if (!that.IsEmpty()) {} else { t.Error() }
+    if (!that.IsFull()) {} else { t.Error() }
+    if (that.IsAlarmed()) {} else { t.Error() }
+    if (!that.Emptied()) {} else { t.Error() }
+    if (!that.Filled()) {} else { t.Error() }
+    if (!that.Alarmed()) {} else { t.Error() }
+    if (!that.Cleared()) {} else { t.Error() }
+    
+    // UPDATE
+    
+    now = now + increment + 10
+    if (!that.Update(now)) {} else { t.Error() }
+    
+    stuff = that.String()
+    if (len(stuff) > 0) {} else { t.Error() }
+    t.Log(stuff)
+
+    if (that.IsEmpty()) {} else { t.Error() }
+    if (!that.IsFull()) {} else { t.Error() }
+    if (!that.IsAlarmed()) {} else { t.Error() }
+    if (that.Emptied()) {} else { t.Error() }
+    if (!that.Filled()) {} else { t.Error() }
+    if (!that.Alarmed()) {} else { t.Error() }
+    if (that.Cleared()) {} else { t.Error() }
+    
+    // SUSTAINED AGAIN
+        
+    now = now + increment
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment  
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment  
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment 
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment
+   
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+
+    now = now + increment
+    if (that.Request(now) == 0) {} else { t.Error() }
+    if (!that.Commit()) {} else { t.Error() }
+    
+    stuff = that.String()
+    if (len(stuff) > 0) {} else { t.Error() }
+    t.Log(stuff)
+ 
+    if (that.IsEmpty()) {} else { t.Error() }
+    if (!that.IsFull()) {} else { t.Error() }
+    if (!that.IsAlarmed()) {} else { t.Error() }
+    if (!that.Emptied()) {} else { t.Error() }
+    if (!that.Filled()) {} else { t.Error() }
+    if (!that.Alarmed()) {} else { t.Error() }
+    if (!that.Cleared()) {} else { t.Error() }
+
 }
 
