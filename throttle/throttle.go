@@ -57,17 +57,15 @@ import (
  * TYPES
  ******************************************************************************/
 
-type Ticks ticks.Ticks
-
 type Events uint32
 
 type Throttle struct {
-	now			Ticks				// Current timestamp
-	then		Ticks				// Prior timestamp
-	increment	Ticks				// GCRA i
-	limit		Ticks				// GCRA l
-	expected	Ticks				// GCRA x
-	actual		Ticks				// GCRA x1
+	now			ticks.Ticks			// Current timestamp
+	then		ticks.Ticks			// Prior timestamp
+	increment	ticks.Ticks			// GCRA i
+	limit		ticks.Ticks			// GCRA l
+	expected	ticks.Ticks			// GCRA x
+	actual		ticks.Ticks			// GCRA x1
 	full0		bool				// The leaky bucket will fill.
 	full1		bool				// The leaky bucket is filling.
 	full2		bool				// The leaky bucket was filled.
@@ -84,7 +82,7 @@ type Throttle struct {
 
 func (that * Throttle) Error() error {
 	return fmt.Errorf("com/diag/vamoose/Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
-		uintptr(unsafe.Pointer(that)), unsafe.Sizeof(that),
+		unsafe.Pointer(that), unsafe.Sizeof(that),
 		that.now - that.then,
 		that.increment, that.limit, that.expected, that.actual,
 		that.full0, that.full1, that.full2,
@@ -97,7 +95,7 @@ func (that * Throttle) Error() error {
  * SETTERS
  ******************************************************************************/
 
-func (that * Throttle) Reset(now Ticks) {
+func (that * Throttle) Reset(now ticks.Ticks) {
 	that.now = now
 	that.then = that.now - that.increment
 	that.expected = that.increment
@@ -112,7 +110,7 @@ func (that * Throttle) Reset(now Ticks) {
 	that.alarmed2 = false
 }
 
-func (that * Throttle) Init(increment Ticks, limit Ticks, now Ticks) {
+func (that * Throttle) Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) {
 	that.increment = increment
 	that.limit = limit
 	that.Reset(now)
@@ -130,7 +128,7 @@ func (that * Throttle) fini() {
  * CONSTRUCTORS
  ******************************************************************************/
 
-func New(increment Ticks, limit Ticks, now Ticks) * Throttle {
+func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
 	throttle := new(Throttle)
 	defer throttle.fini()
 	throttle.Init(increment, limit, now)
@@ -177,9 +175,9 @@ func (that * Throttle) Cleared() bool {
  * ACTIONS
  ******************************************************************************/
 
-func (that * Throttle) Request(now Ticks) Ticks {
-	var delay Ticks
-	var elapsed Ticks
+func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
+	var delay ticks.Ticks
+	var elapsed ticks.Ticks
 	
 	that.now = now
 	elapsed = that.now - that.then
@@ -206,7 +204,7 @@ func (that * Throttle) Request(now Ticks) Ticks {
 
 func (that * Throttle) Commits(events Events) bool {
 	that.then = that.now
-	that.expected = that.actual + (that.increment * Ticks(events))
+	that.expected = that.actual + (that.increment * ticks.Ticks(events))
 	that.full2 = that.full1
 	that.full1 = that.full0
 	that.empty2 = that.empty1
@@ -227,15 +225,15 @@ func (that * Throttle) Commit() bool {
 	return that.Commits(1)
 }
 
-func (that * Throttle) Admits(now Ticks, events Events) bool {
+func (that * Throttle) Admits(now ticks.Ticks, events Events) bool {
 	that.Request(now)
 	return that.Commits(events)
 }
 
-func (that * Throttle) Admit(now Ticks) bool {
+func (that * Throttle) Admit(now ticks.Ticks) bool {
 	return that.Admits(now, 1)
 }
 
-func (that * Throttle) Update(now Ticks) bool {
+func (that * Throttle) Update(now ticks.Ticks) bool {
 	return that.Admits(now, 0)
 }

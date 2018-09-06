@@ -13,6 +13,9 @@ func testFrequency(t * testing.T) {
 }
 
 func testNow(t * testing.T) {
-	ticks := Now()
-	if (ticks > 0) {} else { t.Error("Now") }
+	before := Now()
+	if (before > 0) {} else { t.Error("Now before") }
+	after := Now()
+	if (after > 0) {} else { t.Error("Now after") }
+	if (after > before) {} else { t.Error("Now elapsed") }
 }

@@ -11,13 +11,16 @@ package throttle
 
 import (
     "testing"
+	"github.com/coverclock/com-diag-vamoose/ticks"
 )
 
 func TestThrottle(t * testing.T) {
-	var increment Ticks = 100
-	var limit Ticks = 10
+	var increment ticks.Ticks = 100
+	var limit ticks.Ticks = 10
+	
+	now := ticks.Now()
 
-	that := throttle.New(increment, limit)
+	that := New(increment, limit, now)
 
     if (that.IsEmpty())		{} else { t.Error("IsEmpty") }
     if (!that.IsFull())		{} else { t.Error("IsFull") }
