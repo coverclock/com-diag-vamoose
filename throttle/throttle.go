@@ -49,15 +49,15 @@ package throttle
 
 import (
 	"fmt"
-	"time"
 	"unsafe"
+	"github.com/coverclock/com-diag-vamoose/ticks"
 )
 
 /*******************************************************************************
  * TYPES
  ******************************************************************************/
 
-type Ticks time.Duration
+type Ticks ticks.Ticks
 
 type Events uint32
 
@@ -79,26 +79,8 @@ type Throttle struct {
 }
 
 /*******************************************************************************
- * VALUES
- ******************************************************************************/
-
-const (
-	FREQUENCY Ticks = 1000000000
-)
-
-var epoch time.Time = time.Now()
-
-/*******************************************************************************
  * HELPERS
  ******************************************************************************/
-
-func Frequency() Ticks {
-	return Ticks(FREQUENCY)
-}
-
-func Now() Ticks {
-	return Ticks(time.Now().Sub(epoch))
-}
 
 func (that * Throttle) Error() error {
 	return fmt.Errorf("com/diag/vamoose/Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
