@@ -54,16 +54,12 @@ import (
 )
 
 /*******************************************************************************
- * DECLARATIONS
+ * TYPES
  ******************************************************************************/
 
 type Ticks time.Duration
 
-const (
-	FREQUENCY Ticks = 1000000000
-)
-
-var now time.Time = time.Now()
+type Events uint32
 
 type Throttle struct {
 	now			Ticks				// Current timestamp
@@ -83,6 +79,16 @@ type Throttle struct {
 }
 
 /*******************************************************************************
+ * VALUES
+ ******************************************************************************/
+
+const (
+	FREQUENCY Ticks = 1000000000
+)
+
+var epoch time.Time = time.Now()
+
+/*******************************************************************************
  * HELPERS
  ******************************************************************************/
 
@@ -91,11 +97,11 @@ func Frequency() Ticks {
 }
 
 func Now() Ticks {
-	return Ticks(time.Now().Sub(now))
+	return Ticks(time.Now().Sub(epoch))
 }
 
 func (that * Throttle) Error() error {
-	return fmt.Errorf("Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
+	return fmt.Errorf("com/diag/vamoose/Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
 		uintptr(unsafe.Pointer(that)), unsafe.Sizeof(that),
 		that.now - that.then,
 		that.increment, that.limit, that.expected, that.actual,
@@ -216,9 +222,7 @@ func (that * Throttle) Request(now Ticks) Ticks {
 	return delay
 }
 
-/******************************************************************************/
-
-func (that * Throttle) Commits(events uint) bool {
+func (that * Throttle) Commits(events Events) bool {
 	that.then = that.now
 	that.expected = that.actual + (that.increment * Ticks(events))
 	that.full2 = that.full1
@@ -241,7 +245,7 @@ func (that * Throttle) Commit() bool {
 	return that.Commits(1)
 }
 
-func (that * Throttle) Admits(now Ticks, events uint) bool {
+func (that * Throttle) Admits(now Ticks, events Events) bool {
 	that.Request(now)
 	return that.Commits(events)
 }
