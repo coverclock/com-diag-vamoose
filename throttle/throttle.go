@@ -80,15 +80,14 @@ type Throttle struct {
  * HELPERS
  ******************************************************************************/
 
-func (that * Throttle) Error() error {
-	return fmt.Errorf("com/diag/vamoose/Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
-		unsafe.Pointer(that), unsafe.Sizeof(that),
+func (that * Throttle) String() string {
+	return fmt.Sprintf("Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
+		unsafe.Pointer(that), unsafe.Sizeof(*that),
 		that.now - that.then,
 		that.increment, that.limit, that.expected, that.actual,
 		that.full0, that.full1, that.full2,
 		that.empty0, that.empty1, that.empty2,
 		that.alarmed1, that.alarmed2);
-
 }
 
 /*******************************************************************************

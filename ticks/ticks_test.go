@@ -4,18 +4,15 @@ import (
     "testing"
 )
 
-func TestFREQUENCY(t * testing.T) {
-    if (FREQUENCY == 1000000000) {} else { t.Error("FREQUENCY") }
-}
+func TestTicks(t * testing.T) {
+    if (FREQUENCY == 1000000000) {} else { t.Error() }
 
-func testFrequency(t * testing.T) {
-    if (Frequency() == 1000000000) {} else { t.Error("FREQUENCY") }	
-}
+    if (Frequency() == 1000000000) {} else { t.Error() }	
 
-func testNow(t * testing.T) {
 	before := Now()
-	if (before > 0) {} else { t.Error("Now before") }
+	if (before > 0) {} else { t.Error() }
+
 	after := Now()
-	if (after > 0) {} else { t.Error("Now after") }
-	if (after > before) {} else { t.Error("Now elapsed") }
+	if (after > 0) {} else { t.Error() }
+	if (after > before) {} else { t.Error() }
 }
