@@ -203,7 +203,10 @@ func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 
 func (that * Throttle) Commits(events Events) bool {
 	that.then = that.now
-	that.expected = that.actual + (that.increment * ticks.Ticks(events))
+	that.expected = that.actual;
+	if (events > 0) {
+	     that.expected = that.expected + (that.increment * ticks.Ticks(events))
+	}
 	that.full2 = that.full1
 	that.full1 = that.full0
 	that.empty2 = that.empty1
