@@ -275,261 +275,261 @@ func TestThrottleOne(t * testing.T) {
 
 	that := New(increment, limit, ticks.Ticks(0))
 
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // SUSTAINED
     
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment 
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
    
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
      
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // BURST
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // FILL
     
     now = now + increment - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
-    if (that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (that.Filled()) {} else { t.Error("FAILED!") }
-    if (that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // RECOVER
     
     now = now + increment + 1
-    if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
-    if (that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment + 1
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // REQUEST, RE-REQUEST, COMMIT
     
     now = now + increment - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 1
-    if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + 1
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // REQUEST, DELAY, ADMIT
     
     now = now + increment - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
-    if (!that.Admit(now)) {} else { t.Error("FAILED!") }
+    if (!that.Admit(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // UPDATE
     
     now = now + increment + 10
-    if (!that.Update(now)) {} else { t.Error("FAILED!") }
+    if (!that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // SUSTAINED AGAIN
         
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment 
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
    
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commit()) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
 }
 
@@ -543,260 +543,260 @@ func TestThrottleFixed(t * testing.T) {
 
 	that := New(increment, limit, ticks.Ticks(0))
 
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // SUSTAINED
     
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
    
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // BURST
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // FILL
     
     now = now + (increment * ticks.Ticks(size)) - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
-    if (that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (that.Filled()) {} else { t.Error("FAILED!") }
-    if (that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // RECOVER
     
     now = now + (increment * ticks.Ticks(size)) + 1
-    if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
-    if (that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) + 1
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // REQUEST, RE-REQUEST, COMMIT
     
     now = now + (increment * ticks.Ticks(size)) - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 1
-    if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + 1
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // REQUEST, DELAY, ADMIT
     
     now = now + (increment * ticks.Ticks(size)) - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
-    if (!that.Admits(now, size)) {} else { t.Error("FAILED!") }
+    if (!that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // UPDATE
     
     now = now + (increment * ticks.Ticks(size)) + 10
-    if (!that.Update(now)) {} else { t.Error("FAILED!") }
+    if (!that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // SUSTAINED AGAIN
         
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
 }
 
@@ -811,296 +811,296 @@ func TestThrottleVariable(t * testing.T) {
 
 	that := New(increment, limit, ticks.Ticks(0))
 
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // SUSTAINED
     
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // BURST
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // FILL
     
     now = now + (increment * ticks.Ticks(size)) - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (that.Filled()) {} else { t.Error("FAILED!") }
-    if (that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // RECOVER
     
     now = now + (increment * ticks.Ticks(size)) + 1
-    if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) + 1
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // REQUEST, RE-REQUEST, COMMIT
     
     now = now + (increment * ticks.Ticks(size)) - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 1
-    if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + 1
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // REQUEST, DELAY, ADMIT
     
     now = now + (increment * ticks.Ticks(size)) - 2
-    if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Admits(now, size)) {} else { t.Error("FAILED!") }
+    if (!that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // UPDATE
     
     now = now + (increment * ticks.Ticks(size)) + 10
-    if (!that.Update(now)) {} else { t.Error("FAILED!") }
+    if (!that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     // SUSTAINED AGAIN
         
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
-    if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
+    if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!") }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
-    if (that.IsEmpty()) {} else { t.Error("FAILED!") }
-    if (!that.IsFull()) {} else { t.Error("FAILED!") }
-    if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Emptied()) {} else { t.Error("FAILED!") }
-    if (!that.Filled()) {} else { t.Error("FAILED!") }
-    if (!that.Alarmed()) {} else { t.Error("FAILED!") }
-    if (!that.Cleared()) {} else { t.Error("FAILED!") }
+    if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.IsAlarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Emptied()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Filled()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Alarmed()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Cleared()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
 }
 
@@ -1124,7 +1124,7 @@ func TestThrottleSimulated(t * testing.T) {
     
     frequency = ticks.Frequency()
     increment = (frequency + BANDWIDTH - 1) / BANDWIDTH
-    t.Logf("BANDWIDTH=%dbps frequency=%d increment=%d\n", BANDWIDTH, frequency, increment)
+    t.Logf("BANDWIDTH=%dBps frequency=%d increment=%d\n", BANDWIDTH, frequency, increment)
    
 	that := New(increment, ticks.Ticks(0), now)
 	t.Log(that.String())
@@ -1134,24 +1134,25 @@ func TestThrottleSimulated(t * testing.T) {
 	    now += delay
 	    duration += delay
 	    delay = that.Request(now)
-	    if (delay == 0) {} else { t.Error("FAILED!") }
+	    if (delay == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
         size = Events(rand.Int63n(BLOCKSIZE)) + 1
 	    if (0 < size) {} else { t.Error("FAILED!") }
 	    if (size <= Events(BLOCKSIZE)) {} else { t.Error("FAILED!") }
 	    inadmissable = that.Commits(size)
-	    if (!inadmissable) {} else { t.Error("FAILED!") }
+	    if (!inadmissable) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 	    total += size
 	}
 	
+	seconds = duration / frequency
+	t.Logf("total=%dbytes duration=%dticks=%dseconds\n", total, duration, seconds)
 	if (total > 0) {} else { t.Error("FAILED!") }
 	if (duration > frequency) {} else { t.Error("FAILED!") }
 
-	seconds = duration / frequency
 	bandwidth = ticks.Ticks(total) / seconds
 	delta = bandwidth - BANDWIDTH
 	if (delta < 0) { delta = -delta }
     margin = BANDWIDTH / MARGIN
-	t.Logf("total=%dbytes duration=%dticks=%dseconds bandwidth=%dbps delta=%dbps margin=%dbps\n", total, duration, seconds, bandwidth, delta, margin)
+	t.Logf("bandwidth=%dBps delta=%dbps margin=%dbps\n", bandwidth, delta, margin)
 	if (delta < margin) {} else { t.Error("FAILED!") }
     
 }
