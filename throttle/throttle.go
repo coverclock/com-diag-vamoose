@@ -81,10 +81,11 @@ type Throttle struct {
  ******************************************************************************/
 
 func (that * Throttle) String() string {
-	return fmt.Sprintf("Throttle@%p[%d]: { iat=%d i=%d l=%d x=%d x1=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
+	return fmt.Sprintf("Throttle@%p[%d]: { e=%d i=%d l=%d x=%d x1=%d d=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
 		unsafe.Pointer(that), unsafe.Sizeof(*that),
 		that.now - that.then,
 		that.increment, that.limit, that.expected, that.actual,
+		that.actual - that.limit,
 		that.full0, that.full1, that.full2,
 		that.empty0, that.empty1, that.empty2,
 		that.alarmed1, that.alarmed2);
@@ -204,8 +205,12 @@ func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 func (that * Throttle) Commits(events Events) bool {
 	that.then = that.now
 	that.expected = that.actual;
-	if (events > 0) {
-	     that.expected = that.expected + (that.increment * ticks.Ticks(events))
+	if (events <= 0) {
+	    // Do nothing.
+	} else if (events == 1) {
+	     that.expected += that.increment
+	} else {
+	     that.expected += that.increment * ticks.Ticks(events)
 	}
 	that.full2 = that.full1
 	that.full1 = that.full0

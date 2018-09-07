@@ -15,19 +15,265 @@ import (
 	"github.com/coverclock/com-diag-vamoose/ticks"
 )
 
-func TestThrottle1(t * testing.T) {
+func TestThrottleSanity(t * testing.T) {
+	const increment ticks.Ticks = 10
+	const limit ticks.Ticks = 2
+	var now ticks.Ticks = 0
+	var delay ticks.Ticks = 0
+	var elapsed ticks.Ticks = 0
+	var alarmed bool = false
+
+	that := New(increment, limit, ticks.Ticks(0))
+	
+    stuff := that.String()
+    if (len(stuff) > 0) { t.Log(stuff) } else { t.Errorf("FAILED! \"%v\"", stuff) }
+
+	elapsed = that.now - that.then
+	if (elapsed == increment) {} else { t.Errorf("FAILED! %v", elapsed) }
+
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	now = 0
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+    
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+    
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment + 1
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+ 	
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment - 1
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+    
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == (increment + 1)) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 1) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (!that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (!that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment - 1
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+    
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == (increment + 2)) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 2) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (!that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (!that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment - 1
+ 	delay = that.Request(now)
+ 	if (delay == 1) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+    
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == (increment + 3)) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 3) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (!that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (!that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment
+ 	delay = that.Request(now)
+ 	if (delay == 1) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+ 	
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == (increment + 3)) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 3) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (!that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (!that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment + 1
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+ 	
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == (increment + 2)) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 2) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (!that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (!that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment + 1
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+ 	
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == (increment + 1)) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 1) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (!that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (!that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment + 1
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+ 	
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+    now = now + increment
+ 	delay = that.Request(now)
+ 	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
+ 	
+ 	alarmed = that.Commit()
+ 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+    
+	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
+	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
+	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
+	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
+	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
+	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
+ 	if (that.empty0) {} else { t.Errorf("FAILED! %v", that.empty0) }
+  	if (that.empty1) {} else { t.Errorf("FAILED! %v", that.empty1) }
+ 	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
+ 	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
+ 	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+
+}
+
+func TestThrottleOne(t * testing.T) {
 	var increment ticks.Ticks = 100
 	var limit ticks.Ticks = 10
 	var now ticks.Ticks = 0
-	var stuff string = ""
 	
 	// CONSTRUCTORS
 
 	that := New(increment, limit, ticks.Ticks(0))
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -82,11 +328,7 @@ func TestThrottle1(t * testing.T) {
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commit()) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
- 
+     
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
     if (!that.IsAlarmed()) {} else { t.Error("FAILED!") }
@@ -136,10 +378,6 @@ func TestThrottle1(t * testing.T) {
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commit()) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -154,10 +392,6 @@ func TestThrottle1(t * testing.T) {
     now = now + increment - 2
     if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
     if (that.Commit()) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (that.IsFull()) {} else { t.Error("FAILED!") }
@@ -172,10 +406,6 @@ func TestThrottle1(t * testing.T) {
     now = now + increment + 1
     if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
     if (that.Commit()) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (that.IsFull()) {} else { t.Error("FAILED!") }
@@ -188,10 +418,6 @@ func TestThrottle1(t * testing.T) {
     now = now + increment + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commit()) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -212,10 +438,6 @@ func TestThrottle1(t * testing.T) {
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commit()) {} else { t.Error("FAILED!") }
- 
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -232,10 +454,6 @@ func TestThrottle1(t * testing.T) {
     
     now = now + 2 
     if (!that.Admit(now)) {} else { t.Error("FAILED!") }
- 
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -249,10 +467,6 @@ func TestThrottle1(t * testing.T) {
     
     now = now + increment + 10
     if (!that.Update(now)) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -308,10 +522,6 @@ func TestThrottle1(t * testing.T) {
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commit()) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -323,20 +533,15 @@ func TestThrottle1(t * testing.T) {
 
 }
 
-func TestThrottle10(t * testing.T) {
+func TestThrottleFixed(t * testing.T) {
 	var increment ticks.Ticks = 100
 	var limit ticks.Ticks = 10
 	var now ticks.Ticks = 0
 	var size Events = 10;
-	var stuff string = ""
 	
 	// CONSTRUCTORS
 
 	that := New(increment, limit, ticks.Ticks(0))
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -391,10 +596,6 @@ func TestThrottle10(t * testing.T) {
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -445,10 +646,6 @@ func TestThrottle10(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -463,10 +660,6 @@ func TestThrottle10(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) - 2
     if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
     if (that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (that.IsFull()) {} else { t.Error("FAILED!") }
@@ -481,10 +674,6 @@ func TestThrottle10(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
     if (that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (that.IsFull()) {} else { t.Error("FAILED!") }
@@ -497,10 +686,6 @@ func TestThrottle10(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -521,10 +706,6 @@ func TestThrottle10(t * testing.T) {
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
- 
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -541,10 +722,6 @@ func TestThrottle10(t * testing.T) {
     
     now = now + 2 
     if (!that.Admits(now, size)) {} else { t.Error("FAILED!") }
- 
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -558,10 +735,6 @@ func TestThrottle10(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 10
     if (!that.Update(now)) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -616,10 +789,6 @@ func TestThrottle10(t * testing.T) {
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -631,21 +800,16 @@ func TestThrottle10(t * testing.T) {
 
 }
 
-func TestThrottleN(t * testing.T) {
+func TestThrottleVariable(t * testing.T) {
 	var increment ticks.Ticks = 100
 	var limit ticks.Ticks = 10
 	var now ticks.Ticks = 0
 	var size Events = 10;
-	var stuff string = ""
 	const BLOCKSIZE int64 = 32768
 	
 	// CONSTRUCTORS
 
 	that := New(increment, limit, ticks.Ticks(0))
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -710,10 +874,6 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -774,10 +934,6 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -793,10 +949,6 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 2) {} else { t.Error("FAILED!") }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (that.IsFull()) {} else { t.Error("FAILED!") }
@@ -812,10 +964,6 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 1) {} else { t.Error("FAILED!") }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (that.IsFull()) {} else { t.Error("FAILED!") }
@@ -829,10 +977,6 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-     
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -854,10 +998,6 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
- 
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -875,10 +1015,6 @@ func TestThrottleN(t * testing.T) {
     now = now + 2 
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Admits(now, size)) {} else { t.Error("FAILED!") }
- 
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -892,10 +1028,6 @@ func TestThrottleN(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 10
     if (!that.Update(now)) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -961,10 +1093,6 @@ func TestThrottleN(t * testing.T) {
     if (that.Request(now) == 0) {} else { t.Error("FAILED!") }
     size = Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!") }
-    
-    stuff = that.String()
-    if (len(stuff) > 0) {} else { t.Error("FAILED!") }
-    t.Log(stuff)
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!") }
     if (!that.IsFull()) {} else { t.Error("FAILED!") }
@@ -976,26 +1104,27 @@ func TestThrottleN(t * testing.T) {
 
 }
 
-func TestThrottleLoop(t * testing.T) {
+func TestThrottleSimulated(t * testing.T) {
     const BANDWIDTH ticks.Ticks = 1024 // Bytes per second.
-    const OPERATIONS int = 1000000
 	const BLOCKSIZE int64 = 32768
+    const OPERATIONS int = 1000000
 	const MARGIN ticks.Ticks = 200
 	var frequency ticks.Ticks = 0
 	var increment ticks.Ticks = 0
 	var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
-    var bandwidth ticks.Ticks = 0  
-    var measured ticks.Ticks = 0
+    var seconds ticks.Ticks = 0  
+    var bandwidth ticks.Ticks = 0
     var delta ticks.Ticks = 0
     var margin ticks.Ticks = 0
-	var size Events = 10;
+	var size Events = 0
     var total Events = 0
     var inadmissable bool = false
     
     frequency = ticks.Frequency()
-    increment = frequency / BANDWIDTH
+    increment = (frequency + BANDWIDTH - 1) / BANDWIDTH
+    t.Logf("BANDWIDTH=%dbps frequency=%d increment=%d\n", BANDWIDTH, frequency, increment)
    
 	that := New(increment, ticks.Ticks(0), now)
 	t.Log(that.String())
@@ -1009,19 +1138,20 @@ func TestThrottleLoop(t * testing.T) {
         size = Events(rand.Int63n(BLOCKSIZE)) + 1
 	    if (0 < size) {} else { t.Error("FAILED!") }
 	    if (size <= Events(BLOCKSIZE)) {} else { t.Error("FAILED!") }
-	    total += size
 	    inadmissable = that.Commits(size)
 	    if (!inadmissable) {} else { t.Error("FAILED!") }
+	    total += size
 	}
 	
 	if (total > 0) {} else { t.Error("FAILED!") }
 	if (duration > frequency) {} else { t.Error("FAILED!") }
-	bandwidth = duration / frequency
-	measured = ticks.Ticks(total) / bandwidth
-	delta = measured - BANDWIDTH
+
+	seconds = duration / frequency
+	bandwidth = ticks.Ticks(total) / seconds
+	delta = bandwidth - BANDWIDTH
 	if (delta < 0) { delta = -delta }
     margin = BANDWIDTH / MARGIN
-	t.Logf("BANDWIDTH=%dbps total=%dbytes duration=%dticks=%dseconds measured=%dbps delta=%dbps margin=%dbps\n", BANDWIDTH, total, duration, bandwidth, measured, delta, margin)
+	t.Logf("total=%dbytes duration=%dticks=%dseconds bandwidth=%dbps delta=%dbps margin=%dbps\n", total, duration, seconds, bandwidth, delta, margin)
 	if (delta < margin) {} else { t.Error("FAILED!") }
     
 }
