@@ -1,13 +1,9 @@
 package throttle
 
-/**
- * @file
- *
- * Copyright 2018 Digital Aggregates Corporation, Colorado, USA<BR>
- * Licensed under the terms in LICENSE.txt<BR>
- * Chip Overclock <coverclock@diag.com><BR>
- * https://github.com/coverclock/com-diag-vamoose<BR>
- */
+// Copyright 2018 Digital Aggregates Corporation, Colorado, USA
+// Licensed under the terms in LICENSE.txt
+// Chip Overclock <coverclock@diag.com>
+// https://github.com/coverclock/com-diag-vamoose
 
 import (
     "testing"
