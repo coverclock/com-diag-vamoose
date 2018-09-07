@@ -134,7 +134,7 @@ func (that * Throttle) Reset(now ticks.Ticks) {
 }
 
 /*******************************************************************************
- * Constructors
+ * CONSTRUCTORS
  ******************************************************************************/
 
 // Init initialize a throttle, setting its traffic contract parameters
