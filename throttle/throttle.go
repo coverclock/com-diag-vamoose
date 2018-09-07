@@ -99,7 +99,7 @@ type Throttle struct {
  * HELPERS
  ******************************************************************************/
 
-// Return a printable string showing the guts of the throttle.
+// String returns a printable string showing the guts of the throttle.
 func (that * Throttle) String() string {
 	return fmt.Sprintf("Throttle@%p[%d]: { e=%d i=%d l=%d x=%d x1=%d d=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
 		unsafe.Pointer(that), unsafe.Sizeof(*that),
