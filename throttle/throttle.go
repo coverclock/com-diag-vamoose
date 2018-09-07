@@ -26,7 +26,7 @@ package throttle
  * bandwidth as with ATM. In the original TM spec, the variable "i" was the
  * increment or contracted inter-arrival interval, "l" was the limit or
  * threshold, "x" was the expected inter-arrival interval for the next event,
- * and "x1" was the actual inter-arrival interval of that event. A throttle can
+ * and "x1" was the early inter-arrival duration of that event. A throttle can
  * be used to smooth out low frequency events over a long duration, or to
  * implement a leaky bucket algorithm.
  *
@@ -65,7 +65,7 @@ type Throttle struct {
 	increment	ticks.Ticks			// GCRA i
 	limit		ticks.Ticks			// GCRA l
 	expected	ticks.Ticks			// GCRA x
-	actual		ticks.Ticks			// GCRA x1
+	early		ticks.Ticks			// GCRA x1
 	full0		bool				// The leaky bucket will fill.
 	full1		bool				// The leaky bucket is filling.
 	full2		bool				// The leaky bucket was filled.
@@ -84,8 +84,8 @@ func (that * Throttle) String() string {
 	return fmt.Sprintf("Throttle@%p[%d]: { e=%d i=%d l=%d x=%d x1=%d d=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
 		unsafe.Pointer(that), unsafe.Sizeof(*that),
 		that.now - that.then,
-		that.increment, that.limit, that.expected, that.actual,
-		that.actual - that.limit,
+		that.increment, that.limit, that.expected, that.early,
+		that.early - that.limit,
 		that.full0, that.full1, that.full2,
 		that.empty0, that.empty1, that.empty2,
 		that.alarmed1, that.alarmed2);
@@ -99,7 +99,7 @@ func (that * Throttle) Reset(now ticks.Ticks) {
 	that.now = now
 	that.then = that.now - that.increment
 	that.expected = that.increment
-	that.actual = 0
+	that.early = 0
 	that.full0 = false
 	that.full1 = false
 	that.full2 = false
@@ -182,20 +182,20 @@ func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 	that.now = now
 	elapsed = that.now - that.then
 	if (that.expected <= elapsed) {
-		that.actual = 0
+		that.early = 0
 		that.full0 = false
 		that.empty0 = true
 		delay = 0
 	} else {
-		that.actual = that.expected - elapsed
-		if (that.actual <= that.limit) {
+		that.early = that.expected - elapsed
+		if (that.early <= that.limit) {
 			that.full0 = false
 			that.empty0 = false
 			delay = 0
 		} else {
 			that.full0 = true
 			that.empty0 = false
-			delay = that.actual - that.limit
+			delay = that.early - that.limit
 		}
 	}
 
@@ -204,7 +204,7 @@ func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 
 func (that * Throttle) Commits(events Events) bool {
 	that.then = that.now
-	that.expected = that.actual;
+	that.expected = that.early;
 	if (events <= 0) {
 	    // Do nothing.
 	} else if (events == 1) {

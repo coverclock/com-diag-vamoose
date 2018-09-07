@@ -34,7 +34,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -54,7 +54,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -74,7 +74,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -94,7 +94,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -114,7 +114,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 1)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 1) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 1) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -134,7 +134,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 2)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 2) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 2) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -154,7 +154,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 3)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 3) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 3) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -174,7 +174,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 3)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 3) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 3) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -194,7 +194,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 2)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 2) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 2) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -214,7 +214,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 1)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 1) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 1) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -234,7 +234,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -254,7 +254,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.actual == 0) {} else { t.Errorf("FAILED! %v", that.actual) }
+	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -1107,26 +1107,30 @@ func TestThrottleVariable(t * testing.T) {
 func TestThrottleSimulated(t * testing.T) {
     const BANDWIDTH ticks.Ticks = 1024 // Bytes per second.
 	const BLOCKSIZE int64 = 32768
-    const OPERATIONS int = 1000000
-	const MARGIN ticks.Ticks = 200
+    const OPERATIONS int = 1000 // 1000000
+	const MARGIN ticks.Ticks = 200 // 0.5%
+	const LIMIT ticks.Ticks = 0
 	var frequency ticks.Ticks = 0
 	var increment ticks.Ticks = 0
 	var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
-    var seconds ticks.Ticks = 0  
+    var seconds ticks.Ticks = 0
     var bandwidth ticks.Ticks = 0
     var delta ticks.Ticks = 0
     var margin ticks.Ticks = 0
 	var size Events = 0
     var total Events = 0
+    var blocksize Events = 0
     var inadmissable bool = false
     
     frequency = ticks.Frequency()
     increment = (frequency + BANDWIDTH - 1) / BANDWIDTH
-    t.Logf("BANDWIDTH=%dBps frequency=%d increment=%d\n", BANDWIDTH, frequency, increment)
+    blocksize = Events(BLOCKSIZE) / 2
+    seconds = (increment * ticks.Ticks(blocksize)) / frequency
+    t.Logf("BANDWIDTH=%dB/s BLOCKSIZE=%dB mean=%dB/io frequency=%dHz increment=%dt mean=%ds/io LIMIT=%dt\n", BANDWIDTH, BLOCKSIZE, blocksize, frequency, increment, seconds, LIMIT)
    
-	that := New(increment, ticks.Ticks(0), now)
+	that := New(increment, LIMIT, now)
 	t.Log(that.String())
 	
 	for iops := 0; iops < OPERATIONS; iops += 1 {
@@ -1134,26 +1138,28 @@ func TestThrottleSimulated(t * testing.T) {
 	    now += delay
 	    duration += delay
 	    delay = that.Request(now)
-	    if (delay == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+	    if (delay <= 0) {} else { t.Errorf("FAILED! %v", delay); t.Log(that.String()) }
         size = Events(rand.Int63n(BLOCKSIZE)) + 1
-	    if (0 < size) {} else { t.Error("FAILED!") }
-	    if (size <= Events(BLOCKSIZE)) {} else { t.Error("FAILED!") }
-	    inadmissable = that.Commits(size)
-	    if (!inadmissable) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+	    if (0 < size) {} else { t.Errorf("FAILED! %v", size) }
+	    if (size <= Events(BLOCKSIZE)) {} else { t.Errorf("FAILED! %v", size) }
 	    total += size
+	    inadmissable = that.Commits(size)
+	    if (!inadmissable) {} else { t.Errorf("FAILED! %v", inadmissable); t.Log(that.String()) }
 	}
 	
+	blocksize = total / Events(OPERATIONS)
 	seconds = duration / frequency
-	t.Logf("total=%dbytes duration=%dticks=%dseconds\n", total, duration, seconds)
-	if (total > 0) {} else { t.Error("FAILED!") }
-	if (duration > frequency) {} else { t.Error("FAILED!") }
+	delay = seconds / ticks.Ticks(OPERATIONS)
+	t.Logf("total=%dB mean=%dB duration=%dt=%ds mean=%ds/io\n", total, blocksize, duration, seconds, delay)
+	if (total > 0) {} else { t.Errorf("FAILED! %v", total) }
+	if (duration > frequency) {} else { t.Errorf("FAILED! %v", duration) }
 
 	bandwidth = ticks.Ticks(total) / seconds
 	delta = bandwidth - BANDWIDTH
 	if (delta < 0) { delta = -delta }
     margin = BANDWIDTH / MARGIN
-	t.Logf("bandwidth=%dBps delta=%dbps margin=%dbps\n", bandwidth, delta, margin)
-	if (delta < margin) {} else { t.Error("FAILED!") }
+	t.Logf("bandwidth=%dB/s delta=%dB/s margin=%dB/s\n", bandwidth, delta, margin)
+	if (delta < margin) {} else { t.Errorf("FAILED! %v", delta) }
     
 }
 
