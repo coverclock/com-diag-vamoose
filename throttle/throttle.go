@@ -133,6 +133,10 @@ func (that * Throttle) Reset(now ticks.Ticks) {
 	that.alarmed2 = false
 }
 
+/*******************************************************************************
+ * Constructors
+ ******************************************************************************/
+
 // Init initialize a throttle, setting its traffic contract parameters
 // increment, which is the expected interarrival time in ticks for every event,
 // and limit, which is the maximum aggreate early ticks that can be accumulated
@@ -148,14 +152,15 @@ func (that * Throttle) Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.
  * DESTRUCTORS
  ******************************************************************************/
 
-// fini handles any cleanup necessary before a throttle is deallocated. It is
-// deferred when the throttle is constructed by New.
-func (that * Throttle) fini() {
+// Fini handles any cleanup necessary before a throttle is deallocated. It is
+// deferred when the throttle is constructed by New. It is also callable as
+// part of the API, although doing so may render the throttle unusable.
+func (that * Throttle) Fini() {
 	// Do nothing.
 }
 
 /*******************************************************************************
- * CONSTRUCTORS
+ * ALLOCATORS
  ******************************************************************************/
 
 // New allocate a new throttle. It initializes it with the traffic contract
@@ -165,7 +170,7 @@ func (that * Throttle) fini() {
 // alarmed; and its dynamic state, which is the current monotonic time in ticks.
 func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
 	throttle := new(Throttle)
-	defer throttle.fini()
+	defer throttle.Fini()
 	throttle.Init(increment, limit, now)
 	return throttle
 }
