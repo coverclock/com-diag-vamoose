@@ -1106,8 +1106,8 @@ func TestThrottleVariable(t * testing.T) {
 
 func TestThrottleSimulated(t * testing.T) {
     const BANDWIDTH ticks.Ticks = 1024 // Bytes per second.
-	const BLOCKSIZE int64 = 32768
-    const OPERATIONS int = 1000 // 1000000
+	const BLOCKSIZE Events = 32768
+    const OPERATIONS uint = 1000000
 	const MARGIN ticks.Ticks = 200 // 0.5%
 	const LIMIT ticks.Ticks = 0
 	var frequency ticks.Ticks = 0
@@ -1120,38 +1120,42 @@ func TestThrottleSimulated(t * testing.T) {
     var delta ticks.Ticks = 0
     var margin ticks.Ticks = 0
 	var size Events = 0
-    var total Events = 0
     var blocksize Events = 0
+    var total uint64 = 0
     var inadmissable bool = false
+    var iops uint = 0
     
     frequency = ticks.Frequency()
     increment = (frequency + BANDWIDTH - 1) / BANDWIDTH
-    blocksize = Events(BLOCKSIZE) / 2
+    blocksize = BLOCKSIZE / 2
     seconds = (increment * ticks.Ticks(blocksize)) / frequency
-    t.Logf("BANDWIDTH=%dB/s BLOCKSIZE=%dB mean=%dB/io frequency=%dHz increment=%dt mean=%ds/io LIMIT=%dt\n", BANDWIDTH, BLOCKSIZE, blocksize, frequency, increment, seconds, LIMIT)
-   
+    t.Logf("OPERATIONS=%d BANDWIDTH=%dB/s BLOCKSIZE=%dB mean=%dB/io frequency=%dHz\n", OPERATIONS, BANDWIDTH, BLOCKSIZE, blocksize, frequency)
+
+    t.Logf("increment=%dt mean=%ds/io LIMIT=%dt now=%dt\n", increment, seconds, LIMIT, now)
 	that := New(increment, LIMIT, now)
 	t.Log(that.String())
 	
-	for iops := 0; iops < OPERATIONS; iops += 1 {
+	for iops = 0; iops < OPERATIONS; iops += 1 {
 	    delay = that.Request(now)
 	    now += delay
+	    if (now >= 0) {} else { t.Errorf("OVERFLOW! %v", now) }
 	    duration += delay
+	    if (duration >= 0) {} else { t.Errorf("OVERFLOW! %v", duration) }
 	    delay = that.Request(now)
 	    if (delay <= 0) {} else { t.Errorf("FAILED! %v", delay); t.Log(that.String()) }
-        size = Events(rand.Int63n(BLOCKSIZE)) + 1
+        size = Events(rand.Int63n(int64(BLOCKSIZE))) + 1
 	    if (0 < size) {} else { t.Errorf("FAILED! %v", size) }
 	    if (size <= Events(BLOCKSIZE)) {} else { t.Errorf("FAILED! %v", size) }
-	    total += size
+	    total += uint64(size)
+	    if (total > 0) {} else { t.Errorf("OVERFLOW! %v", total) }
 	    inadmissable = that.Commits(size)
 	    if (!inadmissable) {} else { t.Errorf("FAILED! %v", inadmissable); t.Log(that.String()) }
 	}
 	
-	blocksize = total / Events(OPERATIONS)
+	blocksize = Events(total / uint64(OPERATIONS))
 	seconds = duration / frequency
 	delay = seconds / ticks.Ticks(OPERATIONS)
-	t.Logf("total=%dB mean=%dB duration=%dt=%ds mean=%ds/io\n", total, blocksize, duration, seconds, delay)
-	if (total > 0) {} else { t.Errorf("FAILED! %v", total) }
+	t.Logf("total=%dB mean=%dB/io duration=%dt=%ds mean=%ds/io\n", total, blocksize, duration, seconds, delay)
 	if (duration > frequency) {} else { t.Errorf("FAILED! %v", duration) }
 
 	bandwidth = ticks.Ticks(total) / seconds
