@@ -7,9 +7,15 @@ package throttle
 
 import (
     "testing"
-    "math/rand"
 	"github.com/coverclock/com-diag-vamoose/ticks"
+    "math/rand"
+    "time"
+    "net"
 )
+
+/*******************************************************************************
+ * SANITY
+ ******************************************************************************/
 
 func TestThrottleSanity(t * testing.T) {
 	const increment ticks.Ticks = 10
@@ -262,9 +268,13 @@ func TestThrottleSanity(t * testing.T) {
 
 }
 
+/*******************************************************************************
+ * SINGLE EVENTS
+ ******************************************************************************/
+
 func TestThrottleOne(t * testing.T) {
-	var increment ticks.Ticks = 100
-	var limit ticks.Ticks = 10
+	const increment ticks.Ticks = 100
+	const limit ticks.Ticks = 10
 	var now ticks.Ticks = 0
 	
 	// CONSTRUCTORS
@@ -529,11 +539,15 @@ func TestThrottleOne(t * testing.T) {
 
 }
 
+/*******************************************************************************
+ * FIXED EVENTS
+ ******************************************************************************/
+
 func TestThrottleFixed(t * testing.T) {
-	var increment ticks.Ticks = 100
-	var limit ticks.Ticks = 10
+	const increment ticks.Ticks = 100
+	const limit ticks.Ticks = 10
+	const size Events = 10;
 	var now ticks.Ticks = 0
-	var size Events = 10;
 	
 	// CONSTRUCTORS
 
@@ -796,12 +810,16 @@ func TestThrottleFixed(t * testing.T) {
 
 }
 
+/*******************************************************************************
+ * VARIABLE EVENTS
+ ******************************************************************************/
+
 func TestThrottleVariable(t * testing.T) {
-	var increment ticks.Ticks = 100
-	var limit ticks.Ticks = 10
-	var now ticks.Ticks = 0
-	var size Events = 10;
 	const BLOCKSIZE int64 = 32768
+	const increment ticks.Ticks = 100
+	const limit ticks.Ticks = 10
+	var size Events = 0;
+	var now ticks.Ticks = 0
 	
 	// CONSTRUCTORS
 
@@ -1100,14 +1118,18 @@ func TestThrottleVariable(t * testing.T) {
 
 }
 
+/*******************************************************************************
+ * SIMULATED EVENT STREAM
+ ******************************************************************************/
+
 func TestThrottleSimulated(t * testing.T) {
     const BANDWIDTH ticks.Ticks = 1024 // Bytes per second.
 	const BLOCKSIZE Events = 32768
     const OPERATIONS uint = 1000000
 	const MARGIN ticks.Ticks = 200 // 0.5%
-	const LIMIT ticks.Ticks = 0
-	var frequency ticks.Ticks = 0
+	const limit ticks.Ticks = 0
 	var increment ticks.Ticks = 0
+	var frequency ticks.Ticks = 0
 	var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
@@ -1127,8 +1149,8 @@ func TestThrottleSimulated(t * testing.T) {
     seconds = (increment * ticks.Ticks(blocksize)) / frequency
     t.Logf("OPERATIONS=%d BANDWIDTH=%dB/s BLOCKSIZE=%dB mean=%dB/io frequency=%dHz\n", OPERATIONS, BANDWIDTH, BLOCKSIZE, blocksize, frequency)
 
-    t.Logf("increment=%dt mean=%ds/io LIMIT=%dt now=%dt\n", increment, seconds, LIMIT, now)
-	that := New(increment, LIMIT, now)
+    t.Logf("increment=%dt mean=%ds/io LIMIT=%dt now=%dt\n", increment, seconds, limit, now)
+	that := New(increment, limit, now)
 	t.Log(that.String())
 	
 	for iops = 0; iops < OPERATIONS; iops += 1 {
@@ -1163,3 +1185,150 @@ func TestThrottleSimulated(t * testing.T) {
     
 }
 
+/*******************************************************************************
+ * ACTUAL EVENT STREAM
+ ******************************************************************************/
+
+func producer(t * testing.T, limit uint64, maximum int, delay time.Duration, output chan <- byte) {
+    var total uint64 = 0
+    var duration ticks.Ticks = 0
+    var now ticks.Ticks = 0
+    var then ticks.Ticks = 0
+    var size int = 0
+    var datum byte = 0
+    var bandwidth float64 = 0
+    var frequency ticks.Ticks = 0
+    
+    then = ticks.Now()
+    
+    for limit > 0 {
+        
+        size = rand.Intn(maximum) + 1
+        if uint64(size) > limit {
+            size = int(limit)
+        }
+        
+        for ; size > 0; size -= 1 {
+            datum = byte(rand.Int31n(255))
+            output <- datum
+            total += 1  
+        }
+        
+        limit -= uint64(size)
+        
+        time.Sleep(delay)
+        
+    }
+    
+    close(output)
+       
+    now = ticks.Now()
+    duration += now - then
+    frequency = ticks.Frequency()
+    bandwidth = (float64(total) * float64(frequency)) / float64(duration)
+    t.Logf("producer: total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
+}
+
+func shaper(t * testing.T, maximum int, input <- chan byte, gcra * Throttle, output * net.UDPConn) {
+    var okay bool = true
+    var size int = 0
+    var now ticks.Ticks = 0
+    var delay ticks.Ticks = 0
+    var written int = 0
+    var failure error
+    var alarmed bool = false
+    
+    buffer := make([] byte, maximum)
+    
+    for {
+
+        buffer[0], okay = <- input
+        if !okay {
+            t.Logf("shaper: okay=%v.\n", okay);
+            break
+        }
+
+        for size = 1; (size < maximum) && (len(input) > 0); size +=1 {
+            buffer[size], okay = <- input
+            if !okay {
+                t.Logf("shaper: okay=%v.\n", okay);
+                break
+            }
+        }
+
+        now = ticks.Now()
+        delay = gcra.Request(now)
+        for delay > 0 {
+            time.Sleep(time.Duration(delay))
+            now = ticks.Now()
+            delay = gcra.Request(now)            
+        }
+
+        written, failure = output.Write(buffer[0:size - 1])
+        if written != size {
+            t.Logf("shaper: failure=%v!\n", failure);
+            break
+        }
+
+        alarmed = gcra.Commits(Events(size))
+        if alarmed {
+            t.Logf("shaper: alarmed=%v!\n", alarmed);
+            break
+        }
+
+    }
+    
+}
+
+func policer(t * testing.T, maximum int, input * net.UDPConn, gcra * Throttle, output chan<- byte) {
+    var read int = 0
+    var failure error
+    var now ticks.Ticks = 0
+    var admissable bool = false
+   
+    buffer := make([] byte, maximum)
+    
+    for {
+    
+        read, failure = input.Read(buffer)
+        if read <= 0 {
+            t.Logf("policer: failure=%v!\n", failure);
+            break
+        }
+
+        now = ticks.Now()
+        admissable = gcra.Admits(now, Events(read))
+        if admissable {
+            for index := 0; index < read; index += 1 {
+                output <- buffer[index]
+            }
+        }
+    
+    }
+}
+
+func consumer(t * testing.T, input <-chan byte) {
+    var total uint64 = 0
+    var duration ticks.Ticks = 0
+    var now ticks.Ticks = 0
+    var then ticks.Ticks = 0
+    var bandwidth float64 = 0
+    var frequency ticks.Ticks = 0
+    var okay bool = true
+    
+    then = ticks.Now()
+    
+    for {
+        _, okay = <- input
+        if !okay {
+            break
+        }
+        total += 1
+    }
+   
+    now = ticks.Now()
+    duration += now - then
+    frequency = ticks.Frequency()
+    bandwidth = (float64(total) * float64(frequency)) / float64(duration)
+    t.Logf("producer: total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
+}
