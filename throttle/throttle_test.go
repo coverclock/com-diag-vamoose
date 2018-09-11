@@ -1190,7 +1190,7 @@ func TestThrottleSimulated(t * testing.T) {
  * ACTUAL EVENT STREAM
  ******************************************************************************/
 
-func producer(t * testing.T, limit uint64, maximum int, delay time.Duration, output chan <- byte) {
+func producer(t * testing.T, limit uint64, burst int, delay time.Duration, output chan <- byte, done chan<- bool) {
     var total uint64 = 0
     var duration ticks.Ticks = 0
     var now ticks.Ticks = 0
@@ -1200,13 +1200,13 @@ func producer(t * testing.T, limit uint64, maximum int, delay time.Duration, out
     var bandwidth float64 = 0
     var frequency ticks.Ticks = 0
         
-    t.Log("producer: begin\n");
+    t.Log("producer: begin");
 
     then = ticks.Now()
     
     for limit > 0 {
         
-        size = rand.Intn(maximum) + 1
+        size = rand.Intn(burst) + 1
         if uint64(size) > limit {
             size = int(limit)
         }
@@ -1230,20 +1230,20 @@ func producer(t * testing.T, limit uint64, maximum int, delay time.Duration, out
     frequency = ticks.Frequency()
     bandwidth = (float64(total) * float64(frequency)) / float64(duration)
     t.Logf("producer: end total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
+    
+    done <- true
 }
 
-func shaper(t * testing.T, maximum int, input <- chan byte, that gcra.Gcra, output * net.UDPConn) {
+func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output net.PacketConn, address net.Addr, done chan<- bool) {
     var okay bool = true
     var size int = 0
     var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
-    var written int = 0
-    var failure error
     var alarmed bool = false
         
-    t.Log("shaper: begin\n");
+    t.Log("shaper: begin");
 
-    buffer := make([] byte, maximum)
+    buffer := make([] byte, burst)
     
     for {
 
@@ -1253,7 +1253,7 @@ func shaper(t * testing.T, maximum int, input <- chan byte, that gcra.Gcra, outp
             break
         }
 
-        for size = 1; (size < maximum) && (len(input) > 0); size +=1 {
+        for size = 1; (size < burst) && (len(input) > 0); size +=1 {
             buffer[size], okay = <- input
             if !okay {
                 t.Logf("shaper: okay=%v.\n", okay);
@@ -1269,11 +1269,13 @@ func shaper(t * testing.T, maximum int, input <- chan byte, that gcra.Gcra, outp
             delay = that.Request(now)            
         }
 
-        written, failure = output.Write(buffer[0:size - 1])
-        if written != size {
+        written, failure := output.WriteTo(buffer[0:size - 1], address)
+        if failure != nil {
             t.Logf("shaper: failure=%v!\n", failure);
             break
         }
+        
+        t.Logf("shaper: written=%v.\n", written);
 
         alarmed = that.Commits(gcra.Events(size))
         if alarmed {
@@ -1285,27 +1287,28 @@ func shaper(t * testing.T, maximum int, input <- chan byte, that gcra.Gcra, outp
     
     output.Close();
       
-    t.Log("shaper: end\n");
-  
+    t.Log("shaper: end");
+    
+    done <- true
 }
 
-func policer(t * testing.T, maximum int, input * net.UDPConn, that gcra.Gcra, output chan<- byte) {
-    var read int = 0
-    var failure error
+func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, output chan<- byte, done chan<- bool) {
     var now ticks.Ticks = 0
     var admissable bool = false
     
-    t.Log("policer: begin\n");
+    t.Log("policer: begin");
    
-    buffer := make([] byte, maximum)
+    buffer := make([] byte, burst)
     
     for {
     
-        read, failure = input.Read(buffer)
-        if read <= 0 {
+        read, _, failure := input.ReadFrom(buffer)
+        if failure != nil {
             t.Logf("policer: failure=%v!\n", failure);
             break
         }
+        
+        t.Logf("policer: read=%v.\n", read);
 
         now = ticks.Now()
         admissable = that.Admits(now, gcra.Events(read))
@@ -1320,10 +1323,12 @@ func policer(t * testing.T, maximum int, input * net.UDPConn, that gcra.Gcra, ou
     input.Close()
     close(output)
     
-    t.Log("policer: end\n");
+    t.Log("policer: end");
+    
+    done <- true
 }
 
-func consumer(t * testing.T, input <-chan byte) {
+func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     var total uint64 = 0
     var duration ticks.Ticks = 0
     var now ticks.Ticks = 0
@@ -1332,7 +1337,7 @@ func consumer(t * testing.T, input <-chan byte) {
     var frequency ticks.Ticks = 0
     var okay bool = true
     
-    t.Log("consumer: begin\n");
+    t.Log("consumer: begin");
     
     then = ticks.Now()
     
@@ -1352,36 +1357,69 @@ func consumer(t * testing.T, input <-chan byte) {
     bandwidth = (float64(total) * float64(frequency)) / float64(duration)
 
     t.Logf("consumer: end total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
+    
+    done <- true
 }
 
 func TestThrottleActual(t * testing.T) {
+    const BURST int = 64 // bytes
+    const BANDWIDTH int = 1024 // bytes per second
+    const DURATION int = 1 // seconds
+    const DELAY time.Duration = 1000 // nanoseconds
     var failure error
     
-    supply := make(chan byte)
-    demand := make(chan byte)
+    t.Log("Beginning")
     
-    server, failure := net.ListenUDP(":5555", nil)
+    done := make(chan bool, 4)
+    defer close(done)
+    
+    supply := make(chan byte, BURST)
+    defer close(supply)
+    
+    demand := make(chan byte, BURST)
+    defer close(demand)
+        
+    source, failure := net.ListenPacket("udp", ":5555")
     if failure != nil {
-        t.Log(failure)
-        t.FailNow()
+        t.Fatal(failure)
     }
-
-    client, failure := net.DialUDP("localhost:5555", nil, nil)
+    defer source.Close()
+           
+    sink, failure := net.ListenPacket("udp", ":0")
     if failure != nil {
-        t.Log(failure)
-        t.FailNow()
+        t.Fatal(failure)
+    }
+    defer sink.Close()
+ 
+    destination, failure := net.ResolveUDPAddr("udp", "localhost:5556")
+    if failure != nil {
+        t.Fatal(failure)
     }
     
-    //frequency := ticks.Frequency()
+    frequency := ticks.Frequency()
+    increment := frequency / ticks.Ticks(BANDWIDTH)
+    limit := frequency * ticks.Ticks(BURST) / ticks.Ticks(BANDWIDTH)
     now := ticks.Now()
-
-    shape := New(0, 0, now)
-    police := New(0, 0, now)
-   
-    go consumer(t, demand)
-    go policer(t, 64, server, police, demand)
-    go shaper(t, 64, supply, shape, client)
-    go producer(t, 1073741824, 64, 1000, supply)
+    shape := New(increment, 0, now)
+    police := New(increment, limit, now)
     
-    time.Sleep(1000000000)
+    t.Log("Starting")
+   
+    go consumer(t, demand, done)
+    go policer(t, BURST, source, police, demand, done)
+    go shaper(t, BURST, supply, shape, sink, destination, done)
+    go producer(t, uint64(DURATION) * uint64(BANDWIDTH), BURST, DELAY, supply, done)
+    
+    t.Log("Waiting")
+    
+    //time.Sleep(time.Duration(DURATION) * 1000000000 * 5)
+  
+    <- done
+    <- done
+    <- done
+    <- done
+     
+    close(done)
+   
+    t.Log("Ending")
 }

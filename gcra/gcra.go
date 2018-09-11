@@ -35,8 +35,6 @@ type Gcra interface {
 
     Reset(now ticks.Ticks)
 
-    Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks)
-
     Fini()
     
     IsEmpty() bool
