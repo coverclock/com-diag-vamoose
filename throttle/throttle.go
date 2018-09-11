@@ -60,18 +60,12 @@ import (
 	"fmt"
 	"unsafe"
 	"github.com/coverclock/com-diag-vamoose/ticks"
+	"github.com/coverclock/com-diag-vamoose/gcra"
 )
 
 /*******************************************************************************
  * TYPES
  ******************************************************************************/
-
-// Events is the type used to indicate how many events have been emitted since
-// the last update of the throttle. An event can be the emission of a single
-// packet, or a single byte, or a single bit, etc. It is up to the application
-// to define what an event is. The throttle is defined in terms of ticks per
-// event.
-type Events uint32
 
 // Throttle is the type that contains the state of the throttle. It is based
 // on the Virtual Scheduler implementation for the Generic Cell Rate Algorithm
@@ -262,7 +256,7 @@ func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 // starting at the time specified in the previous Request, and returns true
 // if the throttle is full, indicating the application might want to slow it
 // down a bit.
-func (that * Throttle) Commits(events Events) bool {
+func (that * Throttle) Commits(events gcra.Events) bool {
 	that.then = that.now
 	that.expected = that.early;
 	if (events <= 0) {
@@ -295,7 +289,7 @@ func (that * Throttle) Commit() bool {
 
 // Admits combines calling Request with the current time in ticks with calling
 // and returning the value of Commits with the number of events.
-func (that * Throttle) Admits(now ticks.Ticks, events Events) bool {
+func (that * Throttle) Admits(now ticks.Ticks, events gcra.Events) bool {
 	that.Request(now)
 	return that.Commits(events)
 }

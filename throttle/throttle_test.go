@@ -8,6 +8,7 @@ package throttle
 import (
     "testing"
 	"github.com/coverclock/com-diag-vamoose/ticks"
+	"github.com/coverclock/com-diag-vamoose/gcra"
     "math/rand"
     "time"
     "net"
@@ -546,7 +547,7 @@ func TestThrottleOne(t * testing.T) {
 func TestThrottleFixed(t * testing.T) {
 	const increment ticks.Ticks = 100
 	const limit ticks.Ticks = 10
-	const size Events = 10;
+	const size gcra.Events = 10;
 	var now ticks.Ticks = 0
 	
 	// CONSTRUCTORS
@@ -818,7 +819,7 @@ func TestThrottleVariable(t * testing.T) {
 	const BLOCKSIZE int64 = 32768
 	const increment ticks.Ticks = 100
 	const limit ticks.Ticks = 10
-	var size Events = 0;
+	var size gcra.Events = 0;
 	var now ticks.Ticks = 0
 	
 	// CONSTRUCTORS
@@ -836,57 +837,57 @@ func TestThrottleVariable(t * testing.T) {
     // SUSTAINED
     
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -901,52 +902,52 @@ func TestThrottleVariable(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -961,7 +962,7 @@ func TestThrottleVariable(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) - 2
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -976,7 +977,7 @@ func TestThrottleVariable(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -989,7 +990,7 @@ func TestThrottleVariable(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1010,7 +1011,7 @@ func TestThrottleVariable(t * testing.T) {
       
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1027,7 +1028,7 @@ func TestThrottleVariable(t * testing.T) {
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1055,57 +1056,57 @@ func TestThrottleVariable(t * testing.T) {
         
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    size = Events(rand.Int63n(BLOCKSIZE)) + 1
+    size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
     if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1124,7 +1125,7 @@ func TestThrottleVariable(t * testing.T) {
 
 func TestThrottleSimulated(t * testing.T) {
     const BANDWIDTH ticks.Ticks = 1024 // Bytes per second.
-	const BLOCKSIZE Events = 32768
+	const BLOCKSIZE gcra.Events = 32768
     const OPERATIONS uint = 1000000
 	const MARGIN ticks.Ticks = 200 // 0.5%
 	const limit ticks.Ticks = 0
@@ -1137,8 +1138,8 @@ func TestThrottleSimulated(t * testing.T) {
     var bandwidth ticks.Ticks = 0
     var delta ticks.Ticks = 0
     var margin ticks.Ticks = 0
-	var size Events = 0
-    var blocksize Events = 0
+	var size gcra.Events = 0
+    var blocksize gcra.Events = 0
     var total uint64 = 0
     var inadmissable bool = false
     var iops uint = 0
@@ -1161,16 +1162,16 @@ func TestThrottleSimulated(t * testing.T) {
 	    if (duration >= 0) {} else { t.Errorf("OVERFLOW! %v", duration) }
 	    delay = that.Request(now)
 	    if (delay <= 0) {} else { t.Errorf("FAILED! %v", delay); t.Log(that.String()) }
-        size = Events(rand.Int63n(int64(BLOCKSIZE))) + 1
+        size = gcra.Events(rand.Int63n(int64(BLOCKSIZE))) + 1
 	    if (0 < size) {} else { t.Errorf("FAILED! %v", size) }
-	    if (size <= Events(BLOCKSIZE)) {} else { t.Errorf("FAILED! %v", size) }
+	    if (size <= gcra.Events(BLOCKSIZE)) {} else { t.Errorf("FAILED! %v", size) }
 	    total += uint64(size)
 	    if (total > 0) {} else { t.Errorf("OVERFLOW! %v", total) }
 	    inadmissable = that.Commits(size)
 	    if (!inadmissable) {} else { t.Errorf("FAILED! %v", inadmissable); t.Log(that.String()) }
 	}
 	
-	blocksize = Events(total / uint64(OPERATIONS))
+	blocksize = gcra.Events(total / uint64(OPERATIONS))
 	seconds = duration / frequency
 	delay = seconds / ticks.Ticks(OPERATIONS)
 	t.Logf("total=%dB mean=%dB/io duration=%dt=%ds mean=%ds/io\n", total, blocksize, duration, seconds, delay)
@@ -1198,7 +1199,9 @@ func producer(t * testing.T, limit uint64, maximum int, delay time.Duration, out
     var datum byte = 0
     var bandwidth float64 = 0
     var frequency ticks.Ticks = 0
-    
+        
+    t.Log("producer: begin\n");
+
     then = ticks.Now()
     
     for limit > 0 {
@@ -1226,10 +1229,10 @@ func producer(t * testing.T, limit uint64, maximum int, delay time.Duration, out
     duration += now - then
     frequency = ticks.Frequency()
     bandwidth = (float64(total) * float64(frequency)) / float64(duration)
-    t.Logf("producer: total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
+    t.Logf("producer: end total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
 }
 
-func shaper(t * testing.T, maximum int, input <- chan byte, gcra * Throttle, output * net.UDPConn) {
+func shaper(t * testing.T, maximum int, input <- chan byte, that gcra.Gcra, output * net.UDPConn) {
     var okay bool = true
     var size int = 0
     var now ticks.Ticks = 0
@@ -1237,7 +1240,9 @@ func shaper(t * testing.T, maximum int, input <- chan byte, gcra * Throttle, out
     var written int = 0
     var failure error
     var alarmed bool = false
-    
+        
+    t.Log("shaper: begin\n");
+
     buffer := make([] byte, maximum)
     
     for {
@@ -1257,11 +1262,11 @@ func shaper(t * testing.T, maximum int, input <- chan byte, gcra * Throttle, out
         }
 
         now = ticks.Now()
-        delay = gcra.Request(now)
+        delay = that.Request(now)
         for delay > 0 {
             time.Sleep(time.Duration(delay))
             now = ticks.Now()
-            delay = gcra.Request(now)            
+            delay = that.Request(now)            
         }
 
         written, failure = output.Write(buffer[0:size - 1])
@@ -1270,7 +1275,7 @@ func shaper(t * testing.T, maximum int, input <- chan byte, gcra * Throttle, out
             break
         }
 
-        alarmed = gcra.Commits(Events(size))
+        alarmed = that.Commits(gcra.Events(size))
         if alarmed {
             t.Logf("shaper: alarmed=%v!\n", alarmed);
             break
@@ -1278,13 +1283,19 @@ func shaper(t * testing.T, maximum int, input <- chan byte, gcra * Throttle, out
 
     }
     
+    output.Close();
+      
+    t.Log("shaper: end\n");
+  
 }
 
-func policer(t * testing.T, maximum int, input * net.UDPConn, gcra * Throttle, output chan<- byte) {
+func policer(t * testing.T, maximum int, input * net.UDPConn, that gcra.Gcra, output chan<- byte) {
     var read int = 0
     var failure error
     var now ticks.Ticks = 0
     var admissable bool = false
+    
+    t.Log("policer: begin\n");
    
     buffer := make([] byte, maximum)
     
@@ -1297,7 +1308,7 @@ func policer(t * testing.T, maximum int, input * net.UDPConn, gcra * Throttle, o
         }
 
         now = ticks.Now()
-        admissable = gcra.Admits(now, Events(read))
+        admissable = that.Admits(now, gcra.Events(read))
         if admissable {
             for index := 0; index < read; index += 1 {
                 output <- buffer[index]
@@ -1305,6 +1316,11 @@ func policer(t * testing.T, maximum int, input * net.UDPConn, gcra * Throttle, o
         }
     
     }
+    
+    input.Close()
+    close(output)
+    
+    t.Log("policer: end\n");
 }
 
 func consumer(t * testing.T, input <-chan byte) {
@@ -1316,19 +1332,56 @@ func consumer(t * testing.T, input <-chan byte) {
     var frequency ticks.Ticks = 0
     var okay bool = true
     
+    t.Log("consumer: begin\n");
+    
     then = ticks.Now()
     
     for {
+
         _, okay = <- input
         if !okay {
             break
         }
         total += 1
+
     }
-   
+     
     now = ticks.Now()
     duration += now - then
     frequency = ticks.Frequency()
     bandwidth = (float64(total) * float64(frequency)) / float64(duration)
-    t.Logf("producer: total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
+
+    t.Logf("consumer: end total=%vB duration=%vt bandwidth=%vB/s\n", total, duration, bandwidth);
+}
+
+func TestThrottleActual(t * testing.T) {
+    var failure error
+    
+    supply := make(chan byte)
+    demand := make(chan byte)
+    
+    server, failure := net.ListenUDP(":5555", nil)
+    if failure != nil {
+        t.Log(failure)
+        t.FailNow()
+    }
+
+    client, failure := net.DialUDP("localhost:5555", nil, nil)
+    if failure != nil {
+        t.Log(failure)
+        t.FailNow()
+    }
+    
+    //frequency := ticks.Frequency()
+    now := ticks.Now()
+
+    shape := New(0, 0, now)
+    police := New(0, 0, now)
+   
+    go consumer(t, demand)
+    go policer(t, 64, server, police, demand)
+    go shaper(t, 64, supply, shape, client)
+    go producer(t, 1073741824, 64, 1000, supply)
+    
+    time.Sleep(1000000000)
 }
