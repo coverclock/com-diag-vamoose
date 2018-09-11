@@ -1196,19 +1196,14 @@ var mutex sync.Mutex
 
 func producer(t * testing.T, limit uint64, burst int, delay time.Duration, output chan <- byte, done chan<- bool) {
     var total uint64 = 0
-    var duration ticks.Ticks = 0
-    var now ticks.Ticks = 0
-    var then ticks.Ticks = 0
     var size int = 0
     var datum byte = 0
-    var bandwidth float64 = 0
-    var frequency ticks.Ticks = 0
     
     mutex.Lock()
     fmt.Println("producer: begin.")
     mutex.Unlock()
 
-    then = ticks.Now()
+    then := ticks.Now()
     
     for limit > 0 {
         
@@ -1235,13 +1230,13 @@ func producer(t * testing.T, limit uint64, burst int, delay time.Duration, outpu
     
     close(output)
        
-    now = ticks.Now()
-    duration += now - then
-    frequency = ticks.Frequency()
-    bandwidth = (float64(total) * float64(frequency)) / float64(duration)
+    now := ticks.Now()
+    frequency := float64(ticks.Frequency())
+    duration := float64(now - then) / frequency
+    bandwidth := float64(total) / duration
     
     mutex.Lock()
-    fmt.Printf("producer: end total=%vB duration=%vt bandwidth=%vB/s.\n", total, duration, bandwidth);
+    fmt.Printf("producer: end total=%vB duration=%vs bandwidth=%vB/s.\n", total, duration, bandwidth);
     mutex.Unlock()
     
     done <- true
@@ -1262,15 +1257,12 @@ func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output
 
     buffer := make([] byte, burst)
     
-    frequency := ticks.Frequency()
+    frequency := float64(ticks.Frequency())
     
     for {
 
         buffer[0], okay = <- input
         if !okay {
-            mutex.Lock()
-            fmt.Printf("shaper: okay=%v.\n", okay);
-            mutex.Unlock()
             break
         }
         total += 1
@@ -1278,9 +1270,7 @@ func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output
         for size = 1; (size < burst) && (len(input) > 0); size +=1 {
             buffer[size], okay = <- input
             if !okay {
-                mutex.Lock()
-                fmt.Printf("shaper: okay=%v.\n", okay);
-                mutex.Unlock()
+                // Should never happen.
                 break
             }
             total += 1
@@ -1304,7 +1294,7 @@ func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output
             break
         }
         
-        fmt.Printf("shaper: delay=%vs written=%vB. total=%vB\n", float64(duration) / float64(frequency), written, total);
+        fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
 
         alarmed = that.Commits(gcra.Events(size))
         if alarmed {
@@ -1315,9 +1305,7 @@ func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output
         }
 
     }
-    
-    output.Close();
-      
+          
     mutex.Lock()
     fmt.Println("shaper: end");
     mutex.Unlock()
@@ -1364,7 +1352,6 @@ func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, out
     
     }
     
-    input.Close()
     close(output)
     
     mutex.Lock()
@@ -1376,18 +1363,13 @@ func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, out
 
 func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     var total uint64 = 0
-    var duration ticks.Ticks = 0
-    var now ticks.Ticks = 0
-    var then ticks.Ticks = 0
-    var bandwidth float64 = 0
-    var frequency ticks.Ticks = 0
     var okay bool = true
     
     mutex.Lock()
     fmt.Println("consumer: begin.");
     mutex.Unlock()
     
-    then = ticks.Now()
+    then := ticks.Now()
     
     for {
 
@@ -1399,13 +1381,13 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
 
     }
      
-    now = ticks.Now()
-    duration += now - then
-    frequency = ticks.Frequency()
-    bandwidth = (float64(total) * float64(frequency)) / float64(duration)
+    now := ticks.Now()
+    frequency := float64(ticks.Frequency())
+    duration := float64(now - then) / frequency
+    bandwidth := float64(total) / duration
 
     mutex.Lock()
-    fmt.Printf("consumer: end total=%vB duration=%vt bandwidth=%vB/s.\n", total, duration, bandwidth);
+    fmt.Printf("consumer: end total=%vB duration=%vs bandwidth=%vB/s.\n", total, duration, bandwidth);
     mutex.Unlock()
     
     done <- true
@@ -1468,7 +1450,7 @@ func TestThrottleActual(t * testing.T) {
     fmt.Println("Waiting.")
     mutex.Unlock()
     
-    if true {
+    if false {
         time.Sleep(time.Duration(DURATION) * 1000000000 * 5)
     } else {
         <- done
@@ -1476,8 +1458,6 @@ func TestThrottleActual(t * testing.T) {
         <- done
         <- done
     }
-     
-    close(done)
    
     mutex.Lock()
     fmt.Println("Ending.")
