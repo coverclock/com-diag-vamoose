@@ -95,7 +95,7 @@ type Throttle struct {
 
 // String returns a printable string showing the guts of the throttle.
 func (that * Throttle) String() string {
-	return fmt.Sprintf("Throttle@%p[%d]: { e=%d i=%d l=%d x=%d x1=%d d=%d f=(%t,%t,%t) e=(%t,%t,%t) a=(%t,%t) }",
+	return fmt.Sprintf("Throttle@%p[%d]:{e:%d,i:%d,l:%d,x:%d,x1:%d,d:%d,f:(%t,%t,%t),e:(%t,%t,%t),a:(%t,%t)}",
 		unsafe.Pointer(that), unsafe.Sizeof(*that),
 		that.now - that.then,
 		that.increment, that.limit, that.expected, that.early,
@@ -253,9 +253,9 @@ func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 }
 
 // Commits updates the throttle with the number of events having been emitted
-// starting at the time specified in the previous Request, and returns true
-// if the throttle is full, indicating the application might want to slow it
-// down a bit.
+// starting at the time specified in the previous Request, and returns false
+// if the throttle is alarmed, indicating the application might want to slow it
+// down a bit, true otherwise.
 func (that * Throttle) Commits(events gcra.Events) bool {
 	that.then = that.now
 	that.expected = that.early;
@@ -279,7 +279,7 @@ func (that * Throttle) Commits(events gcra.Events) bool {
 		// Do nothing.
 	}
 
-	return that.full1
+	return !that.alarmed1
 }
 
 // Commit is equivalent to calling Commits with one event.

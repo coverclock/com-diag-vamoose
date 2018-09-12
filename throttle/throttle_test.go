@@ -53,7 +53,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
     
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -73,7 +73,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
     
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -93,7 +93,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
  	
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -113,7 +113,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
     
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -133,7 +133,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
     
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -153,7 +153,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 1) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
     
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -173,7 +173,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 1) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
  	
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -193,7 +193,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
  	
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -213,7 +213,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
   	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
  	
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -233,7 +233,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
  	
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -253,7 +253,7 @@ func TestThrottleSanity(t * testing.T) {
  	delay = that.Request(now)
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
- 	alarmed = that.Commit()
+ 	alarmed = !that.Commit()
  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
     
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
@@ -295,48 +295,48 @@ func TestThrottleOne(t * testing.T) {
     // SUSTAINED
     
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
    
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
      
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -350,43 +350,43 @@ func TestThrottleOne(t * testing.T) {
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + increment - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -400,7 +400,7 @@ func TestThrottleOne(t * testing.T) {
     
     now = now + increment - 2
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -414,7 +414,7 @@ func TestThrottleOne(t * testing.T) {
     
     now = now + increment + 1
     if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -426,7 +426,7 @@ func TestThrottleOne(t * testing.T) {
     
     now = now + increment + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -446,7 +446,7 @@ func TestThrottleOne(t * testing.T) {
       
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -462,7 +462,7 @@ func TestThrottleOne(t * testing.T) {
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
-    if (!that.Admit(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Admit(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -475,7 +475,7 @@ func TestThrottleOne(t * testing.T) {
     // UPDATE
     
     now = now + increment + 10
-    if (!that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -489,48 +489,48 @@ func TestThrottleOne(t * testing.T) {
         
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
    
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + increment
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -567,48 +567,48 @@ func TestThrottleFixed(t * testing.T) {
     // SUSTAINED
     
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
    
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -622,43 +622,43 @@ func TestThrottleFixed(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -672,7 +672,7 @@ func TestThrottleFixed(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) - 2
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -686,7 +686,7 @@ func TestThrottleFixed(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -698,7 +698,7 @@ func TestThrottleFixed(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -718,7 +718,7 @@ func TestThrottleFixed(t * testing.T) {
       
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -734,7 +734,7 @@ func TestThrottleFixed(t * testing.T) {
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
-    if (!that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -747,7 +747,7 @@ func TestThrottleFixed(t * testing.T) {
     // UPDATE
     
     now = now + (increment * ticks.Ticks(size)) + 10
-    if (!that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -761,47 +761,47 @@ func TestThrottleFixed(t * testing.T) {
         
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -840,57 +840,57 @@ func TestThrottleVariable(t * testing.T) {
     
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -905,52 +905,52 @@ func TestThrottleVariable(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
       
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + (increment * ticks.Ticks(size)) - 1;
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -965,7 +965,7 @@ func TestThrottleVariable(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) - 2
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -980,7 +980,7 @@ func TestThrottleVariable(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 1) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -993,7 +993,7 @@ func TestThrottleVariable(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1014,7 +1014,7 @@ func TestThrottleVariable(t * testing.T) {
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1031,7 +1031,7 @@ func TestThrottleVariable(t * testing.T) {
     
     now = now + 2 
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1044,7 +1044,7 @@ func TestThrottleVariable(t * testing.T) {
     // UPDATE
     
     now = now + (increment * ticks.Ticks(size)) + 10
-    if (!that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Update(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1064,52 +1064,52 @@ func TestThrottleVariable(t * testing.T) {
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))  
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size)) 
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
  
     if (that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1143,7 +1143,7 @@ func TestThrottleSimulated(t * testing.T) {
 	var size gcra.Events = 0
     var blocksize gcra.Events = 0
     var total uint64 = 0
-    var inadmissable bool = false
+    var admissable bool = false
     var iops uint = 0
     
     frequency = ticks.Frequency()
@@ -1169,8 +1169,8 @@ func TestThrottleSimulated(t * testing.T) {
 	    if (size <= gcra.Events(BLOCKSIZE)) {} else { t.Errorf("FAILED! %v", size) }
 	    total += uint64(size)
 	    if (total > 0) {} else { t.Errorf("OVERFLOW! %v", total) }
-	    inadmissable = that.Commits(size)
-	    if (!inadmissable) {} else { t.Errorf("FAILED! %v", inadmissable); t.Log(that.String()) }
+	    admissable = that.Commits(size)
+	    if (admissable) {} else { t.Errorf("FAILED! %v", admissable); t.Log(that.String()) }
 	}
 	
 	blocksize = gcra.Events(total / uint64(OPERATIONS))
@@ -1286,22 +1286,20 @@ func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output
             delay = that.Request(now) 
         }
 
-        written, failure := output.WriteTo(buffer[0:size - 1], address)
+        written, failure := output.WriteTo(buffer[0:size], address)
         if failure != nil {
-            mutex.Lock()
-            fmt.Printf("shaper: failure=%v!\n", failure);
-            mutex.Unlock()
-            break
+            t.Fatalf("shaper: failure=%v!\n", failure);
+        }
+        
+        if (written != size) {
+            t.Fatalf("shaper: written=%v size=%v!\n", written, size);
         }
         
         fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
 
-        alarmed = that.Commits(gcra.Events(size))
+        alarmed = !that.Commits(gcra.Events(size))
         if alarmed {
-            mutex.Lock()
-            fmt.Printf("shaper: alarmed=%v!\n", alarmed);
-            mutex.Unlock()
-            break
+            t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
 
     }
@@ -1328,10 +1326,7 @@ func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, out
     
         read, _, failure := input.ReadFrom(buffer)
         if failure != nil {
-            mutex.Lock()
-            fmt.Printf("policer: failure=%v!\n", failure);
-            mutex.Unlock()
-            break
+            t.Fatalf("policer: failure=%v!\n", failure);
         }
         total += uint64(read)
 
@@ -1418,25 +1413,47 @@ func TestThrottleActual(t * testing.T) {
         t.Fatal(failure)
     }
     defer source.Close()
+    
+    mutex.Lock()
+    fmt.Printf("source=%+v.\n", source);
+    mutex.Unlock()    
            
     sink, failure := net.ListenPacket("udp", ":0")
     if failure != nil {
         t.Fatal(failure)
     }
     defer sink.Close()
+    
+    mutex.Lock()
+    fmt.Printf("sink=%+v.\n", sink);
+    mutex.Unlock()    
  
-    destination, failure := net.ResolveUDPAddr("udp", "localhost:5556")
+    destination, failure := net.ResolveUDPAddr("udp", "localhost:5555")
     if failure != nil {
         t.Fatal(failure)
     }
-    
+     
+    mutex.Lock()
+    fmt.Printf("destination=%+v.\n", destination);
+    mutex.Unlock()    
+   
     frequency := ticks.Frequency()
     increment := frequency / ticks.Ticks(BANDWIDTH)
     limit := frequency * ticks.Ticks(BURST) / ticks.Ticks(BANDWIDTH)
     now := ticks.Now()
-    shape := New(increment, 0, now)
-    police := New(increment, limit, now)
     
+    shape := New(increment, 0, now)
+    
+    mutex.Lock()
+    fmt.Printf("shape=%+v.\n", shape);
+    mutex.Unlock()    
+    
+    police := New(increment, limit, now)
+     
+    mutex.Lock()
+    fmt.Printf("police=%+v.\n", police);
+    mutex.Unlock()    
+   
     mutex.Lock()
     fmt.Println("Starting.")
     mutex.Unlock()
@@ -1450,14 +1467,10 @@ func TestThrottleActual(t * testing.T) {
     fmt.Println("Waiting.")
     mutex.Unlock()
     
-    if false {
-        time.Sleep(time.Duration(DURATION) * 1000000000 * 5)
-    } else {
-        <- done
-        <- done
-        <- done
-        <- done
-    }
+    <- done
+    <- done
+    <- done
+    <- done
    
     mutex.Lock()
     fmt.Println("Ending.")
