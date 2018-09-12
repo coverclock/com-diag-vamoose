@@ -194,7 +194,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
  	alarmed = !that.Commit()
- 	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+ 	if (alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
  	
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
@@ -214,7 +214,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (delay == 0) {} else { t.Errorf("FAILED! %v", delay) }
  	
  	alarmed = !that.Commit()
-  	if (!alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
+  	if (alarmed) {} else { t.Errorf("FAILED! %v", alarmed) }
  	
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
@@ -426,7 +426,7 @@ func TestThrottleOne(t * testing.T) {
     
     now = now + increment + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -446,7 +446,7 @@ func TestThrottleOne(t * testing.T) {
       
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commit()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -462,7 +462,7 @@ func TestThrottleOne(t * testing.T) {
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
-    if (that.Admit(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Admit(now)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -698,7 +698,7 @@ func TestThrottleFixed(t * testing.T) {
     
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -718,7 +718,7 @@ func TestThrottleFixed(t * testing.T) {
       
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -734,7 +734,7 @@ func TestThrottleFixed(t * testing.T) {
     if (that.Request(now) == 2) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     
     now = now + 2 
-    if (that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -993,7 +993,7 @@ func TestThrottleVariable(t * testing.T) {
     now = now + (increment * ticks.Ticks(size)) + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1014,7 +1014,7 @@ func TestThrottleVariable(t * testing.T) {
     now = now + 1
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1031,7 +1031,7 @@ func TestThrottleVariable(t * testing.T) {
     
     now = now + 2 
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (!that.Admits(now, size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     if (!that.IsEmpty()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     if (!that.IsFull()) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1059,7 +1059,7 @@ func TestThrottleVariable(t * testing.T) {
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
     size = gcra.Events(rand.Int63n(BLOCKSIZE)) + 1
-    if (!that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
+    if (that.Commits(size)) {} else { t.Error("FAILED!"); t.Log(that.String()) }
 
     now = now + (increment * ticks.Ticks(size))
     if (that.Request(now) == 0) {} else { t.Error("FAILED!"); t.Log(that.String()) }
@@ -1213,7 +1213,7 @@ func producer(t * testing.T, limit uint64, burst int, delay time.Duration, outpu
         }
         
         for index := size; index > 0; index -= 1 {
-            datum = byte(rand.Int31n(255))
+            datum = byte(rand.Int31n(int32('~') - int32(' ') + 1) + int32(' '))
             output <- datum
             total += 1  
         }
@@ -1303,6 +1303,16 @@ func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output
         }
 
     }
+    
+    buffer[0] = 0
+    written, failure := output.WriteTo(buffer[0:1], address)
+    if failure != nil {
+        t.Fatalf("shaper: failure=%v!\n", failure);
+    }    
+        
+    if (written != 1) {
+        t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
+    }
           
     mutex.Lock()
     fmt.Println("shaper: end");
@@ -1315,6 +1325,7 @@ func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, out
     var total uint64 = 0
     var now ticks.Ticks = 0
     var admissable bool = false
+    var eof bool = false
     
     mutex.Lock()
     fmt.Println("policer: begin.");
@@ -1322,14 +1333,17 @@ func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, out
    
     buffer := make([] byte, burst)
     
-    for {
+    for !eof {
     
         read, _, failure := input.ReadFrom(buffer)
         if failure != nil {
             t.Fatalf("policer: failure=%v!\n", failure);
         }
-        total += uint64(read)
-
+        
+        if (read <= 0) {
+            t.Fatalf("policer: read=%v!\n", read);
+        }
+        
         now = ticks.Now()
         admissable = that.Admits(now, gcra.Events(read))
         if admissable {
@@ -1337,12 +1351,20 @@ func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, out
             fmt.Printf("policer: admitted=%vB total=%vB.\n", read, total)
             mutex.Unlock()
             for index := 0; index < read; index += 1 {
+                if buffer[index] == 0 {
+                    eof = true
+                    break
+                }
                 output <- buffer[index]
             }
+            total += uint64(read)
         } else {
             mutex.Lock()
             fmt.Printf("policer: policed=%vB total=%vB?\n", read, total);         
             mutex.Unlock()
+            if buffer[read - 1] == 0 {
+                eof = true
+            }
         }
     
     }
@@ -1403,10 +1425,10 @@ func TestThrottleActual(t * testing.T) {
     defer close(done)
     
     supply := make(chan byte, BURST)
-    defer close(supply)
+    // producer closes.
     
     demand := make(chan byte, BURST)
-    defer close(demand)
+    // policer closes.
         
     source, failure := net.ListenPacket("udp", ":5555")
     if failure != nil {
