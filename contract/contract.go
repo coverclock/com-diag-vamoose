@@ -1,6 +1,6 @@
 /* vi: set ts=4 expandtab shiftwidth=4: */
 
-package compositethrottle
+package contract
 
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
@@ -29,9 +29,9 @@ import (
  * TYPES
  ******************************************************************************/
 
-// CompositeThrottle is a throttle that is a composite of a sustained throttle
+// Contract is a gcra that is a composite of a sustained throttle
 // and a peak throttle.
-type CompositeThrottle struct {
+type Contract struct {
     peak throttle.Throttle
     sustained throttle.Throttle
 }
@@ -41,8 +41,8 @@ type CompositeThrottle struct {
  ******************************************************************************/
 
 // String returns a printable string showing the guts of the throttle.
-func (that * CompositeThrottle) String() string {
-    return fmt.Sprintf("CompositeThrottle@%p[%d]:{p:(%s},s:{%s}}",
+func (that * Contract) String() string {
+    return fmt.Sprintf("Contract@%p[%d]:{p:(%s},s:{%s}}",
 		unsafe.Pointer(that), unsafe.Sizeof(*that),
         that.peak.String(), that.sustained.String());
 }
@@ -54,7 +54,7 @@ func (that * CompositeThrottle) String() string {
 // Reset a throttle back to its initial state. This is used during construction,
 // but can also be used by an application when a calamitous happenstance
 // occurs, like the far end disconnecting and reconnecting.
-func (that * CompositeThrottle) Reset(now ticks.Ticks) {
+func (that * Contract) Reset(now ticks.Ticks) {
     that.sustained.Reset(now)
     that.peak.Reset(now)
 }
@@ -67,9 +67,9 @@ func (that * CompositeThrottle) Reset(now ticks.Ticks) {
 // the peak increment, jitter is the peak limit, sustained is the sustained
 // increment, and burst is the maximum burst size from which is computed the
 // sustained limit.
-func (that * CompositeThrottle) Init(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) {
+func (that * Contract) Init(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) {
     that.peak.Init(peak, jitter, now)
-    limit :=  jitter
+    limit := jitter
     if (burst <= 1) {
         // Do nothing.
     } else if (peak >= sustained) {
@@ -88,7 +88,7 @@ func (that * CompositeThrottle) Init(peak ticks.Ticks, jitter ticks.Ticks, susta
 // Fini handles any cleanup necessary before a throttle is deallocated. It is
 // deferred when the throttle is constructed by New. It is also callable as
 // part of the API, although doing so may render the throttle unusable.
-func (that * CompositeThrottle) Fini() {
+func (that * Contract) Fini() {
 	// Do nothing.
 }
 
@@ -100,8 +100,8 @@ func (that * CompositeThrottle) Fini() {
 // peak is the peak increment, jitter is the peak limit, sustained is the
 // sustained increment, and burst is the maximum burst size from which is
 // computed the sustained limit.
-func New(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) * CompositeThrottle {
-	throttle := new(CompositeThrottle)
+func New(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) * Contract {
+	throttle := new(Contract)
 	defer throttle.Fini()
 	throttle.Init(peak, jitter, sustained, burst, now)
 	return throttle
@@ -113,7 +113,7 @@ func New(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra
 
 // isEmpty returns true if the throttle is empty, that is, it has no accumulated
 // early ticks.
-func (that * CompositeThrottle) IsEmpty() bool {
+func (that * Contract) IsEmpty() bool {
     p := that.peak.IsEmpty()
     s := that.sustained.IsEmpty()
 	return (p && s)
@@ -121,7 +121,7 @@ func (that * CompositeThrottle) IsEmpty() bool {
 
 // IsFull returns true if the throttle is full, that is, its accumulated early
 // ticks is greater than or equal to its limit.
-func (that * CompositeThrottle) IsFull() bool {
+func (that * Contract) IsFull() bool {
     p := that.peak.IsFull()
     s := that.sustained.IsFull()
 	return (p || s)
@@ -130,10 +130,10 @@ func (that * CompositeThrottle) IsFull() bool {
 // IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
 // early ticks is greater than its limit, indicating that the event emission
 // stream is out of compliance with the traffic contract.
-func (that * CompositeThrottle) IsAlarmed() bool {
+func (that * Contract) IsAlarmed() bool {
     p := that.peak.IsAlarmed()
     s := that.sustained.IsAlarmed()
-	return (p && s)
+	return (p || s)
 }
 
 /*******************************************************************************
@@ -141,21 +141,21 @@ func (that * CompositeThrottle) IsAlarmed() bool {
  ******************************************************************************/
 
 // Emptied is true if the throttle just emptied in the last action.
-func (that * CompositeThrottle) Emptied() bool {
+func (that * Contract) Emptied() bool {
     p := that.peak.Emptied()
     s := that.sustained.Emptied()
 	return (p && s)
 }
 
 // Filled is true if the throttle just filled in the last action.
-func (that * CompositeThrottle) Filled() bool {
+func (that * Contract) Filled() bool {
     p := that.peak.Filled()
     s := that.sustained.Filled()
 	return (p || s)
 }
 
 // Alarmed is true if the throttle just alarmed in the last action.
-func (that * CompositeThrottle) Alarmed() bool {
+func (that * Contract) Alarmed() bool {
     p := that.peak.Alarmed()
     s := that.sustained.Alarmed()
 	return (p || s)
@@ -164,7 +164,7 @@ func (that * CompositeThrottle) Alarmed() bool {
 // Cleared is true if the throttle just unalarmed in the last action, indicating
 // that the event emission stream has returned to being compliant with the
 // traffic contract.
-func (that * CompositeThrottle) Cleared() bool {
+func (that * Contract) Cleared() bool {
     p := that.peak.Cleared()
     s := that.sustained.Cleared()
 	return (p && s)
@@ -177,7 +177,7 @@ func (that * CompositeThrottle) Cleared() bool {
 // Request asks given the current time in ticks how long of a delay in ticks
 // would be necessary before the next event were emitted for that emission to be
 // in compliance with the traffic contract.
-func (that * CompositeThrottle) Request(now ticks.Ticks) ticks.Ticks {
+func (that * Contract) Request(now ticks.Ticks) ticks.Ticks {
     var delay ticks.Ticks = 0
     
     p := that.peak.Request(now)
@@ -195,7 +195,7 @@ func (that * CompositeThrottle) Request(now ticks.Ticks) ticks.Ticks {
 // starting at the time specified in the previous Request, and returns false
 // if the throttle is alarmed, indicating the application might want to slow it
 // down a bit, true otherwise.
-func (that * CompositeThrottle) Commits(events gcra.Events) bool {
+func (that * Contract) Commits(events gcra.Events) bool {
     p := that.peak.Commits(events)
     s := that.sustained.Commits(events)
     
@@ -203,7 +203,7 @@ func (that * CompositeThrottle) Commits(events gcra.Events) bool {
 }
 
 // Commit is equivalent to calling Commits with one event.
-func (that * CompositeThrottle) Commit() bool {
+func (that * Contract) Commit() bool {
     p := that.peak.Commit()
     s := that.sustained.Commit()
     
@@ -212,7 +212,7 @@ func (that * CompositeThrottle) Commit() bool {
 
 // Admits combines calling Request with the current time in ticks with calling
 // and returning the value of Commits with the number of events.
-func (that * CompositeThrottle) Admits(now ticks.Ticks, events gcra.Events) bool {
+func (that * Contract) Admits(now ticks.Ticks, events gcra.Events) bool {
     p := that.peak.Admits(now, events)
     s := that.sustained.Admits(now, events)
     
@@ -220,7 +220,7 @@ func (that * CompositeThrottle) Admits(now ticks.Ticks, events gcra.Events) bool
 }
 
 // Admit is equivalent to calling Admits with one event.
-func (that * CompositeThrottle) Admit(now ticks.Ticks) bool {
+func (that * Contract) Admit(now ticks.Ticks) bool {
     p := that.peak.Admit(now)
     s := that.sustained.Admit(now)
     
@@ -231,7 +231,7 @@ func (that * CompositeThrottle) Admit(now ticks.Ticks) bool {
 // update the throttle with the current time, with no event emission. This
 // marks the passage of time during which the emission stream is idle, which
 // may bring the throttle back into compliance with the traffic contract.
-func (that * CompositeThrottle) Update(now ticks.Ticks) bool {
+func (that * Contract) Update(now ticks.Ticks) bool {
     p := that.peak.Update(now)
     s := that.sustained.Update(now)
     

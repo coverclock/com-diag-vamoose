@@ -1,4 +1,4 @@
-package compositethrottle
+package contract
 
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
@@ -16,7 +16,7 @@ import (
  * SIMULATED EVENT STREAM
  ******************************************************************************/
 
-func TestCompositeThrottleSimulated(t * testing.T) {
+func TestContractSimulated(t * testing.T) {
     const PEAK ticks.Ticks = 1024 // Bytes per second.
     const TOLERANCE ticks.Ticks = 64
     const SUSTAINED ticks.Ticks = 512 // Bytes per second.
@@ -30,9 +30,6 @@ func TestCompositeThrottleSimulated(t * testing.T) {
     var admissable bool = false
     var iops uint = 0
     var largest gcra.Events = 0
-    var speed float64 = 0
-    var fastest float64 = 0
-    var bandwidth, margin, delta float64 = 0, 0, 0
     var that gcra.Gcra
     
     frequency := ticks.Frequency()
@@ -52,15 +49,6 @@ func TestCompositeThrottleSimulated(t * testing.T) {
 	    duration += delay
 	    if (duration >= 0) {} else { t.Errorf("OVERFLOW! %v", duration) }
 	    
-	    if (delay == 0) {
-	        // Do nothing.
-	    } else if (size == 0) {
-	        // Do nothing.
-	    } else {
-	        speed = float64(size) / float64(delay)
-	        if (speed > fastest) { fastest = speed }
-	    }
-
 	    delay = that.Request(now)
 	    if (delay == 0) {} else { t.Errorf("FAILED! %v", delay); t.Log(that.String()) }
 
@@ -82,17 +70,10 @@ func TestCompositeThrottleSimulated(t * testing.T) {
 	t.Logf("total=%vB largest=%vB/io mean=%vB/io mean=%vs/io\n", total, largest, blocksize, interarrival)
 	if (duration > frequency) {} else { t.Errorf("FAILED! %v", duration) }
 
-	bandwidth = speed * float64(frequency)
-	delta = bandwidth - float64(PEAK)
+	bandwidth := float64(total) / float64(seconds)
+	delta := bandwidth - float64(SUSTAINED)
 	if (delta < 0) { delta = -delta }
-    margin = float64(PEAK) / float64(MARGIN)
-	t.Logf("peak=%vB/s delta=%vB/s margin=%vB/s\n", bandwidth, delta, margin)
-	//if (delta < margin) {} else { t.Errorf("FAILED! %v", delta) }
-
-	bandwidth = float64(total) / float64(seconds)
-	delta = bandwidth - float64(SUSTAINED)
-	if (delta < 0) { delta = -delta }
-    margin = float64(SUSTAINED) / float64(MARGIN)
+    margin := float64(SUSTAINED) / float64(MARGIN)
 	t.Logf("sustained=%vB/s delta=%vB/s margin=%vB/s\n", bandwidth, delta, margin)
 	if (delta < margin) {} else { t.Errorf("FAILED! %v", delta) }
     
