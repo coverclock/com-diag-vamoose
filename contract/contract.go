@@ -9,11 +9,11 @@ package contract
 //
 // ABSTRACT
 //
-// Implements a composite throttle consisting of two throttles, the first
-// containing the sustained rate contract, the second containing the peak
-// rate contract. To be admissable, an event must be admitted to both
-// throttles. The peak contract consists of the peak increment and the
-// peak limit that is the jitter tolerance. The sustained contract
+// Implements a traffic contract consisting of two throttles, the first
+// implementing the sustained rate GCRA, the second implementing the peak
+// rate GCRA. To be admissable, an event must be admitted to both
+// throttles. The peak GCRA consists of the peak increment and the
+// peak limit that is the jitter tolerance. The sustained GCRA
 // consists of the sustained increment and the sustained limit computed from
 // maximum burst size and the jitter tolerance.
 
@@ -206,7 +206,6 @@ func (that * Contract) Commits(events gcra.Events) bool {
 func (that * Contract) Commit() bool {
     p := that.peak.Commit()
     s := that.sustained.Commit()
-    
     return (p && s)
 }
 
@@ -215,7 +214,6 @@ func (that * Contract) Commit() bool {
 func (that * Contract) Admits(now ticks.Ticks, events gcra.Events) bool {
     p := that.peak.Admits(now, events)
     s := that.sustained.Admits(now, events)
-    
     return (p && s)
 }
 
@@ -223,7 +221,6 @@ func (that * Contract) Admits(now ticks.Ticks, events gcra.Events) bool {
 func (that * Contract) Admit(now ticks.Ticks) bool {
     p := that.peak.Admit(now)
     s := that.sustained.Admit(now)
-    
     return (p && s)
 }
 
@@ -234,6 +231,5 @@ func (that * Contract) Admit(now ticks.Ticks) bool {
 func (that * Contract) Update(now ticks.Ticks) bool {
     p := that.peak.Update(now)
     s := that.sustained.Update(now)
-    
     return (p && s)
 }

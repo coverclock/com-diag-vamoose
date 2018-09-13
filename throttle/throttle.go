@@ -43,18 +43,6 @@ package throttle
 //
 // J. Sloan, "ATM Traffic Management", 2005-08,
 // http://www.diag.com/reports/ATMTrafficManagement.html
-//
-// C. Overclock, Grandote: Throttle.{h, cpp},
-// https://github.com/coverclock/com-diag-grandote,
-// 2005
-//
-// C. Overclock, Buckaroo: Throttle.java,
-// https://github.com/coverclock/com-diag-buckaroo,
-// 2006
-//
-// C. Overclock, Diminuto: diminuto_throttle.{h, c},
-// https://github.com/coverclock/com-diag-diminuto,
-// 2008
 
 import (
 	"fmt"
