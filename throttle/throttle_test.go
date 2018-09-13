@@ -1515,9 +1515,13 @@ func TestThrottleActual(t * testing.T) {
     <- done
     <- done
     <- done
-    
+       
+    mutex.Lock()
+    fmt.Println("Checking.")
+    mutex.Unlock()
+
     if (consumer_total == producer_total) {} else { t.Fatalf("consumer_total=%v producer_total=%v\n", consumer_total, producer_total) }
-    if (consumer_checksum == producer_checksum) {} else {t.Fatalf("consumer_checksum=%v producer_checksum=%v\n", consumer_checksum, producer_checksum) }
+    if (consumer_checksum == producer_checksum) {} else { t.Fatalf("consumer_checksum=%v producer_checksum=%v\n", consumer_checksum, producer_checksum) }
    
     mutex.Lock()
     fmt.Println("Ending.")
