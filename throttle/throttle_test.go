@@ -9,6 +9,7 @@ import (
     "testing"
 	"github.com/coverclock/com-diag-vamoose/ticks"
 	"github.com/coverclock/com-diag-vamoose/gcra"
+ 	"github.com/coverclock/com-diag-vamoose/fletcher"
     "math/rand"
     "time"
     "net"
@@ -1194,10 +1195,19 @@ func TestThrottleSimulated(t * testing.T) {
 
 var mutex sync.Mutex
 
+var producer_total uint64 = 1
+var producer_checksum uint16 = 2
+
+var consumer_total uint64 = 3
+var consumer_checksum uint16 = 4
+
 func producer(t * testing.T, limit uint64, burst int, delay time.Duration, output chan <- byte, done chan<- bool) {
     var total uint64 = 0
     var size int = 0
-    var datum byte = 0
+    var datum [1] byte
+    var a uint8 = 0
+    var b uint8 = 0
+    var c uint16 = 0
     
     mutex.Lock()
     fmt.Println("producer: begin.")
@@ -1213,8 +1223,9 @@ func producer(t * testing.T, limit uint64, burst int, delay time.Duration, outpu
         }
         
         for index := size; index > 0; index -= 1 {
-            datum = byte(rand.Int31n(int32('~') - int32(' ') + 1) + int32(' '))
-            output <- datum
+            datum[0] = byte(rand.Int31n(int32('~') - int32(' ') + 1) + int32(' '))
+            c = fletcher.Checksum16(datum[:], &a, &b)
+            output <- datum[0]
             total += 1  
         }
         
@@ -1238,6 +1249,9 @@ func producer(t * testing.T, limit uint64, burst int, delay time.Duration, outpu
     mutex.Lock()
     fmt.Printf("producer: end total=%vB duration=%vs bandwidth=%vB/s.\n", total, duration, bandwidth);
     mutex.Unlock()
+    
+    producer_total = total
+    producer_checksum = c
     
     done <- true
 }
@@ -1381,6 +1395,10 @@ func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, out
 func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     var total uint64 = 0
     var okay bool = true
+    var datum [1] byte
+    var a uint8 = 0
+    var b uint8 = 0
+    var c uint16 = 0
     
     mutex.Lock()
     fmt.Println("consumer: begin.");
@@ -1390,10 +1408,11 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     
     for {
 
-        _, okay = <- input
+        datum[0], okay = <- input
         if !okay {
             break
         }
+        c = fletcher.Checksum16(datum[:], &a, &b)
         total += 1
 
     }
@@ -1406,6 +1425,9 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     mutex.Lock()
     fmt.Printf("consumer: end total=%vB duration=%vs bandwidth=%vB/s.\n", total, duration, bandwidth);
     mutex.Unlock()
+    
+    consumer_total = total
+    consumer_checksum = c
     
     done <- true
 }
@@ -1493,6 +1515,9 @@ func TestThrottleActual(t * testing.T) {
     <- done
     <- done
     <- done
+    
+    if (consumer_total == producer_total) {} else { t.Fatalf("consumer_total=%v producer_total=%v\n", consumer_total, producer_total) }
+    if (consumer_checksum == producer_checksum) {} else {t.Fatalf("consumer_checksum=%v producer_checksum=%v\n", consumer_checksum, producer_checksum) }
    
     mutex.Lock()
     fmt.Println("Ending.")
