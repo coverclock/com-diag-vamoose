@@ -27,23 +27,23 @@ Wheat Ridge CO 80033
 
 ## Abstract
 
-Implements a Generic Cell Rate Algorithm (GCRA) using a Virtual Scheduler (VS).
-This can in turn be used to implement a variety of traffic shaping and rate
-control algorithms. The VS works by monitoring the inter-arrival interval of
-events and comparing that interval to the expected value. When the cumulative
-error in the inter-arrival interval exceeds a threshold, the throttle becomes
-"alarmed" and the traffic stream is in violation of its contract. In the
-original TM spec, an event was the emission (if traffic shaping) or arrival
-(if traffic policing) of an ATM cell, but it could be data blocks, error
-reports, or any other kind of real-time activity. In this implementation,
-it can even be variable length data blocks, in which the traffic contract
-describes the mean bandwidth of the traffic stream, not the instantaneous
-bandwidth as with ATM. In the original TM spec, the variable "i" was the
-increment or contracted inter-arrival interval, "l" was the limit or
-threshold, "x" was the expected inter-arrival interval for the next event,
-and "x1" was the aggregate early duration accumulated so far. A throttle can
-be used to smooth out low frequency events over a long duration, or to
-implement a leaky bucket algorithm.
+This repository contains the results of my attempts to learn the Go programming
+language (a.k.a. golang) by implementing some non-trivial and possible useful
+packages.
+
+My systems programming language of choice has changed over the decades,
+depending on what I was getting paid to do. In the 1970s, it was IBM 360/370
+Basic Assembler Language (BAL), and later a language implemented in BAL macro
+language. In the 1980s it was PDP-11 Assembler Language (PAL). In the late
+1980s and to the mid 1990s it was C. In the mid-1990s to the 2000s it was C++,
+which was mostly an artifact of the long history Bell Labs and its spinoffs had
+for using C++ for firmware development. In the 2010s, I saw a serious reduction
+in the use of C++ for systems programming, in part due to the evolution of C++
+into a langauge that was hard to learn, hard to debug, and not terribly
+productive to use. During all this time I cast about for an alternative to C++
+and C. I briefly considered D, but it didn't seem to catch on with the
+mainstream. When Google began promoting Go, it seemed like a resonable thing
+to try out (although it took me a while).
 
 ## Repositories
 

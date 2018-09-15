@@ -9,13 +9,16 @@ package contract
 //
 // ABSTRACT
 //
-// Implements a traffic contract consisting of two throttles, the first
-// implementing the sustained rate GCRA, the second implementing the peak
-// rate GCRA. To be admissable, an event must be admitted to both
-// throttles. The peak GCRA consists of the peak increment and the
-// peak limit that is the jitter tolerance. The sustained GCRA
-// consists of the sustained increment and the sustained limit computed from
-// maximum burst size and the jitter tolerance.
+// Implements a traffic contract that is a composite of two GCRAs: one that
+// describes the peak rate, and one that describes the sustainable rate. The
+// event stream must conform to both GCRAs. The interface still appears to be
+// a single GCRA from the point of view of the calling application. The
+// implementation consists of two throttles, one for the peak GCRA, the other
+// for the sustained GCRA. The peak throttle contains the peak increment, and
+// the peak limit that is the jitter tolerance. The sustained throttle contains
+// the sustained increment, and the sustained limit computed from maximum burst
+// size and the jitter tolerance.
+
 
 import (
 	"fmt"
@@ -41,10 +44,10 @@ type Contract struct {
  ******************************************************************************/
 
 // String returns a printable string showing the guts of the throttle.
-func (that * Contract) String() string {
+func (this * Contract) String() string {
     return fmt.Sprintf("Contract@%p[%d]:{p:(%s},s:{%s}}",
-		unsafe.Pointer(that), unsafe.Sizeof(*that),
-        that.peak.String(), that.sustained.String());
+		unsafe.Pointer(this), unsafe.Sizeof(*this),
+        this.peak.String(), this.sustained.String());
 }
 
 /*******************************************************************************
@@ -54,9 +57,9 @@ func (that * Contract) String() string {
 // Reset a throttle back to its initial state. This is used during construction,
 // but can also be used by an application when a calamitous happenstance
 // occurs, like the far end disconnecting and reconnecting.
-func (that * Contract) Reset(now ticks.Ticks) {
-    that.sustained.Reset(now)
-    that.peak.Reset(now)
+func (this * Contract) Reset(now ticks.Ticks) {
+    this.sustained.Reset(now)
+    this.peak.Reset(now)
 }
 
 /*******************************************************************************
@@ -67,8 +70,8 @@ func (that * Contract) Reset(now ticks.Ticks) {
 // the peak increment, jitter is the peak limit, sustained is the sustained
 // increment, and burst is the maximum burst size from which is computed the
 // sustained limit.
-func (that * Contract) Init(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) {
-    that.peak.Init(peak, jitter, now)
+func (this * Contract) Init(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) {
+    this.peak.Init(peak, jitter, now)
     limit := jitter
     if (burst <= 1) {
         // Do nothing.
@@ -77,8 +80,8 @@ func (that * Contract) Init(peak ticks.Ticks, jitter ticks.Ticks, sustained tick
     } else {
         limit += ticks.Ticks(burst - 1) * (sustained - peak)
     }
-    that.sustained.Init(sustained, limit, now)
-	that.Reset(now)
+    this.sustained.Init(sustained, limit, now)
+	this.Reset(now)
 }
 
 /*******************************************************************************
@@ -88,7 +91,7 @@ func (that * Contract) Init(peak ticks.Ticks, jitter ticks.Ticks, sustained tick
 // Fini handles any cleanup necessary before a throttle is deallocated. It is
 // deferred when the throttle is constructed by New. It is also callable as
 // part of the API, although doing so may render the throttle unusable.
-func (that * Contract) Fini() {
+func (this * Contract) Fini() {
 	// Do nothing.
 }
 
@@ -113,26 +116,29 @@ func New(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra
 
 // isEmpty returns true if the throttle is empty, that is, it has no accumulated
 // early ticks.
-func (that * Contract) IsEmpty() bool {
-    p := that.peak.IsEmpty()
-    s := that.sustained.IsEmpty()
+func (this * Contract) IsEmpty() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.IsEmpty()
+    s := this.sustained.IsEmpty()
 	return (p && s)
 }
 
 // IsFull returns true if the throttle is full, that is, its accumulated early
 // ticks is greater than or equal to its limit.
-func (that * Contract) IsFull() bool {
-    p := that.peak.IsFull()
-    s := that.sustained.IsFull()
+func (this * Contract) IsFull() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.IsFull()
+    s := this.sustained.IsFull()
 	return (p || s)
 }
 
 // IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
 // early ticks is greater than its limit, indicating that the event emission
 // stream is out of compliance with the traffic contract.
-func (that * Contract) IsAlarmed() bool {
-    p := that.peak.IsAlarmed()
-    s := that.sustained.IsAlarmed()
+func (this * Contract) IsAlarmed() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.IsAlarmed()
+    s := this.sustained.IsAlarmed()
 	return (p || s)
 }
 
@@ -141,33 +147,37 @@ func (that * Contract) IsAlarmed() bool {
  ******************************************************************************/
 
 // Emptied is true if the throttle just emptied in the last action.
-func (that * Contract) Emptied() bool {
-    p := that.peak.Emptied()
-    s := that.sustained.Emptied()
-	return (p && s)
+func (this * Contract) Emptied() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Emptied()
+    s := this.sustained.Emptied()
+	return (p || s)
 }
 
 // Filled is true if the throttle just filled in the last action.
-func (that * Contract) Filled() bool {
-    p := that.peak.Filled()
-    s := that.sustained.Filled()
+func (this * Contract) Filled() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Filled()
+    s := this.sustained.Filled()
 	return (p || s)
 }
 
 // Alarmed is true if the throttle just alarmed in the last action.
-func (that * Contract) Alarmed() bool {
-    p := that.peak.Alarmed()
-    s := that.sustained.Alarmed()
+func (this * Contract) Alarmed() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Alarmed()
+    s := this.sustained.Alarmed()
 	return (p || s)
 }
 
 // Cleared is true if the throttle just unalarmed in the last action, indicating
 // that the event emission stream has returned to being compliant with the
 // traffic contract.
-func (that * Contract) Cleared() bool {
-    p := that.peak.Cleared()
-    s := that.sustained.Cleared()
-	return (p && s)
+func (this * Contract) Cleared() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Cleared()
+    s := this.sustained.Cleared()
+	return (p || s)
 }
 
 /*******************************************************************************
@@ -177,11 +187,11 @@ func (that * Contract) Cleared() bool {
 // Request asks given the current time in ticks how long of a delay in ticks
 // would be necessary before the next event were emitted for that emission to be
 // in compliance with the traffic contract.
-func (that * Contract) Request(now ticks.Ticks) ticks.Ticks {
+func (this * Contract) Request(now ticks.Ticks) ticks.Ticks {
     var delay ticks.Ticks = 0
     
-    p := that.peak.Request(now)
-    s := that.sustained.Request(now)
+    p := this.peak.Request(now)
+    s := this.sustained.Request(now)
     if (p > s) {
         delay = p
     } else {
@@ -195,32 +205,35 @@ func (that * Contract) Request(now ticks.Ticks) ticks.Ticks {
 // starting at the time specified in the previous Request, and returns false
 // if the throttle is alarmed, indicating the application might want to slow it
 // down a bit, true otherwise.
-func (that * Contract) Commits(events gcra.Events) bool {
-    p := that.peak.Commits(events)
-    s := that.sustained.Commits(events)
-    
+func (this * Contract) Commits(events gcra.Events) bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Commits(events)
+    s := this.sustained.Commits(events)
     return (p && s)
 }
 
 // Commit is equivalent to calling Commits with one event.
-func (that * Contract) Commit() bool {
-    p := that.peak.Commit()
-    s := that.sustained.Commit()
+func (this * Contract) Commit() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Commit()
+    s := this.sustained.Commit()
     return (p && s)
 }
 
 // Admits combines calling Request with the current time in ticks with calling
 // and returning the value of Commits with the number of events.
-func (that * Contract) Admits(now ticks.Ticks, events gcra.Events) bool {
-    p := that.peak.Admits(now, events)
-    s := that.sustained.Admits(now, events)
+func (this * Contract) Admits(now ticks.Ticks, events gcra.Events) bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Admits(now, events)
+    s := this.sustained.Admits(now, events)
     return (p && s)
 }
 
 // Admit is equivalent to calling Admits with one event.
-func (that * Contract) Admit(now ticks.Ticks) bool {
-    p := that.peak.Admit(now)
-    s := that.sustained.Admit(now)
+func (this * Contract) Admit(now ticks.Ticks) bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Admit(now)
+    s := this.sustained.Admit(now)
     return (p && s)
 }
 
@@ -228,8 +241,9 @@ func (that * Contract) Admit(now ticks.Ticks) bool {
 // update the throttle with the current time, with no event emission. This
 // marks the passage of time during which the emission stream is idle, which
 // may bring the throttle back into compliance with the traffic contract.
-func (that * Contract) Update(now ticks.Ticks) bool {
-    p := that.peak.Update(now)
-    s := that.sustained.Update(now)
+func (this * Contract) Update(now ticks.Ticks) bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Update(now)
+    s := this.sustained.Update(now)
     return (p && s)
 }

@@ -26,23 +26,6 @@ package throttle
 // and "x1" was the aggregate early duration accumulated so far. A throttle can
 // be used to smooth out low frequency events over a long duration, or to
 // implement a leaky bucket algorithm.
-//
-// REFERENCES
-//
-// N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,
-// af-tm-0121.000, 1999-03
-//
-// C. Overclock, "Traffic Management", 2006-12,
-// http://coverclock.blogspot.com/2006/12/traffic-management.html
-//
-// C. Overclock, "Rate Control Using Throttles", 2007-01,
-// http://coverclock.blogspot.com/2007/01/rate-control-and-throttles.html
-//
-// C. Overclock, "Traffic Contracts", 2007-01,
-// http://coverclock.blogspot.com/2007/01/traffic-contracts.html
-//
-// J. Sloan, "ATM Traffic Management", 2005-08,
-// http://www.diag.com/reports/ATMTrafficManagement.html
 
 import (
 	"fmt"
@@ -82,15 +65,15 @@ type Throttle struct {
  ******************************************************************************/
 
 // String returns a printable string showing the guts of the throttle.
-func (that * Throttle) String() string {
+func (this * Throttle) String() string {
 	return fmt.Sprintf("Throttle@%p[%d]:{e:%d,i:%d,l:%d,x:%d,x1:%d,d:%d,f:{%t,%t,%t},e:{%t,%t,%t},a:{%t,%t}}",
-		unsafe.Pointer(that), unsafe.Sizeof(*that),
-		that.now - that.then,
-		that.increment, that.limit, that.expected, that.early,
-		that.early - that.limit,
-		that.full0, that.full1, that.full2,
-		that.empty0, that.empty1, that.empty2,
-		that.alarmed1, that.alarmed2);
+		unsafe.Pointer(this), unsafe.Sizeof(*this),
+		this.now - this.then,
+		this.increment, this.limit, this.expected, this.early,
+		this.early - this.limit,
+		this.full0, this.full1, this.full2,
+		this.empty0, this.empty1, this.empty2,
+		this.alarmed1, this.alarmed2);
 }
 
 /*******************************************************************************
@@ -100,19 +83,19 @@ func (that * Throttle) String() string {
 // Reset a throttle back to its initial state. This is used during construction,
 // but can also be used by an application when a calamitous happenstance
 // occurs, like the far end disconnecting and reconnecting.
-func (that * Throttle) Reset(now ticks.Ticks) {
-	that.now = now
-	that.then = that.now - that.increment
-	that.expected = that.increment
-	that.early = 0
-	that.full0 = false
-	that.full1 = false
-	that.full2 = false
-	that.empty0 = true
-	that.empty1 = true
-	that.empty2 = true
-	that.alarmed1 = false
-	that.alarmed2 = false
+func (this * Throttle) Reset(now ticks.Ticks) {
+	this.now = now
+	this.then = this.now - this.increment
+	this.expected = this.increment
+	this.early = 0
+	this.full0 = false
+	this.full1 = false
+	this.full2 = false
+	this.empty0 = true
+	this.empty1 = true
+	this.empty2 = true
+	this.alarmed1 = false
+	this.alarmed2 = false
 }
 
 /*******************************************************************************
@@ -124,10 +107,10 @@ func (that * Throttle) Reset(now ticks.Ticks) {
 // and limit, which is the maximum aggreate early ticks that can be accumulated
 // before the traffic contract is violated and the throttle becomes alarmed; and
 // its dynamic state, which is the current monotonic time in ticks.
-func (that * Throttle) Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) {
-	that.increment = increment
-	that.limit = limit
-	that.Reset(now)
+func (this * Throttle) Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) {
+	this.increment = increment
+	this.limit = limit
+	this.Reset(now)
 }
 
 /*******************************************************************************
@@ -137,7 +120,7 @@ func (that * Throttle) Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.
 // Fini handles any cleanup necessary before a throttle is deallocated. It is
 // deferred when the throttle is constructed by New. It is also callable as
 // part of the API, although doing so may render the throttle unusable.
-func (that * Throttle) Fini() {
+func (this * Throttle) Fini() {
 	// Do nothing.
 }
 
@@ -163,21 +146,21 @@ func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
 
 // isEmpty returns true if the throttle is empty, that is, it has no accumulated
 // early ticks.
-func (that * Throttle) IsEmpty() bool {
-	return that.empty1
+func (this * Throttle) IsEmpty() bool {
+	return this.empty1
 }
 
 // IsFull returns true if the throttle is full, that is, its accumulated early
 // ticks is greater than or equal to its limit.
-func (that * Throttle) IsFull() bool {
-	return that.full1
+func (this * Throttle) IsFull() bool {
+	return this.full1
 }
 
 // IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
 // early ticks is greater than its limit, indicating that the event emission
 // stream is out of compliance with the traffic contract.
-func (that * Throttle) IsAlarmed() bool {
-	return that.alarmed1
+func (this * Throttle) IsAlarmed() bool {
+	return this.alarmed1
 }
 
 /*******************************************************************************
@@ -185,25 +168,25 @@ func (that * Throttle) IsAlarmed() bool {
  ******************************************************************************/
 
 // Emptied is true if the throttle just emptied in the last action.
-func (that * Throttle) Emptied() bool {
-	return (that.empty1 && (!that.empty2))
+func (this * Throttle) Emptied() bool {
+	return (this.empty1 && (!this.empty2))
 }
 
 // Filled is true if the throttle just filled in the last action.
-func (that * Throttle) Filled() bool {
-	return (that.full1 && (!that.full2))
+func (this * Throttle) Filled() bool {
+	return (this.full1 && (!this.full2))
 }
 
 // Alarmed is true if the throttle just alarmed in the last action.
-func (that * Throttle) Alarmed() bool {
-	return (that.alarmed1 && (!that.alarmed2))
+func (this * Throttle) Alarmed() bool {
+	return (this.alarmed1 && (!this.alarmed2))
 }
 
 // Cleared is true if the throttle just unalarmed in the last action, indicating
 // that the event emission stream has returned to being compliant with the
 // traffic contract.
-func (that * Throttle) Cleared() bool {
-	return ((!that.alarmed1) && that.alarmed2)
+func (this * Throttle) Cleared() bool {
+	return ((!this.alarmed1) && this.alarmed2)
 }
 
 /*******************************************************************************
@@ -213,27 +196,27 @@ func (that * Throttle) Cleared() bool {
 // Request asks given the current time in ticks how long of a delay in ticks
 // would be necessary before the next event were emitted for that emission to be
 // in compliance with the traffic contract.
-func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
+func (this * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 	var delay ticks.Ticks
 	var elapsed ticks.Ticks
 	
-	that.now = now
-	elapsed = that.now - that.then
-	if (that.expected <= elapsed) {
-		that.early = 0
-		that.full0 = false
-		that.empty0 = true
+	this.now = now
+	elapsed = this.now - this.then
+	if (this.expected <= elapsed) {
+		this.early = 0
+		this.full0 = false
+		this.empty0 = true
 		delay = 0
 	} else {
-		that.early = that.expected - elapsed
-		if (that.early <= that.limit) {
-			that.full0 = false
-			that.empty0 = false
+		this.early = this.expected - elapsed
+		if (this.early <= this.limit) {
+			this.full0 = false
+			this.empty0 = false
 			delay = 0
 		} else {
-			that.full0 = true
-			that.empty0 = false
-			delay = that.early - that.limit
+			this.full0 = true
+			this.empty0 = false
+			delay = this.early - this.limit
 		}
 	}
 
@@ -244,53 +227,53 @@ func (that * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 // starting at the time specified in the previous Request, and returns false
 // if the throttle is alarmed, indicating the application might want to slow it
 // down a bit, true otherwise.
-func (that * Throttle) Commits(events gcra.Events) bool {
-	that.then = that.now
-	that.expected = that.early;
+func (this * Throttle) Commits(events gcra.Events) bool {
+	this.then = this.now
+	this.expected = this.early;
 	if (events <= 0) {
 	    // Do nothing.
 	} else if (events == 1) {
-	     that.expected += that.increment
+	     this.expected += this.increment
 	} else {
-	     that.expected += that.increment * ticks.Ticks(events)
+	     this.expected += this.increment * ticks.Ticks(events)
 	}
-	that.full2 = that.full1
-	that.full1 = that.full0
-	that.empty2 = that.empty1
-	that.empty1 = that.empty0
-	that.alarmed2 = that.alarmed1
-	if (that.Emptied()) {
-		that.alarmed1 = false
-	} else if (that.Filled()) {
-		that.alarmed1 = true
+	this.full2 = this.full1
+	this.full1 = this.full0
+	this.empty2 = this.empty1
+	this.empty1 = this.empty0
+	this.alarmed2 = this.alarmed1
+	if (this.Emptied()) {
+		this.alarmed1 = false
+	} else if (this.Filled()) {
+		this.alarmed1 = true
 	} else {
 		// Do nothing.
 	}
 
-	return !that.alarmed1
+	return !this.alarmed1
 }
 
 // Commit is equivalent to calling Commits with one event.
-func (that * Throttle) Commit() bool {
-	return that.Commits(1)
+func (this * Throttle) Commit() bool {
+	return this.Commits(1)
 }
 
 // Admits combines calling Request with the current time in ticks with calling
 // and returning the value of Commits with the number of events.
-func (that * Throttle) Admits(now ticks.Ticks, events gcra.Events) bool {
-	that.Request(now)
-	return that.Commits(events)
+func (this * Throttle) Admits(now ticks.Ticks, events gcra.Events) bool {
+	this.Request(now)
+	return this.Commits(events)
 }
 
 // Admit is equivalent to calling Admits with one event.
-func (that * Throttle) Admit(now ticks.Ticks) bool {
-	return that.Admits(now, 1)
+func (this * Throttle) Admit(now ticks.Ticks) bool {
+	return this.Admits(now, 1)
 }
 
 // Update is equivalent to calling Admits with zero events. It is a way to
 // update the throttle with the current time, with no event emission. This
 // marks the passage of time during which the emission stream is idle, which
 // may bring the throttle back into compliance with the traffic contract.
-func (that * Throttle) Update(now ticks.Ticks) bool {
-	return that.Admits(now, 0)
+func (this * Throttle) Update(now ticks.Ticks) bool {
+	return this.Admits(now, 0)
 }

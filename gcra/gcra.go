@@ -10,11 +10,28 @@ package gcra
 // ABSTRACT
 //
 // This is an interface that describes the API for any implementation of a
-// Generic Cell Rate Algorithm. A typical implementation of a GCRA is in fact
-// a composite of two GCRAs: one that describes the peak rate, and one that
-// describes the sustainable rate; the event stream must conform to both GCRAs.
-// Yet the interface still appears to be a single GCRA from the point of view
-// of the calling application.
+// Generic Cell Rate Algorithm (GCRA) as defined in the ATM Forum TM 4.1
+// specification. While TM 4.1 was all about ATM traffic management, the GCRA,
+// and its implementation here, can be used for rate control, traffic shaping,
+// and traffic policing, of any kind of event stream: bytes, packets, button
+// presses in a model-view-controller pattern, etc.
+//
+// REFERENCES
+//
+// N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,
+// af-tm-0121.000, 1999-03
+//
+// C. Overclock, "Traffic Management", 2006-12,
+// http://coverclock.blogspot.com/2006/12/traffic-management.html
+//
+// C. Overclock, "Rate Control Using Throttles", 2007-01,
+// http://coverclock.blogspot.com/2007/01/rate-control-and-throttles.html
+//
+// C. Overclock, "Traffic Contracts", 2007-01,
+// http://coverclock.blogspot.com/2007/01/traffic-contracts.html
+//
+// J. Sloan, "ATM Traffic Management", 2005-08,
+// http://www.diag.com/reports/ATMTrafficManagement.html
 
 import (
 	"github.com/coverclock/com-diag-vamoose/ticks"
