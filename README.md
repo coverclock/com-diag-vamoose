@@ -33,9 +33,9 @@ non-trivial and possible useful packages.
 
 My systems programming language of choice has changed over the
 decades, depending on what I was getting paid to do. In the 1970s,
-it was IBM 360/370 Basic Assembler Language (BAL), and later PL/S,
-a language implemented in BAL macro language (which itself was
-Turing complete). In the 1980s it was PDP-11 Assembler Language
+it was IBM 360/370 Basic Assembler Language (BAL), and later a
+structured language implemented in BAL macro language (which itself
+was Turing complete). In the 1980s it was PDP-11 Assembler Language
 (PAL). In the late 1980s and to the mid 1990s it was C. In the
 mid-1990s to the 2000s it was C++, which was mostly an artifact of
 the long history Bell Labs and its spinoffs, had for using C++ for
