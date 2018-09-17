@@ -27,22 +27,25 @@ Wheat Ridge CO 80033
 
 ## Abstract
 
-This repository contains the results of my attempts to learn the Go programming
-language (a.k.a. golang) by implementing some non-trivial and possible useful
-packages.
+This repository contains the results of my attempts to learn the
+Go programming language (a.k.a. golang) by implementing some
+non-trivial and possible useful packages.
 
-My systems programming language of choice has changed over the decades,
-depending on what I was getting paid to do. In the 1970s, it was IBM 360/370
-Basic Assembler Language (BAL), and later a language implemented in BAL macro
-language. In the 1980s it was PDP-11 Assembler Language (PAL). In the late
-1980s and to the mid 1990s it was C. In the mid-1990s to the 2000s it was C++,
-which was mostly an artifact of the long history Bell Labs and its spinoffs had
-for using C++ for firmware development. In the 2010s, I saw a serious reduction
-in the use of C++ for systems programming, in part due to the evolution of C++
-into a langauge that was hard to learn, hard to debug, and not terribly
-productive to use. During all this time I cast about for an alternative to C++
-and C. I briefly considered D, but it didn't seem to catch on with the
-mainstream. When Google began promoting Go, it seemed like a resonable thing
+My systems programming language of choice has changed over the
+decades, depending on what I was getting paid to do. In the 1970s,
+it was IBM 360/370 Basic Assembler Language (BAL), and later a
+structured language implemented in BAL macro language (which itself
+was Turing complete). In the 1980s it was PDP-11 Assembler Language
+(PAL). In the late 1980s and to the mid 1990s it was C. In the
+mid-1990s to the 2000s it was C++, which was mostly an artifact of
+the long history Bell Labs and its spinoffs, had for using C++ for
+firmware development. In the 2010s, I saw a significant reduction
+in the use of C++ for systems programming, in part due to the
+evolution of C++ into a langauge that was hard to learn, difficult
+to debug, and hence not terribly productive to use.  During all
+this time I cast about for an alternative to C++ and C.  I briefly
+considered D, but it didn't seem to catch on with the mainstream.
+When Google began promoting Go, it seemed like a resonable thing
 to try out (although it took me a while).
 
 ## Repositories
