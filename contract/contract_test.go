@@ -100,7 +100,7 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
     var total uint64 = 0
     var size int = 0
     var count int = 0
-    var maximum int = 0
+    var largest int = 0
     var datum [1] byte
     var a uint8 = 0
     var b uint8 = 0
@@ -109,8 +109,6 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
     mutex.Lock()
     fmt.Println("producer: begin.")
     mutex.Unlock()
-
-    then := ticks.Now()
     
     burst := cap(output)
     
@@ -132,7 +130,7 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
         
         limit -= uint64(size)
         
-        if (size > maximum) { maximum = size }
+        if (size > largest) { largest = size }
          
         mutex.Lock()
         fmt.Printf("producer: produced=%vB total=%vB remaining=%vB.\n", size, total, limit)
@@ -144,14 +142,10 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
     
     close(output)
        
-    now := ticks.Now()
-    frequency := float64(ticks.Frequency())
-    duration := float64(now - then) / frequency
-    sustained := float64(total) / duration
     mean := float64(total) / float64(count)
     
     mutex.Lock()
-    fmt.Printf("producer: end total=%vB/io mean=%vB/io maximum=%vB/io duration=%vs sustained=%vB/s.\n", total, mean, maximum, duration, sustained);
+    fmt.Printf("producer: end total=%vB/io mean=%vB/burst maximum=%vB/burst.\n", total, mean, largest);
     mutex.Unlock()
     
     producer_total = total
@@ -164,10 +158,18 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var total uint64 = 0
     var okay bool = true
     var size int = 0
+    var then ticks.Ticks = 0
     var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
     var alarmed bool = false
+    var count int = 0
+    var largest int = 0
+    var before ticks.Ticks = 0
+    var after ticks.Ticks = 0
+    var interarrival ticks.Ticks = 0
+    var bandwidth float64 = 0.0
+    var fastest float64 = 0.0
         
     mutex.Lock()
     fmt.Println("shaper: begin.");
@@ -177,6 +179,8 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     buffer := make([] byte, burst)
     
     frequency := float64(ticks.Frequency())
+    
+    then = ticks.Now()
     
     for {
 
@@ -195,6 +199,8 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             total += 1
         }
         
+        if (size > largest) { largest = size }
+        
         now = ticks.Now()
         delay = that.Request(now)
         duration = 0
@@ -204,15 +210,23 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             now = ticks.Now()
             delay = that.Request(now) 
         }
-
+        
+        after = ticks.Now()
         written, failure := output.WriteTo(buffer[:size], address)
         if failure != nil {
             t.Fatalf("shaper: failure=%v!\n", failure);
         }
-        
         if (written != size) {
             t.Fatalf("shaper: written=%v size=%v!\n", written, size);
         }
+        
+        if (count > 0) {
+            interarrival = after - before
+            bandwidth = float64(size) / float64(interarrival)
+            if (bandwidth > fastest) { fastest = bandwidth }
+        }
+        before = after
+        count += 1
         
         fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
 
@@ -223,18 +237,40 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
 
     }
     
+    now = ticks.Now()
+    delay = that.Request(now)
+    duration = 0
+    for delay > 0 {
+        duration += delay                       
+        time.Sleep(time.Duration(delay))
+        now = ticks.Now()
+        delay = that.Request(now) 
+    }
+    
     buffer[0] = 0
-    written, failure := output.WriteTo(buffer[0:1], address)
+    size = 1
+    written, failure := output.WriteTo(buffer[0:size], address)
     if failure != nil {
         t.Fatalf("shaper: failure=%v!\n", failure);
-    }    
-        
+    } 
     if (written != 1) {
         t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
     }
-          
+        
+    fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
+
+    alarmed = !that.Commits(gcra.Events(size))
+    if alarmed {
+        t.Fatalf("shaper: alarmed=%v!\n", alarmed);
+    }
+
+    now = ticks.Now()
+    sustained := float64(total) * frequency / float64(now - then)
+    mean := float64(total) / float64(count)
+    peak := frequency * fastest
+
     mutex.Lock()
-    fmt.Println("shaper: end");
+    fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst duration=%vs sustained=%vB/s peak=%vB/s.\n", total, mean, largest, duration, sustained, peak);
     mutex.Unlock()
     
     done <- true
@@ -302,26 +338,16 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     var total uint64 = 0
     var okay bool = true
     var size int = 0
-    var count int = 0
-    var largest int = 0
     var a uint8 = 0
     var b uint8 = 0
     var c uint16 = 0
-    var before ticks.Ticks = 0
-    var after ticks.Ticks = 0
-    var interarrival ticks.Ticks = 0
-    var shortest ticks.Ticks = 0
    
     mutex.Lock()
     fmt.Println("consumer: begin.");
     mutex.Unlock()
- 
-    frequency := float64(ticks.Frequency())
 
     burst := cap(input)
     buffer := make([] byte, burst)
-    
-    then := ticks.Now()
     
     for {
 
@@ -329,7 +355,6 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
         if !okay {
             break
         }
-        after = ticks.Now()
         total += 1
 
         for size = 1; (size < len(buffer)) && (len(input) > 0); size +=1 {
@@ -340,34 +365,13 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
             }
             total += 1
         }
-        
-        if (count > 0) {
-            interarrival = after - before
-            if (count < 2) {
-                shortest = interarrival
-            } else if (interarrival < shortest) {
-                shortest = interarrival
-            } else {
-                // Do nothing.
-            }
-        }
-        before = after
-        count += 1
-         
-        if (size > largest) { largest = size }
-       
+                
         c = fletcher.Checksum16(buffer[:size], &a, &b)
 
     }
-     
-    now := ticks.Now()
-    duration := float64(now - then) / frequency
-    sustained := float64(total) / duration
-    mean := float64(total) / float64(count)
-    peak := frequency / float64(shortest)
-
+    
     mutex.Lock()
-    fmt.Printf("consumer: end total=%vB mean=%vB/io maximum=%vB/io duration=%vs sustained=%vB/s peak=%vB/s.\n", total, mean, largest, duration, sustained, peak);
+    fmt.Printf("consumer: end total=%vB.\n", total);
     mutex.Unlock()
     
     consumer_total = total
@@ -392,10 +396,10 @@ func TestContractActual(t * testing.T) {
     defer close(done)
     
     supply := make(chan byte, BURST)
-    // producer closes.
+    // producer closes to signal EOF to shaper.
     
     demand := make(chan byte, BURST)
-    // policer closes.
+    // policer closes to signal EOF to consumer.
         
     source, failure := net.ListenPacket("udp", ":5555")
     if failure != nil {
