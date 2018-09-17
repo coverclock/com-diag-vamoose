@@ -8,7 +8,7 @@ package fletcher
 // https://github.com/coverclock/com-diag-vamoose
 //
 // ABSTRACT
-//*
+//
 // Implements the computationally simple Fletcher checksum algorithm.
 //
 // REFERENCES
