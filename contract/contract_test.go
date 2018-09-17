@@ -105,12 +105,12 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
     var a uint8 = 0
     var b uint8 = 0
     var c uint16 = 0
-    
-    mutex.Lock()
-    fmt.Println("producer: begin.")
-    mutex.Unlock()
-    
+     
     burst := cap(output)
+   
+    mutex.Lock()
+    fmt.Printf("producer: begin burst=%vB.\n", burst)
+    mutex.Unlock()
     
     for limit > 0 {
         
@@ -145,7 +145,7 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
     mean := float64(total) / float64(count)
     
     mutex.Lock()
-    fmt.Printf("producer: end total=%vB/io mean=%vB/burst maximum=%vB/burst.\n", total, mean, largest);
+    fmt.Printf("producer: end total=%vB mean=%vB/burst maximum=%vB/burst.\n", total, mean, largest);
     mutex.Unlock()
     
     producer_total = total
@@ -162,6 +162,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
+    var accumulated ticks.Ticks = 0
     var alarmed bool = false
     var count int = 0
     var largest int = 0
@@ -170,12 +171,13 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var interdeparture ticks.Ticks = 0
     var bandwidth float64 = 0.0
     var fastest float64 = 0.0
-        
-    mutex.Lock()
-    fmt.Println("shaper: begin.");
-    mutex.Unlock()
 
     burst := cap(input)
+        
+    mutex.Lock()
+    fmt.Printf("shaper: begin burst=%vB.\n", burst);
+    mutex.Unlock()
+    
     buffer := make([] byte, burst)
     
     frequency := float64(ticks.Frequency())
@@ -188,7 +190,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         if !okay {
             break
         }
-        total += 1
 
         for size = 1; (size < len(buffer)) && (len(input) > 0); size +=1 {
             buffer[size], okay = <- input
@@ -196,28 +197,32 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
                 // Should never happen.
                 break
             }
-            total += 1
         }
-        
+
+        total += uint64(size)  
         if (size > largest) { largest = size }
+        count += 1
         
         now = ticks.Now()
         delay = that.Request(now)
         duration = 0
         for delay > 0 {
-            duration += delay                       
+            duration += delay                  
             time.Sleep(time.Duration(delay))
             now = ticks.Now()
             delay = that.Request(now) 
         }
+        accumulated += duration
         
         after = ticks.Now()
         written, failure := output.WriteTo(buffer[:size], address)
         if failure != nil {
             t.Fatalf("shaper: failure=%v!\n", failure);
+            t.FailNow()
         }
         if (written != size) {
             t.Fatalf("shaper: written=%v size=%v!\n", written, size);
+            t.FailNow()
         }
         
         if (count > 0) {
@@ -226,13 +231,13 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             if (bandwidth > fastest) { fastest = bandwidth }
         }
         before = after
-        count += 1
         
         fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
 
         alarmed = !that.Commits(gcra.Events(size))
         if alarmed {
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
+            t.FailNow()
         }
 
     }
@@ -244,19 +249,22 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     written, failure := output.WriteTo(buffer[0:size], address)
     if failure != nil {
         t.Fatalf("shaper: failure=%v!\n", failure);
+        t.FailNow()
     } 
     if (written != 1) {
         t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
+        t.FailNow()
     }
         
     fmt.Printf("shaper: eof.\n");
 
+    average := (float64(accumulated) / float64(count)) / frequency
     sustained := float64(total) * frequency / float64(now - then)
     mean := float64(total) / float64(count)
     peak := frequency * fastest
 
     mutex.Lock()
-    fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst sustained=%vB/s peak=%vB/s.\n", total, mean, largest, sustained, peak);
+    fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst delay=%vs/burst sustained=%vB/s peak=%vB/s.\n", total, mean, largest, average, sustained, peak);
     mutex.Unlock()
     
     done <- true
@@ -269,12 +277,13 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     var now ticks.Ticks = 0
     var admissable bool = false
     var eof bool = false
+
+    burst := cap(output)
     
     mutex.Lock()
-    fmt.Println("policer: begin.");
+    fmt.Printf("policer: begin burst=%vB.\n", burst);
     mutex.Unlock()
     
-    burst := cap(output)
     buffer := make([] byte, burst)
     
     for !eof {
@@ -282,9 +291,11 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
         read, _, failure := input.ReadFrom(buffer)
         if failure != nil {
             t.Fatalf("policer: failure=%v!\n", failure);
+            t.FailNow()
         }
         if read <= 0 {
             t.Fatalf("policer: read=%v!\n", read);
+            t.FailNow()
         }
 
         if buffer[read - 1] == 0 {
@@ -322,6 +333,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     
     if policed > 0 {
         t.Fatalf("policer: policed=%vB\n", policed)
+        t.FailNow()
     }
     
     done <- true
@@ -334,12 +346,13 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     var a uint8 = 0
     var b uint8 = 0
     var c uint16 = 0
-   
-    mutex.Lock()
-    fmt.Println("consumer: begin.");
-    mutex.Unlock()
 
     burst := cap(input)
+   
+    mutex.Lock()
+    fmt.Printf("consumer: begin burst=%vB.\n", burst);
+    mutex.Unlock()
+
     buffer := make([] byte, burst)
     
     for {
@@ -378,7 +391,7 @@ func TestContractActual(t * testing.T) {
     const SUSTAINED int = 512			// bytes per second
     const BURST int = 64				// bytes
     const DURATION int = 60				// seconds
-    const DELAY time.Duration = 1000	// nanoseconds
+    const DELAY time.Duration = 1000000	// nanoseconds
     var failure error
     
     mutex.Lock()
@@ -397,6 +410,7 @@ func TestContractActual(t * testing.T) {
     source, failure := net.ListenPacket("udp", ":5555")
     if failure != nil {
         t.Fatal(failure)
+        t.FailNow()
     }
     defer source.Close()
     
@@ -407,6 +421,7 @@ func TestContractActual(t * testing.T) {
     sink, failure := net.ListenPacket("udp", ":0")
     if failure != nil {
         t.Fatal(failure)
+        t.FailNow()
     }
     defer sink.Close()
     
@@ -417,6 +432,7 @@ func TestContractActual(t * testing.T) {
     destination, failure := net.ResolveUDPAddr("udp", "localhost:5555")
     if failure != nil {
         t.Fatal(failure)
+        t.FailNow()
     }
      
     mutex.Lock()
@@ -424,22 +440,22 @@ func TestContractActual(t * testing.T) {
     mutex.Unlock()    
    
     frequency := ticks.Frequency()
-    peak := frequency / ticks.Ticks(PEAK)
+    peak := (frequency + ticks.Ticks(PEAK) - 1) / ticks.Ticks(PEAK)
     jitter := peak / 200
-    sustained := frequency / ticks.Ticks(SUSTAINED)
+    sustained := (frequency + ticks.Ticks(SUSTAINED) - 1) / ticks.Ticks(SUSTAINED)
     burst := gcra.Events(BURST)
     now := ticks.Now()
     
     shape := New(peak, 0, sustained, burst, now)
     
     mutex.Lock()
-    fmt.Printf("shape=%+v.\n", shape);
+    fmt.Printf("shape=%v.\n", shape);
     mutex.Unlock()    
     
     police := New(peak, jitter, sustained, burst, now)
      
     mutex.Lock()
-    fmt.Printf("police=%+v.\n", police);
+    fmt.Printf("police=%v.\n", police);
     mutex.Unlock()    
    
     mutex.Lock()
@@ -464,8 +480,14 @@ func TestContractActual(t * testing.T) {
     fmt.Println("Checking.")
     mutex.Unlock()
 
-    if (consumer_total == producer_total) {} else { t.Fatalf("consumer_total=%v producer_total=%v\n", consumer_total, producer_total) }
-    if (consumer_checksum == producer_checksum) {} else { t.Fatalf("consumer_checksum=%v producer_checksum=%v\n", consumer_checksum, producer_checksum) }
+    if (consumer_total == producer_total) {} else {
+        t.Fatalf("consumer_total=%v producer_total=%v\n", consumer_total, producer_total)
+        t.FailNow()
+    }
+    if (consumer_checksum == producer_checksum) {} else {
+        t.Fatalf("consumer_checksum=%v producer_checksum=%v\n", consumer_checksum, producer_checksum)
+        t.FailNow()
+    }
    
     mutex.Lock()
     fmt.Println("Ending.")
