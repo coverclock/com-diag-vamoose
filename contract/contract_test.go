@@ -218,7 +218,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
 
         total += uint64(size)  
         if (size > largest) { largest = size }
-        count += 1
         
         now = ticks.Now()
         delay = that.Request(now)
@@ -231,7 +230,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         }
         accumulated += duration
         
-        after = ticks.Now()
         written, failure := output.WriteTo(buffer[:size], address)
         if failure != nil {
             t.Fatalf("shaper: failure=%v!\n", failure);
@@ -241,13 +239,15 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Fatalf("shaper: written=%v size=%v!\n", written, size);
             t.FailNow()
         }
-        
+
+        after = ticks.Now()        
         if (count > 0) {
             interdeparture = after - before
             bandwidth = float64(size) / float64(interdeparture)
             if (bandwidth > fastest) { fastest = bandwidth }
         }
         before = after
+        count += 1
         
         fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
 
@@ -295,6 +295,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     var admissable bool = false
     var eof bool = false
     var count int = 0
+    var largest int = 0
 
     burst := cap(output)
     
@@ -323,6 +324,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
         if read > 0 {
             count += 1
             total += uint64(read)
+            if (read > largest) { largest = read }
             now = ticks.Now()
             admissable = that.Admits(now, gcra.Events(read))
             if admissable {
@@ -348,7 +350,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     mean := float64(total) / float64(count)
     
     mutex.Lock()
-    fmt.Printf("policer: end admitted=%vB policed=%vB total=%vB mean=%vB/burst.\n", admitted, policed, total, mean)
+    fmt.Printf("policer: end admitted=%vB policed=%vB total=%vB mean=%vB/burst maximum=%vB/burst.\n", admitted, policed, total, mean, largest)
     mutex.Unlock()
     
     if policed > 0 {
