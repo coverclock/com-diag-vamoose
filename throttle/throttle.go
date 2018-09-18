@@ -277,3 +277,10 @@ func (this * Throttle) Admit(now ticks.Ticks) bool {
 func (this * Throttle) Update(now ticks.Ticks) bool {
 	return this.Admits(now, 0)
 }
+
+// Comply returns the number of ticks it would be necessary for the caller to
+// delay for the event stream  to comply to the traffic contract with no early
+// penalty accumulated.
+func (this * Throttle) Comply() ticks.Ticks {
+    return this.early
+}

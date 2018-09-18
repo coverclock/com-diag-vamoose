@@ -79,5 +79,7 @@ type Gcra interface {
     Admit(now ticks.Ticks) bool
 
     Update(now ticks.Ticks) bool
+    
+    Comply() ticks.Ticks
 
 }

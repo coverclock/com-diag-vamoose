@@ -138,7 +138,9 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
         mutex.Unlock()
         
         limit -= uint64(size)
-               
+        
+        ticks.Sleep(0)
+
     }
     
     close(output)
@@ -155,7 +157,7 @@ func producer(t * testing.T, limit uint64, delay time.Duration, output chan <- b
     done <- true
 }
 
-func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.PacketConn, address net.Addr, done chan<- bool) {
+func shaper(t * testing.T, input <- chan byte, that * Contract, output net.PacketConn, address net.Addr, done chan<- bool) {
     var total uint64 = 0
     var datum byte = 0
     var okay bool = true
@@ -258,12 +260,24 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
 
         alarmed = !that.Commits(gcra.Events(size))
         if alarmed {
+            t.Logf("shaper: contract=%v!\n", that)
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
+        
+        ticks.Sleep(0)
 
     }
     
     now = ticks.Now()
+    that.Update(now)
+    delay = that.Comply()
+    for delay > 0 {
+        fmt.Printf("shaper: delay=%vs.\n", float64(delay) / frequency);
+        ticks.Sleep(delay)
+        now = ticks.Now()
+        that.Update(now)
+        delay = that.Comply()
+    }
     
     buffer[0] = 0
     size = 1
@@ -274,7 +288,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     if (written != 1) {
         t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
     }
-        
     fmt.Printf("shaper: eof.\n");
 
     average := (float64(accumulated) / float64(count)) / frequency
@@ -290,7 +303,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     done <- true
 }
 
-func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- byte, done chan<- bool) {
+func policer(t * testing.T, input net.PacketConn, that * Contract, output chan<- byte, done chan<- bool) {
     var total uint64 = 0
     var admitted uint64 = 0
     var policed uint64 = 0
@@ -339,16 +352,19 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
             } else {
                 policed += uint64(read)
                 mutex.Lock()
-                fmt.Printf("policer: read=%vB policed=%vB total=%vB?\n", read, policed, total)  
+                fmt.Printf("policer: read=%vB policed=%vB total=%vB contract=%v?\n", read, policed, total, that)  
                 mutex.Unlock()
             }
         }
+        
+        ticks.Sleep(0)
     
     }
     
     close(output)
     
     if policed > 0 {
+        t.Logf("policer: contract=%v!\n", that)
         t.Fatalf("policer: policed=%vB!\n", policed)
     }
     
@@ -375,8 +391,11 @@ func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
     mutex.Unlock()
     
     for buffer[0] = range input {
+
         total += 1          
         c = fletcher.Checksum16(buffer[:], &a, &b)
+        
+        ticks.Sleep(0)
     }
     
     consumer_total = total
@@ -486,6 +505,14 @@ func TestContractActual(t * testing.T) {
     if (consumer_checksum == producer_checksum) {} else {
         t.Fatalf("consumer_checksum=%v producer_checksum=%v\n", consumer_checksum, producer_checksum)
     }
+    
+    mutex.Lock()
+    fmt.Printf("shape=%v.\n", shape);
+    mutex.Unlock()    
+     
+    mutex.Lock()
+    fmt.Printf("police=%v.\n", police);
+    mutex.Unlock()    
    
     mutex.Lock()
     fmt.Println("Ending.")

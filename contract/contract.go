@@ -247,3 +247,20 @@ func (this * Contract) Update(now ticks.Ticks) bool {
     s := this.sustained.Update(now)
     return (p && s)
 }
+
+// Comply returns the number of ticks it would be necessary for the caller to
+// delay for the event stream  to comply to the traffic contract with no early
+// penalty accumulated.
+func (this * Contract) Comply() ticks.Ticks {
+    var delay ticks.Ticks = 0
+    
+    p := this.peak.Comply()
+    s := this.sustained.Comply()
+    if (p > s) {
+        delay = p
+    } else {
+        delay = s
+    }
+    
+    return delay
+}
