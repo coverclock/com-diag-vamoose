@@ -335,11 +335,12 @@ func policer(t * testing.T, input net.PacketConn, that * Contract, output chan<-
             read -= 1
         }
         
+        now = ticks.Now()
+        
         if read > 0 {
             count += 1
             total += uint64(read)
             if (read > largest) { largest = read }
-            now = ticks.Now()
             admissable = that.Admits(now, gcra.Events(read))
             if admissable {
                 admitted += uint64(read)
@@ -355,6 +356,10 @@ func policer(t * testing.T, input net.PacketConn, that * Contract, output chan<-
                 fmt.Printf("policer: read=%vB policed=%vB total=%vB contract=%v?\n", read, policed, total, that)  
                 mutex.Unlock()
             }
+        } else if eof {
+            that.Update(now)
+        } else {
+            // Do nothing.
         }
         
         ticks.Sleep(0)

@@ -249,7 +249,7 @@ func (this * Contract) Update(now ticks.Ticks) bool {
 }
 
 // Comply returns the number of ticks it would be necessary for the caller to
-// delay for the event stream  to comply to the traffic contract with no early
+// delay for the event stream  to comply to the traffic contract with no limit
 // penalty accumulated.
 func (this * Contract) Comply() ticks.Ticks {
     var delay ticks.Ticks = 0
