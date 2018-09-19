@@ -9,12 +9,8 @@ import (
     "testing"
 	"github.com/coverclock/com-diag-vamoose/ticks"
 	"github.com/coverclock/com-diag-vamoose/gcra"
- 	"github.com/coverclock/com-diag-vamoose/fletcher"
+ 	"github.com/coverclock/com-diag-vamoose/framework"
     "math/rand"
-    "time"
-    "net"
-    "fmt"
-    "sync"
 )
 
 /*******************************************************************************
@@ -40,7 +36,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 0) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -49,6 +45,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
  	
  	now = 0
  	delay = that.Request(now)
@@ -60,7 +61,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 0) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -69,6 +70,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment
  	delay = that.Request(now)
@@ -80,7 +86,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 0) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -89,6 +95,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment + 1
  	delay = that.Request(now)
@@ -100,7 +111,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 0) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -109,6 +120,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment - 1
  	delay = that.Request(now)
@@ -120,7 +136,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 1)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 1) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 1) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -129,6 +145,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment - 1
  	delay = that.Request(now)
@@ -140,7 +161,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 2)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 2) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 2) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -149,6 +170,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment - 1
  	delay = that.Request(now)
@@ -160,7 +186,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 3)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 3) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 3) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -169,6 +195,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment
  	delay = that.Request(now)
@@ -180,7 +211,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 3)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 3) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 3) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -189,6 +220,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment + 1
  	delay = that.Request(now)
@@ -200,7 +236,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 2)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 2) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 2) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -209,6 +245,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment + 1
  	delay = that.Request(now)
@@ -220,7 +261,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == (increment + 1)) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 1) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 1) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -229,6 +270,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment + 1
  	delay = that.Request(now)
@@ -240,7 +286,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 0) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -249,6 +295,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
     now = now + increment
  	delay = that.Request(now)
@@ -260,7 +311,7 @@ func TestThrottleSanity(t * testing.T) {
 	if (that.increment == increment) {} else { t.Errorf("FAILED! %v", that.increment) }
 	if (that.limit == limit) {} else { t.Errorf("FAILED! %v", that.limit) }
 	if (that.expected == increment) {} else { t.Errorf("FAILED! %v", that.expected) }
-	if (that.early == 0) {} else { t.Errorf("FAILED! %v", that.early) }
+	if (that.deficit == 0) {} else { t.Errorf("FAILED! %v", that.deficit) }
 	if (!that.full0) {} else { t.Errorf("FAILED! %v", that.full0) }
 	if (!that.full1) {} else { t.Errorf("FAILED! %v", that.full1) }
 	if (!that.full2) {} else { t.Errorf("FAILED! %v", that.full2) }
@@ -269,6 +320,11 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.empty2) {} else { t.Errorf("FAILED! %v", that.empty2) }
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
+ 	
+ 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
+ 	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
+ 	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
 
 }
 
@@ -1128,64 +1184,21 @@ func TestThrottleVariable(t * testing.T) {
 
 func TestThrottleSimulated(t * testing.T) {
     const BANDWIDTH ticks.Ticks = 1024 // Bytes per second.
-	const BLOCKSIZE gcra.Events = 32768
-    const OPERATIONS uint = 1000000
-	const MARGIN ticks.Ticks = 200 // 0.5%
-	const limit ticks.Ticks = 0
-	var increment ticks.Ticks = 0
-	var frequency ticks.Ticks = 0
-	var now ticks.Ticks = 0
-    var delay ticks.Ticks = 0
-    var duration ticks.Ticks = 0
-    var seconds ticks.Ticks = 0
-    var bandwidth ticks.Ticks = 0
-    var delta ticks.Ticks = 0
-    var margin ticks.Ticks = 0
-	var size gcra.Events = 0
-    var blocksize gcra.Events = 0
-    var total uint64 = 0
-    var admissable bool = false
-    var iops uint = 0
-    
-    frequency = ticks.Frequency()
-    increment = (frequency + BANDWIDTH - 1) / BANDWIDTH
-    blocksize = BLOCKSIZE / 2
-    seconds = (increment * ticks.Ticks(blocksize)) / frequency
-    t.Logf("OPERATIONS=%d BANDWIDTH=%dB/s BLOCKSIZE=%dB mean=%dB/io frequency=%dHz\n", OPERATIONS, BANDWIDTH, BLOCKSIZE, blocksize, frequency)
+	const BLOCKSIZE int = 32768
+    const OPERATIONS int = 1000000
+	const LIMIT ticks.Ticks = 0
+     
+    frequency := ticks.Frequency()
+    increment := (frequency + BANDWIDTH - 1) / BANDWIDTH
+    t.Logf("OPERATIONS=%v BANDWIDTH=%vB/s BLOCKSIZE=%vB frequency=%vHz\n", OPERATIONS, BANDWIDTH, BLOCKSIZE, frequency)
 
-    t.Logf("increment=%dt mean=%ds/io LIMIT=%dt now=%dt\n", increment, seconds, limit, now)
-	that := New(increment, limit, now)
-	t.Log(that.String())
+    interarrival := float64(increment) / float64(frequency)
+    expected := float64(frequency) / float64(increment)
+    now := ticks.Now()
+    t.Logf("increment=%vt seconds=%vs expected=%vB/s LIMIT=%vt now=%vt\n", increment, interarrival, expected, LIMIT, now)
+	that := New(increment, LIMIT, now)
 	
-	for iops = 0; iops < OPERATIONS; iops += 1 {
-	    delay = that.Request(now)
-	    now += delay
-	    if (now >= 0) {} else { t.Errorf("OVERFLOW! %v", now) }
-	    duration += delay
-	    if (duration >= 0) {} else { t.Errorf("OVERFLOW! %v", duration) }
-	    delay = that.Request(now)
-	    if (delay <= 0) {} else { t.Errorf("FAILED! %v", delay); t.Log(that.String()) }
-        size = gcra.Events(rand.Int63n(int64(BLOCKSIZE))) + 1
-	    if (0 < size) {} else { t.Errorf("FAILED! %v", size) }
-	    if (size <= gcra.Events(BLOCKSIZE)) {} else { t.Errorf("FAILED! %v", size) }
-	    total += uint64(size)
-	    if (total > 0) {} else { t.Errorf("OVERFLOW! %v", total) }
-	    admissable = that.Commits(size)
-	    if (admissable) {} else { t.Errorf("FAILED! %v", admissable); t.Log(that.String()) }
-	}
-	
-	blocksize = gcra.Events(total / uint64(OPERATIONS))
-	seconds = duration / frequency
-	delay = seconds / ticks.Ticks(OPERATIONS)
-	t.Logf("total=%dB mean=%dB/io duration=%dt=%ds mean=%ds/io\n", total, blocksize, duration, seconds, delay)
-	if (duration > frequency) {} else { t.Errorf("FAILED! %v", duration) }
-
-	bandwidth = ticks.Ticks(total) / seconds
-	delta = bandwidth - BANDWIDTH
-	if (delta < 0) { delta = -delta }
-    margin = BANDWIDTH / MARGIN
-	t.Logf("bandwidth=%dB/s delta=%dB/s margin=%dB/s\n", bandwidth, delta, margin)
-	if (delta < margin) {} else { t.Errorf("FAILED! %v", delta) }
+	framework.SimulatedEventStream(t, that, BLOCKSIZE, OPERATIONS)
     
 }
 
@@ -1193,337 +1206,22 @@ func TestThrottleSimulated(t * testing.T) {
  * ACTUAL EVENT STREAM
  ******************************************************************************/
 
-var mutex sync.Mutex
-
-var producer_total uint64 = 1
-var producer_checksum uint16 = 2
-
-var consumer_total uint64 = 3
-var consumer_checksum uint16 = 4
-
-func producer(t * testing.T, limit uint64, burst int, delay time.Duration, output chan <- byte, done chan<- bool) {
-    var total uint64 = 0
-    var size int = 0
-    var datum [1] byte
-    var a uint8 = 0
-    var b uint8 = 0
-    var c uint16 = 0
-    
-    mutex.Lock()
-    fmt.Println("producer: begin.")
-    mutex.Unlock()
-
-    then := ticks.Now()
-    
-    for limit > 0 {
-        
-        size = rand.Intn(burst) + 1
-        if uint64(size) > limit {
-            size = int(limit)
-        }
-        
-        for index := size; index > 0; index -= 1 {
-            datum[0] = byte(rand.Int31n(int32('~') - int32(' ') + 1) + int32(' '))
-            c = fletcher.Checksum16(datum[:], &a, &b)
-            output <- datum[0]
-            total += 1  
-        }
-        
-        limit -= uint64(size)
-         
-        mutex.Lock()
-        fmt.Printf("producer: produced=%vB total=%vB remaining=%vB.\n", size, total, limit)
-        mutex.Unlock()
-       
-        time.Sleep(delay)
-        
-    }
-    
-    close(output)
-       
-    now := ticks.Now()
-    frequency := float64(ticks.Frequency())
-    duration := float64(now - then) / frequency
-    bandwidth := float64(total) / duration
-    
-    mutex.Lock()
-    fmt.Printf("producer: end total=%vB duration=%vs bandwidth=%vB/s.\n", total, duration, bandwidth);
-    mutex.Unlock()
-    
-    producer_total = total
-    producer_checksum = c
-    
-    done <- true
-}
-
-func shaper(t * testing.T, burst int, input <- chan byte, that gcra.Gcra, output net.PacketConn, address net.Addr, done chan<- bool) {
-    var total uint64 = 0
-    var okay bool = true
-    var size int = 0
-    var now ticks.Ticks = 0
-    var delay ticks.Ticks = 0
-    var duration ticks.Ticks = 0
-    var alarmed bool = false
-        
-    mutex.Lock()
-    fmt.Println("shaper: begin.");
-    mutex.Unlock()
-
-    buffer := make([] byte, burst)
-    
-    frequency := float64(ticks.Frequency())
-    
-    for {
-
-        buffer[0], okay = <- input
-        if !okay {
-            break
-        }
-        total += 1
-
-        for size = 1; (size < burst) && (len(input) > 0); size +=1 {
-            buffer[size], okay = <- input
-            if !okay {
-                // Should never happen.
-                break
-            }
-            total += 1
-        }
-        
-        now = ticks.Now()
-        delay = that.Request(now)
-        duration = 0
-        for delay > 0 {
-            duration += delay                       
-            time.Sleep(time.Duration(delay))
-            now = ticks.Now()
-            delay = that.Request(now) 
-        }
-
-        written, failure := output.WriteTo(buffer[0:size], address)
-        if failure != nil {
-            t.Fatalf("shaper: failure=%v!\n", failure);
-        }
-        
-        if (written != size) {
-            t.Fatalf("shaper: written=%v size=%v!\n", written, size);
-        }
-        
-        fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
-
-        alarmed = !that.Commits(gcra.Events(size))
-        if alarmed {
-            t.Fatalf("shaper: alarmed=%v!\n", alarmed);
-        }
-
-    }
-    
-    buffer[0] = 0
-    written, failure := output.WriteTo(buffer[0:1], address)
-    if failure != nil {
-        t.Fatalf("shaper: failure=%v!\n", failure);
-    }    
-        
-    if (written != 1) {
-        t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
-    }
-          
-    mutex.Lock()
-    fmt.Println("shaper: end");
-    mutex.Unlock()
-    
-    done <- true
-}
-
-func policer(t * testing.T, burst int, input net.PacketConn, that gcra.Gcra, output chan<- byte, done chan<- bool) {
-    var total uint64 = 0
-    var now ticks.Ticks = 0
-    var admissable bool = false
-    var eof bool = false
-    
-    mutex.Lock()
-    fmt.Println("policer: begin.");
-    mutex.Unlock()
-   
-    buffer := make([] byte, burst)
-    
-    for !eof {
-    
-        read, _, failure := input.ReadFrom(buffer)
-        if failure != nil {
-            t.Fatalf("policer: failure=%v!\n", failure);
-        }
-        
-        if (read <= 0) {
-            t.Fatalf("policer: read=%v!\n", read);
-        }
-        
-        now = ticks.Now()
-        admissable = that.Admits(now, gcra.Events(read))
-        if admissable {
-            mutex.Lock()
-            fmt.Printf("policer: admitted=%vB total=%vB.\n", read, total)
-            mutex.Unlock()
-            for index := 0; index < read; index += 1 {
-                if buffer[index] == 0 {
-                    eof = true
-                    break
-                }
-                output <- buffer[index]
-            }
-            total += uint64(read)
-        } else {
-            mutex.Lock()
-            fmt.Printf("policer: policed=%vB total=%vB?\n", read, total);         
-            mutex.Unlock()
-            if buffer[read - 1] == 0 {
-                eof = true
-            }
-        }
-    
-    }
-    
-    close(output)
-    
-    mutex.Lock()
-    fmt.Println("policer: end");
-    mutex.Unlock()
-    
-    done <- true
-}
-
-func consumer(t * testing.T, input <-chan byte, done chan<- bool) {
-    var total uint64 = 0
-    var okay bool = true
-    var datum [1] byte
-    var a uint8 = 0
-    var b uint8 = 0
-    var c uint16 = 0
-    
-    mutex.Lock()
-    fmt.Println("consumer: begin.");
-    mutex.Unlock()
-    
-    then := ticks.Now()
-    
-    for {
-
-        datum[0], okay = <- input
-        if !okay {
-            break
-        }
-        c = fletcher.Checksum16(datum[:], &a, &b)
-        total += 1
-
-    }
-     
-    now := ticks.Now()
-    frequency := float64(ticks.Frequency())
-    duration := float64(now - then) / frequency
-    bandwidth := float64(total) / duration
-
-    mutex.Lock()
-    fmt.Printf("consumer: end total=%vB duration=%vs bandwidth=%vB/s.\n", total, duration, bandwidth);
-    mutex.Unlock()
-    
-    consumer_total = total
-    consumer_checksum = c
-    
-    done <- true
-}
-
 func TestThrottleActual(t * testing.T) {
     const BURST int = 64				// bytes
     const BANDWIDTH int = 1024			// bytes per second
-    const DURATION int = 1				// seconds
-    const DELAY time.Duration = 1000	// nanoseconds
-    var failure error
-    
-    mutex.Lock()
-    fmt.Println("Beginning.")
-    mutex.Unlock()
-    
-    done := make(chan bool, 4)
-    defer close(done)
-    
-    supply := make(chan byte, BURST)
-    // producer closes.
-    
-    demand := make(chan byte, BURST)
-    // policer closes.
-        
-    source, failure := net.ListenPacket("udp", ":5555")
-    if failure != nil {
-        t.Fatal(failure)
-    }
-    defer source.Close()
-    
-    mutex.Lock()
-    fmt.Printf("source=%+v.\n", source);
-    mutex.Unlock()    
-           
-    sink, failure := net.ListenPacket("udp", ":0")
-    if failure != nil {
-        t.Fatal(failure)
-    }
-    defer sink.Close()
-    
-    mutex.Lock()
-    fmt.Printf("sink=%+v.\n", sink);
-    mutex.Unlock()    
- 
-    destination, failure := net.ResolveUDPAddr("udp", "localhost:5555")
-    if failure != nil {
-        t.Fatal(failure)
-    }
-     
-    mutex.Lock()
-    fmt.Printf("destination=%+v.\n", destination);
-    mutex.Unlock()    
-   
+    const TOTAL uint64 = 1024 * 60		// bytes
+
+    supply := make(chan byte, BURST + 1) // Producer closes.
+    demand := make(chan byte, BURST) // Policer closes.
+       
     frequency := ticks.Frequency()
     increment := frequency / ticks.Ticks(BANDWIDTH)
     limit := frequency * ticks.Ticks(BURST) / ticks.Ticks(BANDWIDTH)
     now := ticks.Now()
     
     shape := New(increment, 0, now)
-    
-    mutex.Lock()
-    fmt.Printf("shape=%+v.\n", shape);
-    mutex.Unlock()    
-    
     police := New(increment, limit, now)
-     
-    mutex.Lock()
-    fmt.Printf("police=%+v.\n", police);
-    mutex.Unlock()    
-   
-    mutex.Lock()
-    fmt.Println("Starting.")
-    mutex.Unlock()
-   
-    go consumer(t, demand, done)
-    go policer(t, BURST, source, police, demand, done)
-    go shaper(t, BURST, supply, shape, sink, destination, done)
-    go producer(t, uint64(DURATION) * uint64(BANDWIDTH), BURST, DELAY, supply, done)
     
-    mutex.Lock()
-    fmt.Println("Waiting.")
-    mutex.Unlock()
-    
-    <- done
-    <- done
-    <- done
-    <- done
-       
-    mutex.Lock()
-    fmt.Println("Checking.")
-    mutex.Unlock()
+    framework.ActualEventStream(t, shape, police, supply, demand, TOTAL)
 
-    if (consumer_total == producer_total) {} else { t.Fatalf("consumer_total=%v producer_total=%v\n", consumer_total, producer_total) }
-    if (consumer_checksum == producer_checksum) {} else { t.Fatalf("consumer_checksum=%v producer_checksum=%v\n", consumer_checksum, producer_checksum) }
-   
-    mutex.Lock()
-    fmt.Println("Ending.")
-    mutex.Unlock()
 }

@@ -142,6 +142,23 @@ func (this * Contract) IsAlarmed() bool {
 	return (p || s)
 }
 
+// GetDeficit returns the number of ticks it would be necessary for the caller
+// to delay for the event stream  to comply to the traffic contract with no limit
+// penalty accumulated.
+func (this * Contract) GetDeficit() ticks.Ticks {
+    var delay ticks.Ticks = 0
+    
+    p := this.peak.GetDeficit()
+    s := this.sustained.GetDeficit()
+    if (p > s) {
+        delay = p
+    } else {
+        delay = s
+    }
+    
+    return delay
+}
+
 /*******************************************************************************
  * SENSORS
  ******************************************************************************/
@@ -246,21 +263,4 @@ func (this * Contract) Update(now ticks.Ticks) bool {
     p := this.peak.Update(now)
     s := this.sustained.Update(now)
     return (p && s)
-}
-
-// Comply returns the number of ticks it would be necessary for the caller to
-// delay for the event stream  to comply to the traffic contract with no limit
-// penalty accumulated.
-func (this * Contract) Comply() ticks.Ticks {
-    var delay ticks.Ticks = 0
-    
-    p := this.peak.Comply()
-    s := this.sustained.Comply()
-    if (p > s) {
-        delay = p
-    } else {
-        delay = s
-    }
-    
-    return delay
 }

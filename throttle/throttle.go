@@ -23,7 +23,7 @@ package throttle
 // bandwidth as with ATM. In the original TM spec, the variable "i" was the
 // increment or contracted inter-arrival interval, "l" was the limit or
 // threshold, "x" was the expected inter-arrival interval for the next event,
-// and "x1" was the aggregate early duration accumulated so far. A throttle can
+// and "x1" was the inter-arrival deficit accumulated so far. A throttle can
 // be used to smooth out low frequency events over a long duration, or to
 // implement a leaky bucket algorithm.
 
@@ -47,9 +47,9 @@ type Throttle struct {
 	now			ticks.Ticks			// Current timestamp
 	then		ticks.Ticks			// Prior timestamp
 	increment	ticks.Ticks			// GCRA i: ticks per event
-	limit		ticks.Ticks			// GCRA l: maximum early ticks
+	limit		ticks.Ticks			// GCRA l: maximum deficit ticks
 	expected	ticks.Ticks			// GCRA x: expected ticks until next event
-	early		ticks.Ticks			// GCRA x1: aggregate early ticks
+	deficit		ticks.Ticks			// GCRA x1: aggregate deficit ticks
 	full0		bool				// The leaky bucket will fill.
 	full1		bool				// The leaky bucket is filling.
 	full2		bool				// The leaky bucket was filled.
@@ -66,11 +66,11 @@ type Throttle struct {
 
 // String returns a printable string showing the guts of the throttle.
 func (this * Throttle) String() string {
-	return fmt.Sprintf("Throttle@%p[%d]:{e:%d,i:%d,l:%d,x:%d,x1:%d,d:%d,f:{%t,%t,%t},e:{%t,%t,%t},a:{%t,%t}}",
+	return fmt.Sprintf("Throttle@%p[%d]:{t:%d,i:%d,l:%d,e:%d,d:%d,r:%d,f:{%t,%t,%t},e:{%t,%t,%t},a:{%t,%t}}",
 		unsafe.Pointer(this), unsafe.Sizeof(*this),
 		this.now - this.then,
-		this.increment, this.limit, this.expected, this.early,
-		this.early - this.limit,
+		this.increment, this.limit, this.expected, this.deficit,
+		this.deficit - this.limit,
 		this.full0, this.full1, this.full2,
 		this.empty0, this.empty1, this.empty2,
 		this.alarmed1, this.alarmed2);
@@ -87,7 +87,7 @@ func (this * Throttle) Reset(now ticks.Ticks) {
 	this.now = now
 	this.then = this.now - this.increment
 	this.expected = this.increment
-	this.early = 0
+	this.deficit = 0
 	this.full0 = false
 	this.full1 = false
 	this.full2 = false
@@ -104,7 +104,7 @@ func (this * Throttle) Reset(now ticks.Ticks) {
 
 // Init initialize a throttle, setting its traffic contract parameters
 // increment, which is the expected interarrival time in ticks for every event,
-// and limit, which is the maximum aggreate early ticks that can be accumulated
+// and limit, which is the maximum aggreate deficit ticks that can be accumulated
 // before the traffic contract is violated and the throttle becomes alarmed; and
 // its dynamic state, which is the current monotonic time in ticks.
 func (this * Throttle) Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) {
@@ -130,7 +130,7 @@ func (this * Throttle) Fini() {
 
 // New allocate a new throttle. It initializes it with the traffic contract
 // parameters increment, which is the expected interarrival time in ticks for
-// every event, and limit, which is the maximum aggreate early ticks that can be
+// every event, and limit, which is the maximum aggreate deficit ticks that can be
 // accumulated before the traffic contract is violated and the throttle becomes
 // alarmed; and its dynamic state, which is the current monotonic time in ticks.
 func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
@@ -144,20 +144,27 @@ func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
  * GETTERS
  ******************************************************************************/
 
+// GetDeficit returns the number of ticks it would be necessary for the caller
+// to delay for the event stream  to comply to the traffic contract with no
+// limit penalty accumulated.
+func (this * Throttle) GetDeficit() ticks.Ticks {
+    return this.deficit
+}
+
 // isEmpty returns true if the throttle is empty, that is, it has no accumulated
-// early ticks.
+// deficit ticks.
 func (this * Throttle) IsEmpty() bool {
 	return this.empty1
 }
 
-// IsFull returns true if the throttle is full, that is, its accumulated early
+// IsFull returns true if the throttle is full, that is, its accumulated deficit
 // ticks is greater than or equal to its limit.
 func (this * Throttle) IsFull() bool {
 	return this.full1
 }
 
 // IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
-// early ticks is greater than its limit, indicating that the event emission
+// deficit ticks is greater than its limit, indicating that the event emission
 // stream is out of compliance with the traffic contract.
 func (this * Throttle) IsAlarmed() bool {
 	return this.alarmed1
@@ -203,20 +210,20 @@ func (this * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 	this.now = now
 	elapsed = this.now - this.then
 	if (this.expected <= elapsed) {
-		this.early = 0
+		this.deficit = 0
 		this.full0 = false
 		this.empty0 = true
 		delay = 0
 	} else {
-		this.early = this.expected - elapsed
-		if (this.early <= this.limit) {
+		this.deficit = this.expected - elapsed
+		if (this.deficit <= this.limit) {
 			this.full0 = false
 			this.empty0 = false
 			delay = 0
 		} else {
 			this.full0 = true
 			this.empty0 = false
-			delay = this.early - this.limit
+			delay = this.deficit - this.limit
 		}
 	}
 
@@ -229,7 +236,7 @@ func (this * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 // down a bit, true otherwise.
 func (this * Throttle) Commits(events gcra.Events) bool {
 	this.then = this.now
-	this.expected = this.early;
+	this.expected = this.deficit;
 	if (events <= 0) {
 	    // Do nothing.
 	} else if (events == 1) {
@@ -276,11 +283,4 @@ func (this * Throttle) Admit(now ticks.Ticks) bool {
 // may bring the throttle back into compliance with the traffic contract.
 func (this * Throttle) Update(now ticks.Ticks) bool {
 	return this.Admits(now, 0)
-}
-
-// Comply returns the number of ticks it would be necessary for the caller to
-// delay for the event stream  to comply to the traffic contract with no limit
-// penalty accumulated.
-func (this * Throttle) Comply() ticks.Ticks {
-    return this.early
 }

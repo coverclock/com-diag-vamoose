@@ -11,8 +11,7 @@ package ticks
 //
 // Basic time-related functions for use in Vamoose. We use the go Time types
 // and functions but put a thin abstraction layer around them so it will be
-// easily changed in the future if necessary. (For example, I might end up
-// using the low level runtime now() function instead.)
+// easily changed in the future if necessary.
 
 import (
 	"time"
