@@ -9,7 +9,7 @@ import (
     "testing"
 	"github.com/coverclock/com-diag-vamoose/ticks"
 	"github.com/coverclock/com-diag-vamoose/gcra"
- 	"github.com/coverclock/com-diag-vamoose/framework"
+ 	"github.com/coverclock/com-diag-vamoose/harness"
     "math/rand"
 )
 
@@ -1198,7 +1198,7 @@ func TestThrottleSimulated(t * testing.T) {
     t.Logf("increment=%vt seconds=%vs expected=%vB/s LIMIT=%vt now=%vt\n", increment, interarrival, expected, LIMIT, now)
 	that := New(increment, LIMIT, now)
 	
-	framework.SimulatedEventStream(t, that, BLOCKSIZE, OPERATIONS)
+	harness.SimulatedEventStream(t, that, BLOCKSIZE, OPERATIONS)
     
 }
 
@@ -1211,7 +1211,7 @@ func TestThrottleActual(t * testing.T) {
     const BANDWIDTH int = 1024			// bytes per second
     const TOTAL uint64 = 1024 * 60		// bytes
 
-    supply := make(chan byte, BURST + 1) // Producer closes.
+    supply := make(chan byte, BURST + 1) // +1 for EOR indicator. Producer closes.
     demand := make(chan byte, BURST) // Policer closes.
        
     frequency := ticks.Frequency()
@@ -1222,6 +1222,6 @@ func TestThrottleActual(t * testing.T) {
     shape := New(increment, 0, now)
     police := New(increment, limit, now)
     
-    framework.ActualEventStream(t, shape, police, supply, demand, TOTAL)
+    harness.ActualEventStream(t, shape, police, supply, demand, TOTAL)
 
 }

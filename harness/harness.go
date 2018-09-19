@@ -1,4 +1,4 @@
-package framework
+package harness
 
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
@@ -32,21 +32,26 @@ func SimulatedEventStream(t * testing.T, that gcra.Gcra, blocksize int, operatio
 	t.Log(that.String())
 	
 	for ii := 0; ii < operations; ii += 1 {
+
 	    delay = that.Request(now)
 	    now += delay
 	    if now >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", now) }
 	    duration += delay
 	    if duration >= 0 {} else { t.Log(that.String()); t.Fatalf("OVERFLOW! %v\n", duration) }
+
 	    delay = that.Request(now)
 	    if delay == 0 {} else { t.Log(that.String()); t.Fatalf("FAILED! %v\n", delay);  }
+
         size = gcra.Events(rand.Int63n(int64(blocksize))) + 1
 	    if 0 < size {} else { t.Log(that.String()); t.Fatalf("FAILED! %v\n", size) }
 	    if size <= gcra.Events(blocksize) {} else { t.Fatalf("FAILED! %v\n", size) }
 	    if size > maximum { maximum = size }
 	    total += uint64(size)
 	    if total > 0 {} else { t.Fatalf("OVERFLOW! %v\n", total) }
+
 	    admissable = that.Commits(size)
 	    if admissable {} else { t.Log(that.String); t.Fatalf("FAILED! %v\n", admissable) }
+
 	}
 	
 	delay = that.GetDeficit()
@@ -145,7 +150,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var largest int = 0
     var before ticks.Ticks = 0
     var after ticks.Ticks = 0
-    var period ticks.Ticks = 0
     var rate float64 = 0.0
     var fastest float64 = 0.0
     var briefest ticks.Ticks = 0
@@ -159,6 +163,8 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     buffer := make([] byte, burst)
     
     frequency := float64(ticks.Frequency())
+    
+    then = ticks.Now()
     
     for {
 
@@ -191,20 +197,24 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         if (size > largest) { largest = size }
         
         now = ticks.Now()
-        if count == 0 {
-            then = now
-        }
-
         delay = that.Request(now)
         ticks.Sleep(delay)
         if count == 0 {
             briefest = delay
+        } else if delay == 0 {
+            // Do nothing
         } else if delay < briefest {
             briefest = delay
         } else {
             // Do nothing.
         }
         accumulated += delay
+        
+        now = ticks.Now()
+        delay = that.Request(now)
+        if delay > 0 {
+            t.Fatalf("shaper: delay=%v!\n", delay)
+        }
         
         written, failure := output.WriteTo(buffer[:size], address)
         if failure != nil {
@@ -214,32 +224,36 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Fatalf("shaper: written=%v size=%v!\n", written, size);
         }
 
-        after = ticks.Now()
-        if count > 0 {
-            period = after - before
-            rate = float64(size) / float64(period)
-            if (rate > fastest) { fastest = rate }
-        }
-        before = after
-
-        count += 1
-        
-        fmt.Printf("shaper: delay=%vs written=%vB total=%vB rate=%vB/s.\n", float64(delay) / frequency, written, total, float64(rate) * frequency);
-
         alarmed = !that.Commits(gcra.Events(size))
         if alarmed {
             t.Logf("shaper: contract=%v!\n", that)
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
+
+        after = ticks.Now()
+        if count > 0 {
+            if after <= before {
+                t.Fatalf("shaper: before=%v after=%v\n", before, after)
+            }
+            rate = float64(size) / float64(after - before)
+            if (rate > fastest) { fastest = rate }
+        }
+        before = after
         
-        ticks.Sleep(0)
+        fmt.Printf("shaper: delay=%vs written=%vB total=%vB rate=%vB/s.\n", float64(delay) / frequency, written, total, float64(rate) * frequency);
+
+        count += 1
 
     }
     
     now = ticks.Now()
     that.Update(now)
     delay = that.GetDeficit()
+
+    mutex.Lock()
     fmt.Printf("shaper: delay=%vs.\n", float64(delay) / frequency);
+    mutex.Unlock()
+
     ticks.Sleep(delay)
     now = ticks.Now()
     that.Update(now)
@@ -253,7 +267,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     if (written != 1) {
         t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
     }
-    fmt.Printf("shaper: eof.\n");
 
     average := (float64(accumulated) / float64(count)) / frequency
     minimum := float64(briefest) / frequency
@@ -365,6 +378,12 @@ func consumer(t * testing.T, input <-chan byte, totalp * uint64, checksump * uin
 
         total += 1          
         c = fletcher.Checksum16(buffer[:], &a, &b)
+        
+        if (total % uint64(burst)) == 0 {
+            mutex.Lock()
+            fmt.Printf("consumer: total=%vB.\n", total)
+            mutex.Unlock()            
+        }
         
         ticks.Sleep(0)
     }
