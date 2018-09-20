@@ -4,6 +4,10 @@ package harness
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
 // https://github.com/coverclock/com-diag-vamoose
+//
+// ABSTRACT
+//
+// Provides test harnesses for testing GCRA implementations. 
 
 import (
     "testing"
@@ -20,7 +24,10 @@ import (
  * SIMULATED EVENT STREAM
  ******************************************************************************/
 
-func SimulatedEventStream(t * testing.T, that gcra.Gcra, blocksize int, operations int) {
+// SimulatedEventStream provides a virtual-time test of a GCRA given the
+// GCRA, the maximum size of an event burst, and the total number of iterations
+// to perform.
+func SimulatedEventStream(t * testing.T, that gcra.Gcra, burst int, iterations int) {
 	var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
@@ -31,7 +38,7 @@ func SimulatedEventStream(t * testing.T, that gcra.Gcra, blocksize int, operatio
 
 	t.Log(that.String())
 	
-	for ii := 0; ii < operations; ii += 1 {
+	for ii := 0; ii < iterations; ii += 1 {
 
 	    delay = that.Request(now)
 	    now += delay
@@ -42,9 +49,9 @@ func SimulatedEventStream(t * testing.T, that gcra.Gcra, blocksize int, operatio
 	    delay = that.Request(now)
 	    if delay == 0 {} else { t.Log(that.String()); t.Fatalf("FAILED! %v\n", delay);  }
 
-        size = gcra.Events(rand.Int63n(int64(blocksize))) + 1
+        size = gcra.Events(rand.Int63n(int64(burst))) + 1
 	    if 0 < size {} else { t.Log(that.String()); t.Fatalf("FAILED! %v\n", size) }
-	    if size <= gcra.Events(blocksize) {} else { t.Fatalf("FAILED! %v\n", size) }
+	    if size <= gcra.Events(burst) {} else { t.Fatalf("FAILED! %v\n", size) }
 	    if size > maximum { maximum = size }
 	    total += uint64(size)
 	    if total > 0 {} else { t.Fatalf("OVERFLOW! %v\n", total) }
@@ -61,9 +68,9 @@ func SimulatedEventStream(t * testing.T, that gcra.Gcra, blocksize int, operatio
 	if duration >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", duration) }
 	
 	frequency := float64(ticks.Frequency())
-	average := float64(total) / float64(operations)
+	average := float64(total) / float64(iterations)
 	seconds := float64(duration) / frequency
-	mean := seconds / float64(operations)
+	mean := seconds / float64(iterations)
 	actual := float64(total) * frequency / float64(duration)
 	t.Logf("total=%vB mean=%vB/io maximum=%vB/io latency=%vs/io actual=%vB/s\n", total, average, maximum, mean, actual)
     
@@ -144,12 +151,11 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var then ticks.Ticks = 0
     var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
+    var duration ticks.Ticks = 0
     var accumulated ticks.Ticks = 0
     var alarmed bool = false
     var count int = 0
     var largest int = 0
-    var before ticks.Ticks = 0
-    var after ticks.Ticks = 0
     var rate float64 = 0.0
     var fastest float64 = 0.0
     var briefest ticks.Ticks = 0
@@ -198,21 +204,30 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         
         now = ticks.Now()
         delay = that.Request(now)
-        ticks.Sleep(delay)
-        if count == 0 {
-            briefest = delay
-        } else if delay == 0 {
+        if delay < 0 {
+            t.Fatalf("shaper: delay=%v!\n", delay)
+        }
+        if delay == 0 {
             // Do nothing
+        } else if briefest == 0 {
+            briefest = delay
         } else if delay < briefest {
             briefest = delay
         } else {
             // Do nothing.
         }
+        if delay > 0 {
+            rate = float64(size) / float64(delay)
+            if (rate > fastest) { fastest = rate }
+        }
+        duration = delay
         accumulated += delay
         
+        ticks.Sleep(delay)
+       
         now = ticks.Now()
         delay = that.Request(now)
-        if delay > 0 {
+        if delay != 0 {
             t.Fatalf("shaper: delay=%v!\n", delay)
         }
         
@@ -230,17 +245,8 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
 
-        after = ticks.Now()
-        if count > 0 {
-            if after <= before {
-                t.Fatalf("shaper: before=%v after=%v\n", before, after)
-            }
-            rate = float64(size) / float64(after - before)
-            if (rate > fastest) { fastest = rate }
-        }
-        before = after
         
-        fmt.Printf("shaper: delay=%vs written=%vB total=%vB rate=%vB/s.\n", float64(delay) / frequency, written, total, float64(rate) * frequency);
+        fmt.Printf("shaper: delay=%vs written=%vB total=%vB rate=%vB/s.\n", float64(duration) / frequency, written, total, float64(rate) * frequency);
 
         count += 1
 
@@ -257,7 +263,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     ticks.Sleep(delay)
     now = ticks.Now()
     that.Update(now)
-    
+   
     buffer[0] = 0
     size = 1
     written, failure := output.WriteTo(buffer[0:size], address)
@@ -398,12 +404,16 @@ func consumer(t * testing.T, input <-chan byte, totalp * uint64, checksump * uin
     done <- true
 }
 
+// ActualEventStream provides a real-time test of a GCRA given a GCRA
+// used for traffic shaping, a GCRA used for traffic policing, a supply
+// channel used for supply-side bursts, a demand channel used for demand-
+// side bursts, and the total number of events in the event stream.
 func ActualEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, supply chan byte, demand chan byte, total uint64) {
     var failure error
-    var producertotal uint64 = 0
-    var producerchecksum uint16 = 0
-    var consumertotal uint64 = 0
-    var consumerchecksum uint16 = 0
+    var producertotal uint64 = 1
+    var producerchecksum uint16 = 2
+    var consumertotal uint64 = 3
+    var consumerchecksum uint16 = 4
     
     fmt.Println("Beginning.")
        
@@ -450,12 +460,15 @@ func ActualEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, supply 
     <- done
        
     fmt.Println("Checking.")
-
-    if (consumertotal == producertotal) {} else { t.Fatalf("FAILED! consumertotal=%v producertotal=%v\n", consumertotal, producertotal) }
-    if (consumerchecksum == producerchecksum) {} else { t.Fatalf("FAILED! consumerchecksum=%v producerchecksum=%v\n", consumerchecksum, producerchecksum) }
+    
+    fmt.Printf("produced=%v@%v\n", producertotal, producerchecksum);
+    fmt.Printf("consumed=%v@%v\n", consumertotal, consumerchecksum);
     
     fmt.Printf("shape=%v.\n", shape);
     fmt.Printf("police=%v.\n", police);
+
+    if (consumertotal == producertotal) {} else { t.Fatalf("FAILED! consumertotal=%v producertotal=%v\n", consumertotal, producertotal) }
+    if (consumerchecksum == producerchecksum) {} else { t.Fatalf("FAILED! consumerchecksum=%v producerchecksum=%v\n", consumerchecksum, producerchecksum) }
    
     fmt.Println("Ending.")
 }

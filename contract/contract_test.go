@@ -13,6 +13,22 @@ import (
 )
 
 /*******************************************************************************
+ * SANITY
+ ******************************************************************************/
+
+func TestContractSanity(t * testing.T) {
+    const PEAK ticks.Ticks = 1
+    const JITTER ticks.Ticks = 2
+    const SUSTAINED ticks.Ticks = 3
+    const BURST ticks.Ticks = 4
+    var now ticks.Ticks = 0
+    
+    that := New(PEAK, JITTER, SUSTAINED, BURST, now)
+    fmt.Printf(that.String())
+    
+}
+
+/*******************************************************************************
  * SIMULATED EVENT STREAM
  ******************************************************************************/
 

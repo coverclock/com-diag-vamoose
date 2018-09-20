@@ -66,7 +66,9 @@ libraries, and repositories, from oldest to newest: C++ in Grandote
 in Buckaroo from 2006, C in Diminuto from 2008, and finally Go in Vamoose.
 They are not strictly ports from one another, because my own understanding of
 the underlying algorithms, architectures and patterns has evolved over
-the years.
+the years. All of this was in turn based on work I did on commercial products
+- specifically, an ATM switch, and an ATM interface card, both using OC-3
+optical fiber - during my time at Bell Labs in the mid-to-late 1990s.
 
 ## Repositories
 
