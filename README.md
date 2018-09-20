@@ -54,11 +54,35 @@ was hardly mainstream either. I've done quite a bit of development in
 Python, but that was strictly in the realm of building tools to support
 my embedded work. I've been known to hack JavaScript in an emergency.
 
-When Google began promoting Go, it seemed like a reasonable thing to try
-out, although it took me a while to get to it. I still have a lot of
-affection for C and C++ (and Java and Python, in their place); virtually
-all of my work these days continues to be in C. My productivity in C has
-been greatly enhanced by my using my Diminuto C systems programming library.
+Why Go? Moore’s Law, based on an observation made in 1965 by Gordon
+Moore, founder of Fairchild Semiconductor and Intel, on transistor
+density in integrated circuits, came to predict a doubling of
+microprocessor performance every eighteen months. This cadence of
+introducing new microprocessor generations became so predictable
+that over the past few decades it drove everything from hardware
+systems architecture, to computer software and programming language
+design, to consumer product roadmaps. In 2006, David Patterson, the
+Turing Award-winning computer scientist who was in part responsible
+for RAID disk arrays, RISC processors, and the classic books on
+computer architecture by Patterson and Hennessy, observed that the
+growth in microprocessor performance had stalled, and instead
+semiconductor manufacturers had turned to increasing the number of
+processing cores per chip. Today, Patterson says: “We are a factor
+of 15 behind where we should be if Moore’s Law were still operative.
+We are in the post-Moore’s Law era.” We can no longer throw faster
+computers at our product development requirements.
+
+The stalling of single core performance, and the surprising (to me
+anyway) growth of multi-core processors, leads me to believe we
+need programming languages that are compiled to squeeze more
+performance from single cores, that natively support efficient
+multi-threading to leverage large numbers of parallel cores, and
+that developers can productively write and debug.
+
+I still have a lot of affection for C and C++ (and Java and Python,
+in their place); virtually all of my work these days continues to
+be in C. My productivity in C has been greatly enhanced by my using
+my Diminuto C systems programming library.
 
 My work here in Go has been based my prior work in earlier languages,
 libraries, and repositories, from oldest to newest: C++ in Grandote
