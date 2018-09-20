@@ -49,7 +49,7 @@ type Throttle struct {
 	increment	ticks.Ticks			// GCRA i: ticks per event
 	limit		ticks.Ticks			// GCRA l: maximum deficit ticks
 	expected	ticks.Ticks			// GCRA x: expected ticks until next event
-	deficit		ticks.Ticks			// GCRA x1: aggregate deficit ticks
+	deficit		ticks.Ticks			// GCRA x1: current deficit ticks
 	full0		bool				// The leaky bucket will fill.
 	full1		bool				// The leaky bucket is filling.
 	full2		bool				// The leaky bucket was filled.
@@ -64,16 +64,21 @@ type Throttle struct {
  * HELPERS
  ******************************************************************************/
 
+func btoi(value bool) int {
+    if value { return 1 } else { return 0 }
+}
+
 // String returns a printable string showing the guts of the throttle.
 func (this * Throttle) String() string {
-	return fmt.Sprintf("Throttle@%p[%d]:{t:%d,i:%d,l:%d,e:%d,d:%d,r:%d,f:{%t,%t,%t},e:{%t,%t,%t},a:{%t,%t}}",
+	return fmt.Sprintf("Throttle@%p[%d]:{T:%d,i:%d,l:%d,x:%d,d:%d,D:%d,f:{%d,%d,%d},e:{%d,%d,%d},a:{%d,%d}}",
 		unsafe.Pointer(this), unsafe.Sizeof(*this),
 		this.now - this.then,
-		this.increment, this.limit, this.expected, this.deficit,
+		this.increment, this.limit,
+		this.expected, this.deficit,
 		this.deficit - this.limit,
-		this.full0, this.full1, this.full2,
-		this.empty0, this.empty1, this.empty2,
-		this.alarmed1, this.alarmed2);
+		btoi(this.full0), btoi(this.full1), btoi(this.full2),
+		btoi(this.empty0), btoi(this.empty1), btoi(this.empty2),
+		btoi(this.alarmed1), btoi(this.alarmed2))
 }
 
 /*******************************************************************************
@@ -86,7 +91,7 @@ func (this * Throttle) String() string {
 func (this * Throttle) Reset(now ticks.Ticks) {
 	this.now = now
 	this.then = this.now - this.increment
-	this.expected = this.increment
+	this.expected = 0
 	this.deficit = 0
 	this.full0 = false
 	this.full1 = false
@@ -141,12 +146,12 @@ func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
 }
 
 /*******************************************************************************
- * ACTIONS
+ * MUTATORS
  ******************************************************************************/
 
-// Request asks given the current time in ticks how long of a delay in ticks
-// would be necessary before the next event were emitted for that emission to be
-// in compliance with the traffic contract.
+// Request computes, given the current time in ticks, how long of a delay in
+// ticks would be necessary before the next event were emitted for that
+// emission to be in compliance with the traffic contract.
 func (this * Throttle) Request(now ticks.Ticks) ticks.Ticks {
 	var delay ticks.Ticks
 	var elapsed ticks.Ticks
@@ -229,16 +234,16 @@ func (this * Throttle) Update(now ticks.Ticks) bool {
 	return this.Admits(now, 0)
 }
 
+// Comply computes the number of ticks that would be necessary for the caller
+// to delay for the event stream  to comply to the traffic contract with no
+// limit penalty accumulated given the current state of the throttle.
+func (this * Throttle) Comply() ticks.Ticks {
+    return this.expected
+}
+
 /*******************************************************************************
  * GETTERS
  ******************************************************************************/
-
-// GetDeficit returns the number of ticks that would be necessary for the caller
-// to delay for the event stream  to comply to the traffic contract with no
-// limit penalty accumulated.
-func (this * Throttle) GetDeficit() ticks.Ticks {
-    return this.deficit
-}
 
 // isEmpty returns true if the throttle is empty, that is, it has no accumulated
 // deficit ticks.

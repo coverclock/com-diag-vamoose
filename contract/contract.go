@@ -111,97 +111,11 @@ func New(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra
 }
 
 /*******************************************************************************
- * GETTERS
+ * MUTATORS
  ******************************************************************************/
 
-// isEmpty returns true if the throttle is empty, that is, it has no accumulated
-// early ticks.
-func (this * Contract) IsEmpty() bool {
-    // Both calls must be executed! Beware refactoring!
-    p := this.peak.IsEmpty()
-    s := this.sustained.IsEmpty()
-	return (p && s)
-}
-
-// IsFull returns true if the throttle is full, that is, its accumulated early
-// ticks is greater than or equal to its limit.
-func (this * Contract) IsFull() bool {
-    // Both calls must be executed! Beware refactoring!
-    p := this.peak.IsFull()
-    s := this.sustained.IsFull()
-	return (p || s)
-}
-
-// IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
-// early ticks is greater than its limit, indicating that the event emission
-// stream is out of compliance with the traffic contract.
-func (this * Contract) IsAlarmed() bool {
-    // Both calls must be executed! Beware refactoring!
-    p := this.peak.IsAlarmed()
-    s := this.sustained.IsAlarmed()
-	return (p || s)
-}
-
-// GetDeficit returns the number of ticks it would be necessary for the caller
-// to delay for the event stream  to comply to the traffic contract with no limit
-// penalty accumulated.
-func (this * Contract) GetDeficit() ticks.Ticks {
-    var delay ticks.Ticks = 0
-    
-    p := this.peak.GetDeficit()
-    s := this.sustained.GetDeficit()
-    if (p > s) {
-        delay = p
-    } else {
-        delay = s
-    }
-    
-    return delay
-}
-
-/*******************************************************************************
- * SENSORS
- ******************************************************************************/
-
-// Emptied is true if the throttle just emptied in the last action.
-func (this * Contract) Emptied() bool {
-    // Both calls must be executed! Beware refactoring!
-    p := this.peak.Emptied()
-    s := this.sustained.Emptied()
-	return (p || s)
-}
-
-// Filled is true if the throttle just filled in the last action.
-func (this * Contract) Filled() bool {
-    // Both calls must be executed! Beware refactoring!
-    p := this.peak.Filled()
-    s := this.sustained.Filled()
-	return (p || s)
-}
-
-// Alarmed is true if the throttle just alarmed in the last action.
-func (this * Contract) Alarmed() bool {
-    // Both calls must be executed! Beware refactoring!
-    p := this.peak.Alarmed()
-    s := this.sustained.Alarmed()
-	return (p || s)
-}
-
-// Cleared is true if the throttle just unalarmed in the last action, indicating
-// that the event emission stream has returned to being compliant with the
-// traffic contract.
-func (this * Contract) Cleared() bool {
-    // Both calls must be executed! Beware refactoring!
-    p := this.peak.Cleared()
-    s := this.sustained.Cleared()
-	return (p || s)
-}
-
-/*******************************************************************************
- * ACTIONS
- ******************************************************************************/
-
-// Request asks given the current time in ticks how long of a delay in ticks
+// Request computes, given the current time in ticks how long of a delay in
+// ticks
 // would be necessary before the next event were emitted for that emission to be
 // in compliance with the traffic contract.
 func (this * Contract) Request(now ticks.Ticks) ticks.Ticks {
@@ -214,7 +128,6 @@ func (this * Contract) Request(now ticks.Ticks) ticks.Ticks {
     } else {
         delay = s
     }
-    fmt.Printf("REQUEST: p=%v s=%v delay=%v\n", p, s, delay)
     
     return delay
 }
@@ -264,4 +177,91 @@ func (this * Contract) Update(now ticks.Ticks) bool {
     p := this.peak.Update(now)
     s := this.sustained.Update(now)
     return (p && s)
+}
+
+// Comply computes the number of ticks it would be necessary for the caller to
+// delay for the event stream  to comply to the traffic contract with no limit
+// penalty accumulated.
+func (this * Contract) Comply() ticks.Ticks {
+    var delay ticks.Ticks = 0
+    
+    p := this.peak.Comply()
+    s := this.sustained.Comply()
+    if (p > s) {
+        delay = p
+    } else {
+        delay = s
+    }
+    
+    return delay
+}
+
+/*******************************************************************************
+ * GETTERS
+ ******************************************************************************/
+
+// isEmpty returns true if the throttle is empty, that is, it has no accumulated
+// early ticks.
+func (this * Contract) IsEmpty() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.IsEmpty()
+    s := this.sustained.IsEmpty()
+	return (p && s)
+}
+
+// IsFull returns true if the throttle is full, that is, its accumulated early
+// ticks is greater than or equal to its limit.
+func (this * Contract) IsFull() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.IsFull()
+    s := this.sustained.IsFull()
+	return (p || s)
+}
+
+// IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
+// early ticks is greater than its limit, indicating that the event emission
+// stream is out of compliance with the traffic contract.
+func (this * Contract) IsAlarmed() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.IsAlarmed()
+    s := this.sustained.IsAlarmed()
+	return (p || s)
+}
+
+/*******************************************************************************
+ * SENSORS
+ ******************************************************************************/
+
+// Emptied returns true if the throttle just emptied in the last action.
+func (this * Contract) Emptied() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Emptied()
+    s := this.sustained.Emptied()
+	return (p || s)
+}
+
+// Filled returns true if the throttle just filled in the last action.
+func (this * Contract) Filled() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Filled()
+    s := this.sustained.Filled()
+	return (p || s)
+}
+
+// Alarmed returns true if the throttle just alarmed in the last action.
+func (this * Contract) Alarmed() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Alarmed()
+    s := this.sustained.Alarmed()
+	return (p || s)
+}
+
+// Cleared returns true if the throttle just unalarmed in the last action,
+// indicating that the event emission stream has returned to being compliant
+// with the traffic contract.
+func (this * Contract) Cleared() bool {
+    // Both calls must be executed! Beware refactoring!
+    p := this.peak.Cleared()
+    s := this.sustained.Cleared()
+	return (p || s)
 }

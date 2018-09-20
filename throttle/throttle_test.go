@@ -46,7 +46,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -71,7 +71,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -96,7 +96,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -121,7 +121,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -146,7 +146,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -171,7 +171,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -196,7 +196,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -221,7 +221,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -246,7 +246,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -271,7 +271,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -296,7 +296,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }
@@ -321,7 +321,7 @@ func TestThrottleSanity(t * testing.T) {
  	if (!that.alarmed1) {} else { t.Errorf("FAILED! %v", that.alarmed1) }
  	if (!that.alarmed2) {} else { t.Errorf("FAILED! %v", that.alarmed2) }
  	
- 	if (that.GetDeficit() == that.deficit) {} else { t.Errorf("FAILED! %v!=%v", that.GetDeficit(), that.deficit) }
+ 	if (that.Comply() == that.expected) {} else { t.Errorf("FAILED! %v!=%v", that.Comply(), that.expected) }
  	if (that.IsFull() == that.full1) {} else { t.Errorf("FAILED! %v!=%v", that.IsFull(), that.full1) }
  	if (that.IsEmpty() == that.empty1) {} else { t.Errorf("FAILED! %v!=%v", that.IsEmpty(), that.empty1) }
  	if (that.IsAlarmed() == that.alarmed1) {} else { t.Errorf("FAILED! %v!=%v", that.IsAlarmed(), that.alarmed1) }

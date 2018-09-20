@@ -25,39 +25,39 @@ func TestContractSandbox(t * testing.T) {
     var now ticks.Ticks = 1000000000
     var delay ticks.Ticks = 0
     var admissable bool = false
-    var deficit ticks.Ticks = 0
+    var expected ticks.Ticks = 0
     
+    fmt.Printf("now=%v\n", now)
     that := New(PEAK, JITTER, SUSTAINED, BURST, now)
     fmt.Printf("that=%s\n", that.String())
     
     now += 4
+    fmt.Printf("now=%v\n", now)
     delay = that.Request(now)
-    fmt.Printf("delay=%v\n", delay);
+    fmt.Printf("Request=%v\n", delay);
     fmt.Printf("that=%s\n", that.String())
   
     admissable = that.Commits(BURST)
-    fmt.Printf("admissable=%v\n", admissable)
+    fmt.Printf("Commits=%v\n", admissable)
     fmt.Printf("that=%s\n", that.String())
     
     now += 4
+    fmt.Printf("now=%v\n", now)
     delay = that.Request(now)
-    fmt.Printf("delay=%v\n", delay);
+    fmt.Printf("Request=%v\n", delay);
     fmt.Printf("that=%s\n", that.String())
   
     admissable = that.Commits(BURST)
-    fmt.Printf("admissable=%v\n", admissable)
+    fmt.Printf("Commits=%v\n", admissable)
     fmt.Printf("that=%s\n", that.String())
     
-    deficit = that.GetDeficit()
-    fmt.Printf("deficit=%v\n", deficit);
+    expected = that.Comply()
+    fmt.Printf("Comply=%v\n", expected);
 
-    now += deficit
-    delay = that.Request(now)
-    fmt.Printf("delay=%v\n", delay);
-    fmt.Printf("that=%s\n", that.String())
-  
-    admissable = that.Commits(BURST)
-    fmt.Printf("admissable=%v\n", admissable)
+    now += expected
+    fmt.Printf("now=%v\n", now)
+    admissable = that.Update(now)
+    fmt.Printf("Update=%v\n", admissable);
     fmt.Printf("that=%s\n", that.String())
 }
 

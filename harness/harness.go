@@ -61,7 +61,7 @@ func SimulatedEventStream(t * testing.T, that gcra.Gcra, burst int, iterations i
 
 	}
 	
-	delay = that.GetDeficit()
+	delay = that.Comply()
 	now += delay
 	if now >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", now) }
 	duration += delay
@@ -254,7 +254,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     
     now = ticks.Now()
     that.Update(now)
-    delay = that.GetDeficit()
+    delay = that.Comply()
 
     mutex.Lock()
     fmt.Printf("shaper: delay=%vs.\n", float64(delay) / frequency);
@@ -461,8 +461,8 @@ func ActualEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, supply 
        
     fmt.Println("Checking.")
     
-    fmt.Printf("produced=%v@%v\n", producertotal, producerchecksum);
-    fmt.Printf("consumed=%v@%v\n", consumertotal, consumerchecksum);
+    fmt.Printf("produced=%v:%#04x\n", producertotal, producerchecksum);
+    fmt.Printf("consumed=%v:%#04x\n", consumertotal, consumerchecksum);
     
     fmt.Printf("shape=%v.\n", shape);
     fmt.Printf("police=%v.\n", police);

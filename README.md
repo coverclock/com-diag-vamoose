@@ -79,12 +79,15 @@ anyway) growth of multi-core processors, leads me to believe we
 need programming languages that are compiled to squeeze more
 performance from single cores, that natively support efficient
 multi-threading to leverage large numbers of parallel cores, and
-that developers can productively write and debug.
+that developers can productively write and debug. Google's Go, with
+its compiled performance, its super lightweight "goroutines" threads
+based on the Communicating Sequence Process (CSP) model, and its
+simpler syntax and semantics than C++, seemed like good choice to evaluate.
 
-I still have a lot of affection for C and C++ (and Java and Python,
-in their place); virtually all of my work these days continues to
-be in C. My productivity in C has been greatly enhanced by my using
-my Diminuto C systems programming library.
+(I still have a lot of affection for C and C++ (and Java and Python,
+in their place); virtually all of my paying work these days continues to
+be in C. My productivity in that language has been greatly enhanced
+by my use of my Diminuto C systems programming library.)
 
 My work here in Go has been based my prior work in earlier languages,
 libraries, and repositories, from oldest to newest: C++ in Grandote
