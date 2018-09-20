@@ -141,62 +141,6 @@ func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
 }
 
 /*******************************************************************************
- * GETTERS
- ******************************************************************************/
-
-// GetDeficit returns the number of ticks it would be necessary for the caller
-// to delay for the event stream  to comply to the traffic contract with no
-// limit penalty accumulated.
-func (this * Throttle) GetDeficit() ticks.Ticks {
-    return this.deficit
-}
-
-// isEmpty returns true if the throttle is empty, that is, it has no accumulated
-// deficit ticks.
-func (this * Throttle) IsEmpty() bool {
-	return this.empty1
-}
-
-// IsFull returns true if the throttle is full, that is, its accumulated deficit
-// ticks is greater than or equal to its limit.
-func (this * Throttle) IsFull() bool {
-	return this.full1
-}
-
-// IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
-// deficit ticks is greater than its limit, indicating that the event emission
-// stream is out of compliance with the traffic contract.
-func (this * Throttle) IsAlarmed() bool {
-	return this.alarmed1
-}
-
-/*******************************************************************************
- * SENSORS
- ******************************************************************************/
-
-// Emptied is true if the throttle just emptied in the last action.
-func (this * Throttle) Emptied() bool {
-	return (this.empty1 && (!this.empty2))
-}
-
-// Filled is true if the throttle just filled in the last action.
-func (this * Throttle) Filled() bool {
-	return (this.full1 && (!this.full2))
-}
-
-// Alarmed is true if the throttle just alarmed in the last action.
-func (this * Throttle) Alarmed() bool {
-	return (this.alarmed1 && (!this.alarmed2))
-}
-
-// Cleared is true if the throttle just unalarmed in the last action, indicating
-// that the event emission stream has returned to being compliant with the
-// traffic contract.
-func (this * Throttle) Cleared() bool {
-	return ((!this.alarmed1) && this.alarmed2)
-}
-
-/*******************************************************************************
  * ACTIONS
  ******************************************************************************/
 
@@ -284,3 +228,60 @@ func (this * Throttle) Admit(now ticks.Ticks) bool {
 func (this * Throttle) Update(now ticks.Ticks) bool {
 	return this.Admits(now, 0)
 }
+
+/*******************************************************************************
+ * GETTERS
+ ******************************************************************************/
+
+// GetDeficit returns the number of ticks that would be necessary for the caller
+// to delay for the event stream  to comply to the traffic contract with no
+// limit penalty accumulated.
+func (this * Throttle) GetDeficit() ticks.Ticks {
+    return this.deficit
+}
+
+// isEmpty returns true if the throttle is empty, that is, it has no accumulated
+// deficit ticks.
+func (this * Throttle) IsEmpty() bool {
+	return this.empty1
+}
+
+// IsFull returns true if the throttle is full, that is, its accumulated deficit
+// ticks is greater than or equal to its limit.
+func (this * Throttle) IsFull() bool {
+	return this.full1
+}
+
+// IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
+// deficit ticks is greater than its limit, indicating that the event emission
+// stream is out of compliance with the traffic contract.
+func (this * Throttle) IsAlarmed() bool {
+	return this.alarmed1
+}
+
+/*******************************************************************************
+ * SENSORS
+ ******************************************************************************/
+
+// Emptied is true if the throttle just emptied in the last action.
+func (this * Throttle) Emptied() bool {
+	return (this.empty1 && (!this.empty2))
+}
+
+// Filled is true if the throttle just filled in the last action.
+func (this * Throttle) Filled() bool {
+	return (this.full1 && (!this.full2))
+}
+
+// Alarmed is true if the throttle just alarmed in the last action.
+func (this * Throttle) Alarmed() bool {
+	return (this.alarmed1 && (!this.alarmed2))
+}
+
+// Cleared is true if the throttle just unalarmed in the last action, indicating
+// that the event emission stream has returned to being compliant with the
+// traffic contract.
+func (this * Throttle) Cleared() bool {
+	return ((!this.alarmed1) && this.alarmed2)
+}
+

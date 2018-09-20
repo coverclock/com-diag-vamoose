@@ -31,6 +31,8 @@ This repository contains the results of my attempts to learn the Go
 programming language (a.k.a. golang) by implementing some non-trivial
 and possible useful packages.
 
+## Remarks
+
 My systems programming language of choice has changed over the decades,
 depending on what I was getting paid to do and where I was doing it. In
 the 1970s, it was IBM 360/370 Basic Assembler Language (BAL), and later
@@ -38,37 +40,61 @@ a structured language implemented in BAL macro language (which itself
 was Turing complete), with an occasional foray into PL/1. In the 1980s,
 it was PDP-11 Assembler Language (PAL). In the late 1980s and to the
 mid-1990s it was C. In the mid-1990s to the mid-2000s it was C++, which
-was mostly an artifact of the long history Bell Labs and its spinoffs,
-where I was variously employed at the time, had for using C++ for
-firmware development. In the 2010s, I saw a significant reduction in the
-use of C++ for systems programming, in part due to the evolution of C++
-into a langauge that was hard to learn, difficult to debug, and hence
-not terribly productive to use.
+was mostly an artifact of the long history Bell Labs and its spinoffs
+(where I was variously employed during that period) had for using C++
+for firmware development. In the 2010s, I saw a significant reduction
+in the use of C++ for systems programming, in part due to the evolution
+of C++ into a langauge that was hard to learn, difficult to debug,
+and hence not terribly productive to use.
 
 During most of this time I cast about for an alternative to C and C++
 for the kinds of real-time or close-to-bare-metal work I typically do. I
 briefly considered D, but it didn't seem to catch on with the mainstream.
-I used Java in two product development efforts, one of which was
-actually an embedded project for which we used a Java compiler, but that
-was hardly mainstream either. I've done quite a bit of development in
-Python, but that was strictly in the realm of building tools to support
-my embedded work. I've been known to hack JavaScript in an emergency.
+I used Java in two product development efforts, one of which was actually
+an embedded project for which we used a Java compiler, but that was hardly
+mainstream either. I've done quite a bit of development in Python, but
+that was strictly in the realm of building tools to support my embedded
+work. I've been known to hack JavaScript in an emergency.
 
-When Google began promoting Go, it seemed like a reasonable thing to try
-out, although it took me a while to get to it. I still have a lot of
+When Google began promoting Go, it seemed like a reasonable thing to
+try out, although it took me a while to get to it. I still have a lot of
 affection for C and C++ (and Java and Python, in their place); virtually
-all of my work these days continues to be in C. My productivity in C has
-been greatly enhanced by my using my Diminuto C systems programming library.
+all of my work these days continues to be in C. My productivity in C
+has been greatly enhanced by my using my Diminuto C systems programming
+library.
 
-My work here in Go has been based my prior work in earlier languages,
-libraries, and repositories, from oldest to newest: C++ in Grandote
-(forked from Desperadito, which was forked from Desperado) from 2005, Java
-in Buckaroo from 2006, C in Diminuto from 2008, and finally Go in Vamoose.
-They are not strictly ports from one another, because my own understanding of
-the underlying algorithms, architectures and patterns has evolved over
-the years. All of this was in turn based on work I did on commercial products
-- specifically, an ATM switch, and an ATM interface card, both using OC-3
-optical fiber - during my time at Bell Labs in the mid-to-late 1990s.
+My work here in Go has been based my prior work on traffic scheduling
+more than two decades ago. The Generic Cell Rate Algorithm or GCRA, which
+I originally encountered in the ATM Forum document "Traffic Management
+4.0", has become my go-to (so to speak) example with which to evalute
+the real-time capabilities of a new programming language. Typically
+implemented using either a "virtual scheduler" or a "leaky bucket"
+approach, the GCRA is a tool that can be used to control the rate at
+which events (an abstract term which the developer can interpret as
+bytes, packets, log messages, what have you) are emitted (written, sent,
+logged, etc.).
+
+From oldest to newest, I have developed open-source implementations of
+the GCRA in: C++ for Grandote (forked from Desperadito, which was forked
+from Desperado) from 2005; Java for Buckaroo from 2006; C for Diminuto
+from 2008; and finally Go for Vamoose. They are not strictly ports from
+one another, because my own understanding of the underlying algorithms,
+architectures and patterns has evolved over the years.
+
+All of this was in turn is based on work I did on commercial products,
+specifically, an ATM switch (A500), and an ATM interface card (TN2305),
+during my time at Bell Labs in the latter half of the 1990s. On the
+ATM switch, which managed hundreds of virtual circuits across many OC-3
+optical fiber ports, the GCRA was implemented in hardware and used for
+traffic policing, and my code merely programmed its parameters. In the
+ATM interface card, which had a few dozen virtual circuits on a single
+OC-3 port, the GCRA was used for traffic shaping, and I did it all in
+firmware, writing in C++.
+
+You would think that after having implemented the same basic algorithm,
+described in a public standard, many times, I'd pretty much have it
+down. But every time I revisit it, I learn something new. And by using
+a different language, I encounter new challenges.
 
 ## Repositories
 
