@@ -10,7 +10,56 @@ import (
 	"github.com/coverclock/com-diag-vamoose/ticks"
 	"github.com/coverclock/com-diag-vamoose/gcra"
  	"github.com/coverclock/com-diag-vamoose/harness"
+ 	"fmt"
 )
+
+/*******************************************************************************
+ * MANUAL
+ ******************************************************************************/
+
+func TestContractSandbox(t * testing.T) {
+    const PEAK ticks.Ticks = 4
+    const JITTER ticks.Ticks = 2
+    const SUSTAINED ticks.Ticks = 8
+    const BURST gcra.Events = 16
+    var now ticks.Ticks = 1000000000
+    var delay ticks.Ticks = 0
+    var admissable bool = false
+    var deficit ticks.Ticks = 0
+    
+    that := New(PEAK, JITTER, SUSTAINED, BURST, now)
+    fmt.Printf("that=%s\n", that.String())
+    
+    now += 4
+    delay = that.Request(now)
+    fmt.Printf("delay=%v\n", delay);
+    fmt.Printf("that=%s\n", that.String())
+  
+    admissable = that.Commits(BURST)
+    fmt.Printf("admissable=%v\n", admissable)
+    fmt.Printf("that=%s\n", that.String())
+    
+    now += 4
+    delay = that.Request(now)
+    fmt.Printf("delay=%v\n", delay);
+    fmt.Printf("that=%s\n", that.String())
+  
+    admissable = that.Commits(BURST)
+    fmt.Printf("admissable=%v\n", admissable)
+    fmt.Printf("that=%s\n", that.String())
+    
+    deficit = that.GetDeficit()
+    fmt.Printf("deficit=%v\n", deficit);
+
+    now += deficit
+    delay = that.Request(now)
+    fmt.Printf("delay=%v\n", delay);
+    fmt.Printf("that=%s\n", that.String())
+  
+    admissable = that.Commits(BURST)
+    fmt.Printf("admissable=%v\n", admissable)
+    fmt.Printf("that=%s\n", that.String())
+}
 
 /*******************************************************************************
  * SIMULATED EVENT STREAM

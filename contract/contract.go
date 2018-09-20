@@ -214,6 +214,7 @@ func (this * Contract) Request(now ticks.Ticks) ticks.Ticks {
     } else {
         delay = s
     }
+    fmt.Printf("REQUEST: p=%v s=%v delay=%v\n", p, s, delay)
     
     return delay
 }

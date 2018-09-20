@@ -31,6 +31,8 @@ This repository contains the results of my attempts to learn the Go
 programming language (a.k.a. golang) by implementing some non-trivial
 and possible useful packages.
 
+## Remarks
+
 My systems programming language of choice has changed over the decades,
 depending on what I was getting paid to do and where I was doing it. In
 the 1970s, it was IBM 360/370 Basic Assembler Language (BAL), and later
@@ -38,12 +40,12 @@ a structured language implemented in BAL macro language (which itself
 was Turing complete), with an occasional foray into PL/1. In the 1980s,
 it was PDP-11 Assembler Language (PAL). In the late 1980s and to the
 mid-1990s it was C. In the mid-1990s to the mid-2000s it was C++, which
-was mostly an artifact of the long history Bell Labs and its spinoffs,
-where I was variously employed at the time, had for using C++ for
-firmware development. In the 2010s, I saw a significant reduction in the
-use of C++ for systems programming, in part due to the evolution of C++
-into a langauge that was hard to learn, difficult to debug, and hence
-not terribly productive to use.
+was mostly an artifact of the long history Bell Labs and its spinoffs
+(where I was variously employed during that period) had for using C++
+for firmware development. In the 2010s, I saw a significant reduction
+in the use of C++ for systems programming, in part due to the evolution
+of C++ into a langauge that was hard to learn, difficult to debug,
+and hence not terribly productive to use.
 
 During most of this time I cast about for an alternative to C and C++
 for the kinds of real-time or close-to-bare-metal work I typically do. I
@@ -91,6 +93,28 @@ in Buckaroo from 2006, C in Diminuto from 2008, and finally Go in Vamoose.
 They are not strictly ports from one another, because my own understanding of
 the underlying algorithms, architectures and patterns has evolved over
 the years.
+
+From oldest to newest, I have developed open-source implementations of
+the GCRA in: C++ for Grandote (forked from Desperadito, which was forked
+from Desperado) from 2005; Java for Buckaroo from 2006; C for Diminuto
+from 2008; and finally Go for Vamoose. They are not strictly ports from
+one another, because my own understanding of the underlying algorithms,
+architectures and patterns has evolved over the years.
+
+All of this was in turn is based on work I did on commercial products,
+specifically, an ATM switch (A500), and an ATM interface card (TN2305),
+during my time at Bell Labs in the latter half of the 1990s. On the
+ATM switch, which managed hundreds of virtual circuits across many OC-3
+optical fiber ports, the GCRA was implemented in hardware and used for
+traffic policing, and my code merely programmed its parameters. In the
+ATM interface card, which had a few dozen virtual circuits on a single
+OC-3 port, the GCRA was used for traffic shaping, and I did it all in
+firmware, writing in C++.
+
+You would think that after having implemented the same basic algorithm,
+described in a public standard, many times, I'd pretty much have it
+down. But every time I revisit it, I learn something new. And by using
+a different language, I encounter new challenges.
 
 ## Repositories
 
