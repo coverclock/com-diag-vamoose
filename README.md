@@ -38,8 +38,8 @@ a structured language implemented in BAL macro language (which itself
 was Turing complete), with an occasional foray into PL/1. In the 1980s,
 it was PDP-11 Assembler Language (PAL). In the late 1980s and to the
 mid-1990s it was C. In the mid-1990s to the mid-2000s it was C++, which
-was mostly an artifact of the long history Bell Labs and its spinoffs
-- where I was variously employed at the time - had for using C++ for
+was mostly an artifact of the long history Bell Labs and its spinoffs,
+where I was variously employed at the time, had for using C++ for
 firmware development. In the 2010s, I saw a significant reduction in the
 use of C++ for systems programming, in part due to the evolution of C++
 into a langauge that was hard to learn, difficult to debug, and hence
