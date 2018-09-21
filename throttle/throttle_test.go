@@ -1215,7 +1215,7 @@ func TestThrottleActualSustained(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes
     
     frequency := ticks.Frequency()
-    increment := frequency / ticks.Ticks(BANDWIDTH)
+    increment := (frequency + ticks.Ticks(BANDWIDTH) - 1 ) / ticks.Ticks(BANDWIDTH)
     limit := (ticks.Ticks(BURST) - 1) * increment
     now := ticks.Now()
     
@@ -1235,7 +1235,7 @@ func TestThrottleActualPeak(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes.
        
     frequency := ticks.Frequency()
-    increment := frequency / ticks.Ticks(BANDWIDTH)
+    increment := (frequency + ticks.Ticks(BANDWIDTH) - 1) / ticks.Ticks(BANDWIDTH)
     limit := (ticks.Ticks(BURST) - 1) * increment
     now := ticks.Now()
     
