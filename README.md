@@ -156,19 +156,30 @@ af-tm-0121.000, 1999-03
 
 ## Notes
 
-This is selected output from Throttle unit test. Note that the sustained rates
+I'm still trying to figure out the correct way to calculate the peak rate in
+bytes per second, typically using the instantaneous rate calculated from the
+interdeparture (in the shaper) and interarrival (in the policer) times. I
+remain unhappy.
+
+This is selected output from Throttle unit tests. Note that the sustained rates
 closely match the respective 512B/s and 1024B/s Throttle settings.
 
-    shaper: end total=30720B mean=32.20125786163522B/burst maximum=64B/burst delay=0.06272311737840672s/burst peak=81056.98305909055B/s sustained=510.7720615189501B/s.
-    policer: end admitted=30720B policed=0B total=30720B mean=32.20125786163522B/burst maximum=64B/burst peak=496.8860153418526B/s sustained=510.77116321452644B/s.
+    shaper: end total=30720B mean=32.20125786163522B/burst maximum=64B/burst delay=0.06272279126310272s/burst peak=3.8832519103094074e+06B/s sustained=510.7809393419717B/s.
+    policer: end admitted=30720B policed=0B total=30720B mean=32.20125786163522B/burst maximum=64B/burst peak=30283.891949027326B/s sustained=510.78030067125894B/s.
 
-    shaper: end total=61440B mean=32.82051282051282B/burst maximum=64B/burst delay=0.03194282338888889s/burst peak=126968.00406297614B/s sustained=1019.3231384502383B/s.
-    policer: end admitted=61440B policed=0B total=61440B mean=32.82051282051282B/burst maximum=64B/burst peak=956.1079522366712B/s sustained=1019.3204023893874B/s.
+    shaper: end total=61440B mean=32.82051282051282B/burst maximum=64B/burst delay=0.03194344442735043s/burst peak=4.32870208755149e+06B/s sustained=1019.3363099703025B/s.
+    policer: end admitted=61440B policed=0B total=61440B mean=32.82051282051282B/burst maximum=64B/burst peak=57208.91333031246B/s sustained=1019.335670172402B/s.
 
-This is selected output from Contract unit test. Note that the peak rates,
-measured using the instantaneous interdeparture and interarrival times, of
-1024B/s are jittered all to heck, but the sustained rates of 512B/s are quite
-close.
+This is selected output from Contract unit tests. Not only are the peak rates
+(nominally 1024B/s) incorrect, but they suggest that the interdeparture and
+interarrival times are are jittered all to heck. The sustained rates (nominally
+512B/s) are quite close.
 
-    shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06351481046411483s/burst peak=109098.84355225835B/s sustained=511.99915054220935B/s.
-    policer: end admitted=61440B policed=0B total=61440B mean=32.66347687400319B/burst maximum=64B/burst peak=545.3633210444798B/s sustained=511.9987266122337B/s.
+    shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06353551014141415s/burst peak=4.218533886583679e+06B/s sustained=511.9992536160214B/s.
+    policer: end admitted=61440B policed=0B total=61440B mean=32.66347687400319B/burst maximum=64B/burst peak=32299.388239167594B/s sustained=511.9988639939872B/s.
+
+Since the Throttle unit tests use the same parameters individually, and the
+same core GCRA code, as the Contract unit tests use in composition, I'm
+a little baffled as to what these numbers are really telling me. This would
+suggested to me a bug in the Contract implementation, but I'm not seeing it
+yet.
