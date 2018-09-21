@@ -156,9 +156,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var alarmed bool = false
     var count int = 0
     var largest int = 0
-    var rate float64 = 0.0
-    var fastest float64 = 0.0
-    var briefest ticks.Ticks = 0
 
     burst := cap(input) - 1
         
@@ -207,19 +204,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         if delay < 0 {
             t.Fatalf("shaper: delay=%v!\n", delay)
         }
-        if delay == 0 {
-            // Do nothing
-        } else if briefest == 0 {
-            briefest = delay
-        } else if delay < briefest {
-            briefest = delay
-        } else {
-            // Do nothing.
-        }
-        if delay > 0 {
-            rate = float64(size) / float64(delay)
-            if (rate > fastest) { fastest = rate }
-        }
+        
         duration = delay
         accumulated += delay
         
@@ -244,9 +229,8 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Logf("shaper: contract=%v!\n", that)
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
-
         
-        fmt.Printf("shaper: delay=%vs written=%vB total=%vB rate=%vB/s.\n", float64(duration) / frequency, written, total, float64(rate) * frequency);
+        fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
 
         count += 1
 
@@ -275,13 +259,11 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     }
 
     average := (float64(accumulated) / float64(count)) / frequency
-    minimum := float64(briefest) / frequency
     sustained := float64(total) * frequency / float64(now - then)
     mean := float64(total) / float64(count)
-    peak := frequency * fastest
 
     mutex.Lock()
-    fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst delay=%vs/burst minimum=%vs/burst sustained=%vB/s peak=%vB/s.\n", total, mean, largest, average, minimum, sustained, peak);
+    fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst delay=%vs/burst sustained=%vB/s.\n", total, mean, largest, average, sustained);
     mutex.Unlock()
     
     done <- true
@@ -292,6 +274,9 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     var admitted uint64 = 0
     var policed uint64 = 0
     var now ticks.Ticks = 0
+    var then ticks.Ticks = 0
+    var interarrival ticks.Ticks = 0
+    var shortest ticks.Ticks = 0
     var admissable bool = false
     var eof bool = false
     var count int = 0
@@ -304,6 +289,8 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     mutex.Unlock()
     
     buffer := make([] byte, burst)
+    
+    before := ticks.Now()
     
     for !eof {
     
@@ -319,12 +306,14 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
             read -= 1
         }
         
+        then = now
         now = ticks.Now()
         
         if read > 0 {
-            count += 1
+
             total += uint64(read)
             if (read > largest) { largest = read }
+
             admissable = that.Admits(now, gcra.Events(read))
             if admissable {
                 admitted += uint64(read)
@@ -341,6 +330,21 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
                 fmt.Printf("policer: contract=%v?\n", that)  
                 mutex.Unlock()
             }
+            
+            if count == 0 {
+                // Do nothing.
+            } else if now <= then {
+                // Do nothing.
+            } else if interarrival == 0 {
+                interarrival = now - then
+                shortest = interarrival
+            } else {
+                interarrival = now - then
+                if interarrival < shortest { shortest = interarrival }
+            }
+            
+            count += 1
+
         } else if eof {
             that.Update(now)
         } else {
@@ -351,6 +355,8 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     
     }
     
+    after := ticks.Now()
+    
     close(output)
     
     if policed > 0 {
@@ -359,9 +365,12 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     }
     
     mean := float64(total) / float64(count)
+    frequency := float64(ticks.Frequency())
+    peak := frequency / float64(shortest)
+    sustained := float64(total) * frequency / float64(after - before)
     
     mutex.Lock()
-    fmt.Printf("policer: end admitted=%vB policed=%vB total=%vB mean=%vB/burst maximum=%vB/burst.\n", admitted, policed, total, mean, largest)
+    fmt.Printf("policer: end admitted=%vB policed=%vB total=%vB mean=%vB/burst maximum=%vB/burst peak=%vB/s sustained=%vB/s.\n", admitted, policed, total, mean, largest, peak, sustained)
     mutex.Unlock()
     
     done <- true

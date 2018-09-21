@@ -84,40 +84,44 @@ its compiled performance, its super lightweight "goroutines" threads
 based on the Communicating Sequence Process (CSP) model, and its
 simpler syntax and semantics than C++, seemed like good choice to evaluate.
 
-(I still have a lot of affection for C and C++ (and Java and Python,
-in their place); virtually all of my paying work these days continues to
-be in C. My productivity in that language has been greatly enhanced
-by my use of my Diminuto C systems programming library.)
-
-My work here in Go has been based my prior work in earlier languages,
-libraries, and repositories, from oldest to newest: C++ in Grandote
-(forked from Desperadito, which was forked from Desperado) from 2005, Java
-in Buckaroo from 2006, C in Diminuto from 2008, and finally Go in Vamoose.
-They are not strictly ports from one another, because my own understanding of
-the underlying algorithms, architectures and patterns has evolved over
-the years.
+My work here in Go has been based my prior work on traffic scheduling
+more than two decades ago. The Generic Cell Rate Algorithm or GCRA, which
+I originally encountered in the ATM Forum document "Traffic Management
+4.0", has become my go-to (so to speak) example with which to evalute
+the real-time capabilities of a new programming language. Typically
+implemented using either a "virtual scheduler" or a "leaky bucket"
+approach, the GCRA is a tool that can be used to control the rate at
+which events (an abstract term which the developer can interpret as
+bytes, packets, log messages, what have you) are emitted (written, sent,
+logged, etc.).
 
 From oldest to newest, I have developed open-source implementations of
-the GCRA in: C++ for Grandote (forked from Desperadito, which was forked
-from Desperado) from 2005; Java for Buckaroo from 2006; C for Diminuto
-from 2008; and finally Go for Vamoose. They are not strictly ports from
+the GCRA in: C++ for Desperado (forked into Desperadito, which was later
+forked into Grandote) in 2005; Java for Buckaroo in 2006; C for Diminuto
+in 2008; and finally Go for Vamoose. They are not strictly ports from
 one another, because my own understanding of the underlying algorithms,
 architectures and patterns has evolved over the years.
 
 All of this was in turn is based on work I did on commercial products,
 specifically, an ATM switch (A500), and an ATM interface card (TN2305),
 during my time at Bell Labs in the latter half of the 1990s. On the
-ATM switch, which managed hundreds of virtual circuits across many OC-3
-optical fiber ports, the GCRA was implemented in hardware and used for
-traffic policing, and my code merely programmed its parameters. In the
-ATM interface card, which had a few dozen virtual circuits on a single
-OC-3 port, the GCRA was used for traffic shaping, and I did it all in
+ATM switch, which applied the GCRA to hundreds of virtual circuits ingressing
+on many OC-3 optical fiber ports, the GCRA was implemented in hardware and used
+for traffic policing; my code merely computed its parameters. In the
+ATM interface card, which had a few dozen virtual circuits egressing on a single
+OC-3 port, the GCRA was used for traffic shaping, and I implemented it all in
 firmware, writing in C++.
 
 You would think that after having implemented the same basic algorithm,
 described in a public standard, many times, I'd pretty much have it
 down. But every time I revisit it, I learn something new. And by using
-a different language, I encounter new challenges.
+a different language, I encounter new challenges and have new insights.
+
+I still have a lot of affection for C and C++ (and Java and Python,
+in their place); virtually all of my paying work these days continues to
+be in C. My productivity in that language has been greatly enhanced
+by my use of my Diminuto C systems programming library, all or parts of which
+ships in a handful of commercial products from several different clients.
 
 ## Repositories
 
@@ -131,17 +135,20 @@ a different language, I encounter new challenges.
 
 ## Articles
 
+C. Overclock, "Traffic Management", 2006-12,
 <http://coverclock.blogspot.com/2006/12/traffic-management.html>
 
+C. Overclock, "Rate Control and Throttles", 2007-01,
 <http://coverclock.blogspot.com/2007/01/rate-control-and-throttles.html>
 
+C. Overclock, "Traffic Contracts", 2007-01,
 <http://coverclock.blogspot.com/2007/01/traffic-contracts.html>
 
 ## References
 
 <https://golang.org/doc/>
 
-J. Sloan, "ATM Traffic Management", 2005-08,
+J. Sloan, "ATM Traffic Management", Digital Aggregates Corporation, 2005-08,
 <http://www.diag.com/reports/ATMTrafficManagement.html>
 
 N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,

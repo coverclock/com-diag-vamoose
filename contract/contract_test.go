@@ -67,7 +67,7 @@ func TestContractSandbox(t * testing.T) {
 
 func TestContractSimulated(t * testing.T) {
     const PEAK ticks.Ticks = 1024 // Bytes per second.
-    const JITTER ticks.Ticks = 64 // Ticks
+    const JITTER ticks.Ticks = 0 // Ticks
     const SUSTAINED ticks.Ticks = 512 // Bytes per second.
 	const BURST int = 32768
     const OPERATIONS int = 1000000
@@ -100,7 +100,7 @@ func TestContractActual(t * testing.T) {
            
     frequency := ticks.Frequency()
     peak := (frequency + ticks.Ticks(PEAK) - 1) / ticks.Ticks(PEAK)
-    jitter := peak / 100
+    jitter := peak * (ticks.Ticks(BURST) - 1)
     sustained := (frequency + ticks.Ticks(SUSTAINED) - 1) / ticks.Ticks(SUSTAINED)
     burst := gcra.Events(BURST)
     now := ticks.Now()
