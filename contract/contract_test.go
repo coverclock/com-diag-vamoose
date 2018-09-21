@@ -28,7 +28,8 @@ func TestContractSandbox(t * testing.T) {
     var expected ticks.Ticks = 0
     
     fmt.Printf("now=%v\n", now)
-    that := New(PEAK, JITTER, SUSTAINED, BURST, now)
+    bt := BurstTolerance(PEAK, JITTER, SUSTAINED, BURST)
+    that := New(PEAK, JITTER, SUSTAINED, bt, now)
     fmt.Printf("that=%s\n", that.String())
     
     now += 4
@@ -76,9 +77,10 @@ func TestContractSimulated(t * testing.T) {
     peak := (frequency + PEAK - 1) / PEAK
     sustained := (frequency + SUSTAINED - 1) / SUSTAINED
     burst := gcra.Events(BURST)
+    bt := BurstTolerance(peak, JITTER, sustained, burst)
     now := ticks.Now()
     
-	that := New(peak, JITTER, sustained, burst, now)
+	that := New(peak, JITTER, sustained, bt, now)
 	t.Log(that.String())
 	    	
 	harness.SimulatedEventStream(t, that, BURST, OPERATIONS)
@@ -105,8 +107,8 @@ func TestContractActual(t * testing.T) {
     burst := gcra.Events(BURST)
     now := ticks.Now()
     
-    shape := New(peak, 0, sustained, burst, now)
-    police := New(peak, jitter, sustained, burst, now)
+    shape := New(peak, 0, sustained, BurstTolerance(peak, 0, sustained, burst), now)
+    police := New(peak, jitter, sustained, BurstTolerance(peak, jitter, sustained, burst), now)
     
     harness.ActualEventStream(t, shape, police, supply, demand, TOTAL)
 

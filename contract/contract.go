@@ -50,6 +50,25 @@ func (this * Contract) String() string {
         this.peak.String(), this.sustained.String());
 }
 
+// BurstTolerance computes the burst tolerance (sustained limit) from the peak
+// increment (minimum interarrival time), jittertolerance (peak limit),
+// sustained increment (mean interarrival time), and maximum burst size.
+func BurstTolerance(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, burstsize gcra.Events) ticks.Ticks {
+    var limit ticks.Ticks
+    
+    limit = jittertolerance
+
+    if (burstsize <= 1) {
+        // Do nothing.
+    } else if (peak >= sustained) {
+        // Do nothing.
+    } else {
+        limit += ticks.Ticks(burstsize - 1) * (sustained - peak)
+    }
+    
+    return limit
+}
+
 /*******************************************************************************
  * SETTERS
  ******************************************************************************/
@@ -67,20 +86,11 @@ func (this * Contract) Reset(now ticks.Ticks) {
  ******************************************************************************/
 
 // Init initialize a throttle, setting its traffic contract parameters: peak is
-// the peak increment, jitter is the peak limit, sustained is the sustained
-// increment, and burst is the maximum burst size from which is computed the
-// sustained limit.
-func (this * Contract) Init(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) {
-    this.peak.Init(peak, jitter, now)
-    limit := jitter
-    if (burst <= 1) {
-        // Do nothing.
-    } else if (peak >= sustained) {
-        // Do nothing.
-    } else {
-        limit += ticks.Ticks(burst - 1) * (sustained - peak)
-    }
-    this.sustained.Init(sustained, limit, now)
+// the peak increment, jittertolerance is the peak limit, sustained is the
+// sustained increment, and bursttolerance is the sustained limit.
+func (this * Contract) Init(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) {
+    this.peak.Init(peak, jittertolerance, now)
+    this.sustained.Init(sustained, bursttolerance, now)
 	this.Reset(now)
 }
 
@@ -100,14 +110,13 @@ func (this * Contract) Fini() {
  ******************************************************************************/
 
 // New allocates initialize a throttle, setting its traffic contract parameters:
-// peak is the peak increment, jitter is the peak limit, sustained is the
-// sustained increment, and burst is the maximum burst size from which is
-// computed the sustained limit.
-func New(peak ticks.Ticks, jitter ticks.Ticks, sustained ticks.Ticks, burst gcra.Events, now ticks.Ticks) * Contract {
-	throttle := new(Contract)
-	defer throttle.Fini()
-	throttle.Init(peak, jitter, sustained, burst, now)
-	return throttle
+// peak is the peak increment, jittertolerance is the peak limit, sustained is
+// the sustained increment, and bursttolerance is the sustained limit.
+func New(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) * Contract {
+	contract := new(Contract)
+	defer contract.Fini()
+	contract.Init(peak, jittertolerance, sustained, bursttolerance, now)
+	return contract
 }
 
 /*******************************************************************************

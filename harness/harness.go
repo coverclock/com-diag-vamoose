@@ -148,8 +148,10 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var datum byte = 0
     var okay bool = true
     var size int = 0
-    var then ticks.Ticks = 0
     var now ticks.Ticks = 0
+    var then ticks.Ticks = 0
+    var interarrival ticks.Ticks = 0
+    var shortest ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
     var accumulated ticks.Ticks = 0
@@ -167,7 +169,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     
     frequency := float64(ticks.Frequency())
     
-    then = ticks.Now()
+    before := ticks.Now()
     
     for {
 
@@ -230,6 +232,21 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
         
+        then = now
+        now = ticks.Now()
+            
+        if count == 0 {
+            // Do nothing.
+        } else if now <= then {
+            // Do nothing.
+        } else if interarrival == 0 {
+            interarrival = now - then
+            shortest = interarrival
+        } else {
+            interarrival = now - then
+            if interarrival < shortest { shortest = interarrival }
+        }
+        
         fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
 
         count += 1
@@ -247,7 +264,9 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     ticks.Sleep(delay)
     now = ticks.Now()
     that.Update(now)
-   
+    
+    after := now
+    
     buffer[0] = 0
     size = 1
     written, failure := output.WriteTo(buffer[0:size], address)
@@ -259,11 +278,12 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     }
 
     average := (float64(accumulated) / float64(count)) / frequency
-    sustained := float64(total) * frequency / float64(now - then)
     mean := float64(total) / float64(count)
+    peak := /* mean * */ frequency / float64(shortest)
+    sustained := float64(total) * frequency / float64(after - before)
 
     mutex.Lock()
-    fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst delay=%vs/burst sustained=%vB/s.\n", total, mean, largest, average, sustained);
+    fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst delay=%vs/burst peak=%vB/s sustained=%vB/s.\n", total, mean, largest, average, peak, sustained);
     mutex.Unlock()
     
     done <- true
@@ -366,7 +386,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     
     mean := float64(total) / float64(count)
     frequency := float64(ticks.Frequency())
-    peak := frequency / float64(shortest)
+    peak := /* mean * */ frequency / float64(shortest)
     sustained := float64(total) * frequency / float64(after - before)
     
     mutex.Lock()
