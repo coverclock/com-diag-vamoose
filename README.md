@@ -183,3 +183,15 @@ same core GCRA code, as the Contract unit tests use in composition, I'm
 a little baffled as to what these numbers are really telling me. This would
 suggested to me a bug in the Contract implementation, but I'm not seeing it
 yet.
+
+Using the delay returned by Comply instead of Request (which yields a far more
+conservative scheduling) in Shaper does not appreciably change the results.
+
+    shaper: end total=30720B mean=32.20125786163522B/burst maximum=64B/burst delay=0.06282142623165618s/burst peak=4.625614339404453e+06B/s sustained=510.0415977823625B/s.
+    policer: end admitted=30720B policed=0B total=30720B mean=32.20125786163522B/burst maximum=64B/burst peak=29028.473186586598B/s sustained=510.0419067524961B/s.
+
+    shaper: end total=61440B mean=32.82051282051282B/burst maximum=64B/burst delay=0.032040310618589744s/burst peak=4.2637862421830585e+06B/s sustained=1016.389772649993B/s.
+    policer: end admitted=61440B policed=0B total=61440B mean=32.82051282051282B/burst maximum=64B/burst peak=54745.80999032824B/s sustained=1016.3890552167045B/s.
+
+    shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06379273823763955s/burst peak=3.9539164223873476e+06B/s sustained=510.0260630059605B/s.
+    policer: end admitted=61440B policed=0B total=61440B mean=32.66347687400319B/burst maximum=64B/burst peak=28037.4127618163B/s sustained=510.02599976099884B/s.
