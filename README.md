@@ -153,3 +153,22 @@ J. Sloan, "ATM Traffic Management", Digital Aggregates Corporation, 2005-08,
 
 N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,
 af-tm-0121.000, 1999-03
+
+## Notes
+
+This is selected output from Throttle unit test. Note that the sustained rates
+closely match the respective 512B/s and 1024B/s Throttle settings.
+
+    shaper: end total=30720B mean=32.20125786163522B/burst maximum=64B/burst delay=0.06272311737840672s/burst peak=81056.98305909055B/s sustained=510.7720615189501B/s.
+    policer: end admitted=30720B policed=0B total=30720B mean=32.20125786163522B/burst maximum=64B/burst peak=496.8860153418526B/s sustained=510.77116321452644B/s.
+
+    shaper: end total=61440B mean=32.82051282051282B/burst maximum=64B/burst delay=0.03194282338888889s/burst peak=126968.00406297614B/s sustained=1019.3231384502383B/s.
+    policer: end admitted=61440B policed=0B total=61440B mean=32.82051282051282B/burst maximum=64B/burst peak=956.1079522366712B/s sustained=1019.3204023893874B/s.
+
+This is selected output from Contract unit test. Note that the peak rates,
+measured using the instantaneous interdeparture and interarrival times, of
+1024B/s are jittered all to heck, but the sustained rates of 512B/s are quite
+close.
+
+    shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06351481046411483s/burst peak=109098.84355225835B/s sustained=511.99915054220935B/s.
+    policer: end admitted=61440B policed=0B total=61440B mean=32.66347687400319B/burst maximum=64B/burst peak=545.3633210444798B/s sustained=511.9987266122337B/s.
