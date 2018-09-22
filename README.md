@@ -116,6 +116,7 @@ You would think that after having implemented the same basic algorithm,
 described in a public standard, many times, I'd pretty much have it
 down. But every time I revisit it, I learn something new. And by using
 a different language, I encounter new challenges and have new insights.
+This kind of deliberate practice has served me well throughout my career.
 
 I still have a lot of affection for C and C++ (and Java and Python,
 in their place); virtually all of my paying work these days continues to
@@ -195,3 +196,4 @@ conservative scheduling) in Shaper does not appreciably change the results.
 
     shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06379273823763955s/burst peak=3.9539164223873476e+06B/s sustained=510.0260630059605B/s.
     policer: end admitted=61440B policed=0B total=61440B mean=32.66347687400319B/burst maximum=64B/burst peak=28037.4127618163B/s sustained=510.02599976099884B/s.
+
