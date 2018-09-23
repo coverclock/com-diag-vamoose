@@ -37,6 +37,10 @@ import (
 	"github.com/coverclock/com-diag-vamoose/ticks"
 )
 
+/*******************************************************************************
+ * TYPES
+ ******************************************************************************/
+
 // Events is the type used to indicate how many events have been emitted since
 // the last update of the Gcra. An event can be the emission of a single
 // packet, or a single byte, or a single bit, etc. It is up to the application
@@ -147,3 +151,27 @@ type Gcra interface {
     Cleared() bool
 
 }
+
+/*******************************************************************************
+ * HELPERS
+ ******************************************************************************/
+
+// BurstTolerance computes the burst tolerance (sustained limit) from the peak
+// increment (minimum interarrival time), jittertolerance (peak limit),
+// sustained increment (mean interarrival time), and maximum burst size.
+func BurstTolerance(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, burstsize Events) ticks.Ticks {
+    var limit ticks.Ticks
+    
+    limit = jittertolerance
+
+    if (burstsize <= 1) {
+        // Do nothing.
+    } else if (peak >= sustained) {
+        // Do nothing.
+    } else {
+        limit += ticks.Ticks(burstsize - 1) * (sustained - peak)
+    }
+    
+    return limit
+}
+

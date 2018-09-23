@@ -50,25 +50,6 @@ func (this * Contract) String() string {
         this.peak.String(), this.sustained.String());
 }
 
-// BurstTolerance computes the burst tolerance (sustained limit) from the peak
-// increment (minimum interarrival time), jittertolerance (peak limit),
-// sustained increment (mean interarrival time), and maximum burst size.
-func BurstTolerance(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, burstsize gcra.Events) ticks.Ticks {
-    var limit ticks.Ticks
-    
-    limit = jittertolerance
-
-    if (burstsize <= 1) {
-        // Do nothing.
-    } else if (peak >= sustained) {
-        // Do nothing.
-    } else {
-        limit += ticks.Ticks(burstsize - 1) * (sustained - peak)
-    }
-    
-    return limit
-}
-
 /*******************************************************************************
  * SETTERS
  ******************************************************************************/

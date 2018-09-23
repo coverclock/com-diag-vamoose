@@ -28,7 +28,7 @@ func TestContractSandbox(t * testing.T) {
     var expected ticks.Ticks = 0
     
     fmt.Printf("now=%v\n", now)
-    bt := BurstTolerance(PEAK, JITTER, SUSTAINED, BURST)
+    bt := gcra.BurstTolerance(PEAK, JITTER, SUSTAINED, BURST)
     that := New(PEAK, JITTER, SUSTAINED, bt, now)
     fmt.Printf("that=%s\n", that.String())
     
@@ -77,7 +77,7 @@ func TestContractSimulated(t * testing.T) {
     peak := (frequency + PEAK - 1) / PEAK
     sustained := (frequency + SUSTAINED - 1) / SUSTAINED
     burst := gcra.Events(BURST)
-    bt := BurstTolerance(peak, JITTER, sustained, burst)
+    bt := gcra.BurstTolerance(peak, JITTER, sustained, burst)
     now := ticks.Now()
     
 	that := New(peak, JITTER, sustained, bt, now)
@@ -101,14 +101,15 @@ func TestContractActual(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes.
            
     frequency := ticks.Frequency()
-    peak := (frequency + ticks.Ticks(PEAK) - 1) / ticks.Ticks(PEAK)
-    jitter := peak * (ticks.Ticks(BURST) - 1)
-    sustained := (frequency + ticks.Ticks(SUSTAINED) - 1) / ticks.Ticks(SUSTAINED)
     burst := gcra.Events(BURST)
+    peak := (frequency + ticks.Ticks(PEAK) - 1) / ticks.Ticks(PEAK)
+    jt := gcra.BurstTolerance(0, 0, peak, burst)
+    sustained := (frequency + ticks.Ticks(SUSTAINED) - 1) / ticks.Ticks(SUSTAINED)
+    bt := gcra.BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
     
-    shape := New(peak, 0, sustained, BurstTolerance(peak, 0, sustained, burst), now)
-    police := New(peak, jitter, sustained, BurstTolerance(peak, jitter, sustained, burst), now)
+    shape := New(peak, jt, sustained, bt, now)
+    police := New(peak, jt, sustained, bt, now)
     
     harness.ActualEventStream(t, shape, police, supply, demand, TOTAL)
 

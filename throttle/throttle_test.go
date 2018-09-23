@@ -1216,7 +1216,7 @@ func TestThrottleActualSustained(t * testing.T) {
     
     frequency := ticks.Frequency()
     increment := (frequency + ticks.Ticks(BANDWIDTH) - 1 ) / ticks.Ticks(BANDWIDTH)
-    limit := (ticks.Ticks(BURST) - 1) * increment
+    limit := gcra.BurstTolerance(0, 0, increment, gcra.Events(BURST))
     now := ticks.Now()
     
     shape := New(increment, 0, now)
@@ -1236,7 +1236,7 @@ func TestThrottleActualPeak(t * testing.T) {
        
     frequency := ticks.Frequency()
     increment := (frequency + ticks.Ticks(BANDWIDTH) - 1) / ticks.Ticks(BANDWIDTH)
-    limit := (ticks.Ticks(BURST) - 1) * increment
+    limit := gcra.BurstTolerance(0, 0, increment, gcra.Events(BURST))
     now := ticks.Now()
     
     shape := New(increment, 0, now)
