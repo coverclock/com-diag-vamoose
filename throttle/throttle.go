@@ -1,7 +1,5 @@
 /* vi: set ts=4 expandtab shiftwidth=4: */
 
-package throttle
-
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
@@ -26,6 +24,8 @@ package throttle
 // and "x1" was the inter-arrival deficit accumulated so far. A throttle can
 // be used to smooth out low frequency events over a long duration, or to
 // implement a leaky bucket algorithm.
+//
+package throttle
 
 import (
 	"fmt"

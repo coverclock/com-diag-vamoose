@@ -1,4 +1,4 @@
-package harness
+/* vi: set ts=4 expandtab shiftwidth=4: */
 
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
@@ -7,7 +7,9 @@ package harness
 //
 // ABSTRACT
 //
-// Provides test harnesses for testing GCRA implementations. 
+// Provides test harnesses for testing GCRA implementations.
+//
+package harness
 
 import (
     "testing"
@@ -148,6 +150,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var datum byte = 0
     var okay bool = true
     var size int = 0
+    var prior int = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
     var accumulated ticks.Ticks = 0
@@ -155,7 +158,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var count int = 0
     var largest int = 0
     var now ticks.Ticks = 0
-    var then ticks.Ticks = 0
     var rate float64 = 0.0
     var peak float64 = 0.0
 
@@ -172,6 +174,8 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     before := ticks.Now()
     
     for {
+        
+        prior = size
 
         datum, okay = <- input
         if !okay {
@@ -231,16 +235,13 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Logf("shaper: contract=%v!\n", that)
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
-        
-        then = now
-        now = ticks.Now()
-            
+                    
         if count == 0 {
             // Do nothing.
-        } else if now <= then {
+        } else if duration <= 0 {
             // Do nothing.
         } else {
-            rate = float64(size) * frequency / float64(now - then)
+            rate = float64(prior) * frequency / float64(duration)
             if rate > peak { peak = rate }
         }
         
@@ -286,11 +287,13 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
 }
 
 func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- byte, done chan<- bool) {
+    var eof bool = false
+    var read int = 0
+    var failure error
     var total uint64 = 0
     var admitted uint64 = 0
     var policed uint64 = 0
     var admissable bool = false
-    var eof bool = false
     var count int = 0
     var largest int = 0
     var now ticks.Ticks = 0
@@ -312,7 +315,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     
     for !eof {
     
-        read, _, failure := input.ReadFrom(buffer)
+        read, _, failure = input.ReadFrom(buffer)
         if failure != nil {
             t.Fatalf("policer: failure=%v!\n", failure);
         }
@@ -335,9 +338,6 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
             admissable = that.Admits(now, gcra.Events(read))
             if admissable {
                 admitted += uint64(read)
-                for index := 0; index < read; index += 1 {
-                    output <- buffer[index]
-                }
                 mutex.Lock()
                 fmt.Printf("policer: read=%vB admitted=%vB total=%vB.\n", read, admitted, total)
                 mutex.Unlock()
@@ -345,10 +345,13 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
                 policed += uint64(read)
                 mutex.Lock()
                 fmt.Printf("policer: read=%vB policed=%vB total=%vB?\n", read, policed, total)  
-                fmt.Printf("policer: contract=%v?\n", that)  
                 mutex.Unlock()
             }
             
+             for index := 0; index < read; index += 1 {
+                output <- buffer[index]
+            }
+           
             if count == 0 {
                 // Do nothing.
             } else if now <= then {
@@ -376,7 +379,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     
     if policed > 0 {
         t.Logf("policer: contract=%v!\n", that)
-        t.Fatalf("policer: policed=%vB!\n", policed)
+        t.Errorf("policer: policed=%vB!\n", policed)
     }
     
     mean := float64(total) / float64(count)

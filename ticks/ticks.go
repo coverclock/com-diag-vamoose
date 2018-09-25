@@ -1,7 +1,5 @@
 /* vi: set ts=4 expandtab shiftwidth=4: */
 
-package ticks
-
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
@@ -12,6 +10,8 @@ package ticks
 // Basic time-related functions for use in Vamoose. We use the go Time types
 // and functions but put a thin abstraction layer around them so it will be
 // easily changed in the future if necessary.
+//
+package ticks
 
 import (
 	"time"

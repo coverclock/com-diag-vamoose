@@ -1,7 +1,5 @@
 /* vi: set ts=4 expandtab shiftwidth=4: */
 
-package fletcher
-
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
@@ -22,6 +20,8 @@ package fletcher
 // J. Fletcher, "An Arithmetic Checksum for Serial Transmissions",
 // IEEE Transactions on Communication, COM-30, No. 1, pp. 247-252,
 // January 1982
+//
+package fletcher
 
 func Checksum16(buffer [] byte, ap * uint8, bp * uint8) uint16 {
     var a uint16

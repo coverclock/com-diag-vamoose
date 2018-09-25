@@ -1,7 +1,5 @@
 /* vi: set ts=4 expandtab shiftwidth=4: */
 
-package contract
-
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
@@ -18,7 +16,8 @@ package contract
 // the peak limit that is the jitter tolerance. The sustained throttle contains
 // the sustained increment, and the sustained limit computed from maximum burst
 // size and the jitter tolerance.
-
+//
+package contract
 
 import (
 	"fmt"

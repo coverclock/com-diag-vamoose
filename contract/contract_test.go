@@ -1,9 +1,10 @@
-package contract
+/* vi: set ts=4 expandtab shiftwidth=4: */
 
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
 // https://github.com/coverclock/com-diag-vamoose
+package contract
 
 import (
     "testing"
@@ -68,19 +69,19 @@ func TestContractSandbox(t * testing.T) {
 
 func TestContractSimulated(t * testing.T) {
     const PEAK ticks.Ticks = 1024 // Bytes per second.
-    const JITTER ticks.Ticks = 0 // Ticks
     const SUSTAINED ticks.Ticks = 512 // Bytes per second.
 	const BURST int = 32768
     const OPERATIONS int = 1000000
 
     frequency := ticks.Frequency()
-    peak := (frequency + PEAK - 1) / PEAK
-    sustained := (frequency + SUSTAINED - 1) / SUSTAINED
+    peak := gcra.Increment(gcra.Events(PEAK), 1, frequency)
     burst := gcra.Events(BURST)
-    bt := gcra.BurstTolerance(peak, JITTER, sustained, burst)
+    jt := gcra.JitterTolerance(peak, burst)
+    sustained := gcra.Increment(gcra.Events(SUSTAINED), 1, frequency)
+    bt := gcra.BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
     
-	that := New(peak, JITTER, sustained, bt, now)
+	that := New(peak, jt, sustained, bt, now)
 	t.Log(that.String())
 	    	
 	harness.SimulatedEventStream(t, that, BURST, OPERATIONS)
@@ -101,10 +102,10 @@ func TestContractActual(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes.
            
     frequency := ticks.Frequency()
+    peak := gcra.Increment(gcra.Events(PEAK), 1, frequency)
     burst := gcra.Events(BURST)
-    peak := (frequency + ticks.Ticks(PEAK) - 1) / ticks.Ticks(PEAK)
-    jt := gcra.BurstTolerance(0, 0, peak, burst)
-    sustained := (frequency + ticks.Ticks(SUSTAINED) - 1) / ticks.Ticks(SUSTAINED)
+    jt := gcra.JitterTolerance(peak, burst)
+    sustained := gcra.Increment(gcra.Events(SUSTAINED), 1, frequency)
     bt := gcra.BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
     

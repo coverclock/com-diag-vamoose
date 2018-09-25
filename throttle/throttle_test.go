@@ -1,9 +1,10 @@
-package throttle
+/* vi: set ts=4 expandtab shiftwidth=4: */
 
 // Copyright 2018 Digital Aggregates Corporation, Colorado, USA
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
 // https://github.com/coverclock/com-diag-vamoose
+package throttle
 
 import (
     "testing"
@@ -1215,11 +1216,13 @@ func TestThrottleActualSustained(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes
     
     frequency := ticks.Frequency()
-    increment := (frequency + ticks.Ticks(BANDWIDTH) - 1 ) / ticks.Ticks(BANDWIDTH)
-    limit := gcra.BurstTolerance(0, 0, increment, gcra.Events(BURST))
+    rate := gcra.Events(BANDWIDTH)
+    increment := gcra.Increment(rate, 1, frequency)
+    burst := gcra.Events(BURST)
+    limit := gcra.JitterTolerance(increment, burst)
     now := ticks.Now()
     
-    shape := New(increment, 0, now)
+    shape := New(increment, limit, now)
     police := New(increment, limit, now)
     
     harness.ActualEventStream(t, shape, police, supply, demand, TOTAL)
@@ -1235,11 +1238,13 @@ func TestThrottleActualPeak(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes.
        
     frequency := ticks.Frequency()
-    increment := (frequency + ticks.Ticks(BANDWIDTH) - 1) / ticks.Ticks(BANDWIDTH)
-    limit := gcra.BurstTolerance(0, 0, increment, gcra.Events(BURST))
+    rate := gcra.Events(BANDWIDTH)
+    increment := gcra.Increment(rate, 1, frequency)
+    burst := gcra.Events(BURST)
+    limit := gcra.JitterTolerance(increment, burst)
     now := ticks.Now()
     
-    shape := New(increment, 0, now)
+    shape := New(increment, limit, now)
     police := New(increment, limit, now)
     
     harness.ActualEventStream(t, shape, police, supply, demand, TOTAL)
