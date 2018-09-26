@@ -46,7 +46,7 @@ import (
 // packet, or a single byte, or a single bit, etc. It is up to the application
 // to define what an event is. The Gcra is defined in terms of ticks per
 // event.
-type Events uint32
+type Events uint64
 
 // Gcra is the type that describes the interface to any implementation of the
 // Generic Cell Rate Algorithm.

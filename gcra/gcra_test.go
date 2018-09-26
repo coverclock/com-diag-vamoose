@@ -9,7 +9,13 @@ package gcra
 import (
     "testing"
 	"github.com/coverclock/com-diag-vamoose/ticks"
+    "unsafe"
+    "fmt"
 )
+
+func TestTypes(t * testing.T) {
+    fmt.Printf("Events: Alignof=%v Sizeof=%v\n", unsafe.Alignof(Events(0)), unsafe.Sizeof(Events(0)));
+}
 
 func TestIncrement(t * testing.T) {
     var i ticks.Ticks

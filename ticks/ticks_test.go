@@ -8,7 +8,13 @@ package ticks
 
 import (
     "testing"
+    "unsafe"
+    "fmt"
 )
+
+func TestTypes(t * testing.T) {
+    fmt.Printf("Ticks: Alignof=%v Sizeof=%v\n", unsafe.Alignof(Ticks(0)), unsafe.Sizeof(Ticks(0)));
+}
 
 func TestFREQUENCY(t * testing.T) {
     if (FREQUENCY == 1000000000) {} else { t.Fatalf("FAILED!\n") }

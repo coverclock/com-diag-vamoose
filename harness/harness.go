@@ -27,9 +27,9 @@ import (
  ******************************************************************************/
 
 // SimulatedEventStream provides a virtual-time test of a GCRA given the
-// GCRA, the maximum size of an event burst, and the total number of iterations
-// to perform.
-func SimulatedEventStream(t * testing.T, that gcra.Gcra, burst int, iterations int) {
+// shaping GCRA, the policing GCRA, the maximum size of an event burst, and
+// the total number of iterations to perform.
+func SimulatedEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, burst int, iterations int) {
 	var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
@@ -37,44 +37,72 @@ func SimulatedEventStream(t * testing.T, that gcra.Gcra, burst int, iterations i
 	var maximum gcra.Events = 0
     var total uint64 = 0
     var admissable bool = false
+    var admitted bool = false
+    var rate float64 = 0
+    var peak float64 = 0
 
-	t.Log(that.String())
+	t.Log(shape.String())
+	t.Log(police.String())
 	
+	frequency := float64(ticks.Frequency())
+
 	for ii := 0; ii < iterations; ii += 1 {
 
-	    delay = that.Request(now)
+	    delay = shape.Request(now)
 	    now += delay
 	    if now >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", now) }
 	    duration += delay
-	    if duration >= 0 {} else { t.Log(that.String()); t.Fatalf("OVERFLOW! %v\n", duration) }
-
-	    delay = that.Request(now)
-	    if delay == 0 {} else { t.Log(that.String()); t.Fatalf("FAILED! %v\n", delay);  }
+	    if duration >= 0 {} else { t.Log(shape.String()); t.Fatalf("OVERFLOW! %v\n", duration) }
+	    
+	    if ii <= 0 {
+	        // Do nothing.
+	    } else if delay <= 0 {
+	        // Do nothing.
+	    } else {
+	        rate = float64(size) * frequency / float64(delay)
+	        if rate > peak {
+	            peak = rate
+	        }
+	    }
+	    
+	    delay = shape.Request(now)
+	    if delay == 0 {} else { t.Log(shape.String()); t.Fatalf("FAILED! %v\n", delay);  }
 
         size = gcra.Events(rand.Int63n(int64(burst))) + 1
-	    if 0 < size {} else { t.Log(that.String()); t.Fatalf("FAILED! %v\n", size) }
+	    if 0 < size {} else { t.Log(shape.String()); t.Fatalf("FAILED! %v\n", size) }
 	    if size <= gcra.Events(burst) {} else { t.Fatalf("FAILED! %v\n", size) }
 	    if size > maximum { maximum = size }
 	    total += uint64(size)
 	    if total > 0 {} else { t.Fatalf("OVERFLOW! %v\n", total) }
 
-	    admissable = that.Commits(size)
-	    if admissable {} else { t.Log(that.String); t.Fatalf("FAILED! %v\n", admissable) }
+	    admissable = shape.Commits(size)
+	    if admissable {} else { t.Log(shape.String); t.Fatalf("FAILED! %v\n", admissable) }
+	    
+	    admitted = police.Admits(now, size)
+	    if admitted {} else { t.Log(police.String); t.Fatalf("FAILED! %v\n", admitted) }
 
 	}
 	
-	delay = that.Comply()
+	delay = shape.Comply()
 	now += delay
 	if now >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", now) }
 	duration += delay
 	if duration >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", duration) }
+	admissable = shape.Update(now)
+	if admissable {} else { t.Log(shape.String); t.Fatalf("FAILED! %v\n", admissable) }
+
+	admitted = police.Update(now)
+	if admitted {} else { t.Log(police.String); t.Fatalf("FAILED! %v\n", admitted) }
+
+	t.Log(shape.String())
+	t.Log(police.String())
 	
-	frequency := float64(ticks.Frequency())
 	average := float64(total) / float64(iterations)
 	seconds := float64(duration) / frequency
 	mean := seconds / float64(iterations)
-	actual := float64(total) * frequency / float64(duration)
-	t.Logf("total=%vB mean=%vB/io maximum=%vB/io latency=%vs/io actual=%vB/s\n", total, average, maximum, mean, actual)
+	sustained := float64(total) * frequency / float64(duration)
+	
+	t.Logf("total=%vB mean=%vB/io maximum=%vB/io latency=%vs/io peak=%vB/s sustained=%vB/s\n", total, average, maximum, mean, peak, sustained)
     
 }
 
@@ -226,7 +254,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         if failure != nil {
             t.Fatalf("shaper: failure=%v!\n", failure);
         }
-        if (written != size) {
+        if written != size {
             t.Fatalf("shaper: written=%v size=%v!\n", written, size);
         }
 
@@ -271,7 +299,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     if failure != nil {
         t.Fatalf("shaper: failure=%v!\n", failure);
     } 
-    if (written != 1) {
+    if written != 1 {
         t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
     }
 

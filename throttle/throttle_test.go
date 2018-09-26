@@ -1197,9 +1197,11 @@ func TestThrottleSimulated(t * testing.T) {
     expected := float64(frequency) / float64(increment)
     now := ticks.Now()
     t.Logf("increment=%vt seconds=%vs expected=%vB/s LIMIT=%vt now=%vt\n", increment, interarrival, expected, LIMIT, now)
-	that := New(increment, LIMIT, now)
+
+	shape := New(increment, LIMIT, now)
+	police := New(increment, LIMIT, now)
 	
-	harness.SimulatedEventStream(t, that, BLOCKSIZE, OPERATIONS)
+	harness.SimulatedEventStream(t, shape, police, BLOCKSIZE, OPERATIONS)
     
 }
 

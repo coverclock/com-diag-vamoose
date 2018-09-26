@@ -76,15 +76,18 @@ func TestContractSimulated(t * testing.T) {
     frequency := ticks.Frequency()
     peak := gcra.Increment(gcra.Events(PEAK), 1, frequency)
     burst := gcra.Events(BURST)
+    /*
     jt := gcra.JitterTolerance(peak, burst)
+    */
+    jt := ticks.Ticks(0)
     sustained := gcra.Increment(gcra.Events(SUSTAINED), 1, frequency)
     bt := gcra.BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
     
-	that := New(peak, jt, sustained, bt, now)
-	t.Log(that.String())
+	shape := New(peak, jt, sustained, bt, now)
+	police := New(peak, jt, sustained, bt, now)
 	    	
-	harness.SimulatedEventStream(t, that, BURST, OPERATIONS)
+	harness.SimulatedEventStream(t, shape, police, BURST, OPERATIONS)
     
 }
 
