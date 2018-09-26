@@ -55,7 +55,7 @@ func Now() Ticks {
 // Sleep delays the caller for at least as many ticks as specified. If zero
 // ticks are specified, the caller yields the processor.
 func Sleep(ticks Ticks) {
-    if (ticks > 0) {
+    if ticks > 0 {
         time.Sleep(time.Duration(ticks))
     } else {
         runtime.Gosched()
