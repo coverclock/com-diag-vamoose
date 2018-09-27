@@ -1191,12 +1191,7 @@ func TestThrottleSimulated(t * testing.T) {
      
     frequency := ticks.Frequency()
     increment := (frequency + BANDWIDTH - 1) / BANDWIDTH
-    t.Logf("OPERATIONS=%v BANDWIDTH=%vB/s BLOCKSIZE=%vB frequency=%vHz\n", OPERATIONS, BANDWIDTH, BLOCKSIZE, frequency)
-
-    interarrival := float64(increment) / float64(frequency)
-    expected := float64(frequency) / float64(increment)
     now := ticks.Now()
-    t.Logf("increment=%vt seconds=%vs expected=%vB/s LIMIT=%vt now=%vt\n", increment, interarrival, expected, LIMIT, now)
 
 	shape := New(increment, LIMIT, now)
 	police := New(increment, LIMIT, now)
@@ -1224,7 +1219,7 @@ func TestThrottleActualSustained(t * testing.T) {
     limit := gcra.JitterTolerance(increment, burst)
     now := ticks.Now()
     
-    shape := New(increment, limit, now)
+    shape := New(increment, 0, now)
     police := New(increment, limit, now)
     
     harness.ActualEventStream(t, shape, police, supply, demand, TOTAL)
@@ -1246,7 +1241,7 @@ func TestThrottleActualPeak(t * testing.T) {
     limit := gcra.JitterTolerance(increment, burst)
     now := ticks.Now()
     
-    shape := New(increment, limit, now)
+    shape := New(increment, 0, now)
     police := New(increment, limit, now)
     
     harness.ActualEventStream(t, shape, police, supply, demand, TOTAL)

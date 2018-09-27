@@ -85,7 +85,7 @@ based on the Communicating Sequence Process (CSP) model, and its
 simpler syntax and semantics than C++, seemed like good choice to evaluate.
 
 My work here in Go has been based my prior work on traffic scheduling
-more than two decades ago. The Generic Cell Rate Algorithm or GCRA, which
+more than two decades ago. The Generic Cell Rate Algorithm, or GCRA, which
 I originally encountered in the ATM Forum document "Traffic Management
 4.0", has become my go-to (so to speak) example with which to evalute
 the real-time capabilities of a new programming language. Typically
@@ -100,14 +100,14 @@ the GCRA in: C++ for Desperado (forked into Desperadito, which was later
 forked into Grandote) in 2005; Java for Buckaroo in 2006; C for Diminuto
 in 2008; and finally Go for Vamoose. They are not strictly ports from
 one another, because my own understanding of the underlying algorithms,
-architectures and patterns has evolved over the years.
+architectures, and patterns has evolved over the years.
 
 All of this was in turn is based on work I did on commercial products,
 specifically, an ATM switch (A500), and an ATM interface card (TN2305),
 during my time at Bell Labs in the latter half of the 1990s. On the
 ATM switch, which applied the GCRA to hundreds of virtual circuits ingressing
 on many OC-3 optical fiber ports, the GCRA was implemented in hardware and used
-for traffic policing; my code merely computed its parameters. In the
+for traffic policing; my code merely computed its parameters. On the
 ATM interface card, which had a few dozen virtual circuits egressing on a single
 OC-3 port, the GCRA was used for traffic shaping, and I implemented it all in
 firmware, writing in C++.
@@ -123,6 +123,7 @@ in their place); virtually all of my paying work these days continues to
 be in C. My productivity in that language has been greatly enhanced
 by my use of my Diminuto C systems programming library, all or parts of which
 ships in a handful of commercial products from several different clients.
+It remains to be seen if Go will yield the same kind of success for me.
 
 ## Repositories
 
@@ -147,10 +148,28 @@ C. Overclock, "Traffic Contracts", 2007-01,
 
 ## References
 
-<https://golang.org/doc/>
-
 J. Sloan, "ATM Traffic Management", Digital Aggregates Corporation, 2005-08,
 <http://www.diag.com/reports/ATMTrafficManagement.html>
 
 N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,
 af-tm-0121.000, 1999-03
+
+<https://golang.org/doc/>
+
+## Notes
+
+The jitter introduced by both the UDP connection between the producer/shaper
+side and the policer/consumer side of the Contract test can be seen in the
+traffic measurements. The shaper measures something very close to the contract,
+about 1024Bps peak and 512Bps sustained. The policer on the other hand measures
+a 32kBps peak yet a 512Bps sustained. I haven't ruled out some boneheaded bug
+on my part. But this attempt on my part to adapt the per-cell ATM GCRA to
+event streams containing variable length packets makes me think it might not be
+suitable for policing.
+
+    producer: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst.
+    shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06352381948059542s/burst peak=1024.7240767399094B/s sustained=511.9994023345643B/s.
+    policer: end admitted=61440B policed=0B total=61440B mean=32.66347687400319B/burst maximum=64B/burst peak=31424.227065382667B/s sustained=511.999044093518B/s.
+    consumer: end total=61440B.
+    Actual: produced=61440:0x1a6d
+    Actual: consumed=61440:0x1a6d
