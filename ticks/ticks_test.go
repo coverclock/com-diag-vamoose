@@ -9,7 +9,14 @@ package ticks
 import (
     "testing"
     "unsafe"
+    "time"
 )
+
+func TestTime(t * testing.T) {
+    t.Logf("before=%s\n", time.Now().String());
+	Sleep(Frequency())
+    t.Logf("after=%s\n", time.Now().String());
+}
 
 func TestTypes(t * testing.T) {
     t.Logf("Ticks: Alignof=%v Sizeof=%v\n", unsafe.Alignof(Ticks(0)), unsafe.Sizeof(Ticks(0)));

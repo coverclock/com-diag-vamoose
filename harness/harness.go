@@ -7,7 +7,7 @@
 //
 // ABSTRACT
 //
-// Provides test harnesses for testing GCRA implementations.
+// Provides a test harnesses for testing GCRA implementations.
 //
 package harness
 
@@ -88,6 +88,7 @@ func SimulatedEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, burs
 	if now >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", now) }
 	duration += delay
 	if duration >= 0 {} else { t.Fatalf("OVERFLOW! %v\n", duration) }
+
 	admissable = shape.Update(now)
 	if admissable {} else { t.Log(shape.String); t.Fatalf("FAILED! %v\n", admissable) }
 
@@ -102,7 +103,7 @@ func SimulatedEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, burs
 	mean := seconds / float64(iterations)
 	sustained := float64(total) * frequency / float64(duration)
 	
-	t.Logf("total=%vB mean=%vB/io maximum=%vB/io latency=%vs/io peak=%vB/s sustained=%vB/s\n", total, average, maximum, mean, peak, sustained)
+	fmt.Printf("total=%vB mean=%vB/io maximum=%vB/io latency=%vs/io peak=%vB/s sustained=%vB/s\n", total, average, maximum, mean, peak, sustained)
     
 }
 
@@ -121,6 +122,13 @@ func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64,
     var a uint8 = 0
     var b uint8 = 0
     var c uint16 = 0
+    
+    // The output channel is one byte larger than the burst size to allow for
+    // the end of record character. Multiple records can be written to the
+    // channel if the Producer gets ahead of the Shaper, as the two operate
+    // asynchronously. We want the Producer to generate data as quickly as the
+    // Shaper can consume it. We don't want the Shaper to block other than to
+    // manage the traffic stream to the Policer.
      
     burst := cap(output) - 1
    
@@ -130,10 +138,18 @@ func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64,
     
     for limit > 0 {
         
+        // Choose a random size somewhere in the range of one to the maximum
+        // burst size.
+        
         size = rand.Intn(burst) + 1
         if uint64(size) > limit {
             size = int(limit)
         }
+        
+        // Producer only generates printable characters. There's no special
+        // reason for this other maybe than convenience for debugging. All
+        // it really needs to do is not generate the end of record character
+        // 0x00 as part of the payload.
         
         for remain := size; remain > 0; remain -= 1 {
             datum[0] = byte(rand.Int31n(int32('~') - int32(' ') + 1) + int32(' '))
@@ -146,7 +162,11 @@ func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64,
         
         count += 1
 
-        datum[0] = 0
+        // Write an 0x00 end of record indicator to the channel. That allows
+        // the Shaper to delimit the data that goes into the datagram it sends
+        // to the Policer.
+
+        datum[0] = 0x00
         output <- datum[0]
          
         mutex.Lock()
@@ -178,7 +198,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var datum byte = 0
     var okay bool = true
     var size int = 0
-    var prior int = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
     var accumulated ticks.Ticks = 0
@@ -203,7 +222,44 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     
     for {
         
-        prior = size
+        // The Shaper assumes that the Producer has filled the channel with
+        // data. So it delays now assuming there will be data in the channel
+        // to consume. Otherwise, there will be an additional delay that will
+        // affect the traffic management.
+        
+        now = ticks.Now()
+        delay = that.Request(now)
+        if delay < 0 {
+            t.Fatalf("shaper: delay=%v!\n", delay)
+        }
+        
+        duration = delay
+        accumulated += delay
+        
+        ticks.Sleep(delay)
+        
+        now = ticks.Now()
+        delay = that.Request(now)
+        if delay != 0 {
+            t.Fatalf("shaper: delay=%v!\n", delay)
+        }
+        
+        // Calculate the peak data rate, which is based on the instantaneous
+        // interarrival time between records from the Producer, and the size
+        // of those records. The interarrival time is actually the traffic
+        // management delay enforced by the traffic contract, since the Producer
+        // constantly generates data for the Shaper to consume.
+        
+        if count == 0 {
+            // Do nothing.
+        } else if duration <= 0 {
+            // Do nothing.
+        } else {
+            rate = float64(size) * frequency / float64(duration)
+            if rate > peak { 
+                peak = rate
+            }
+        }
 
         datum, okay = <- input
         if !okay {
@@ -233,22 +289,11 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         total += uint64(size)  
         if (size > largest) { largest = size }
         
-        now = ticks.Now()
-        delay = that.Request(now)
-        if delay < 0 {
-            t.Fatalf("shaper: delay=%v!\n", delay)
-        }
-        
-        duration = delay
-        accumulated += delay
-        
-        ticks.Sleep(delay)
-       
-        now = ticks.Now()
-        delay = that.Request(now)
-        if delay != 0 {
-            t.Fatalf("shaper: delay=%v!\n", delay)
-        }
+        // Write a datagram to the Policer. We use UDP so that if we get
+        // to far ahead of the Policer (which would indicate a failure in
+        // the traffic shaping), datagrams are discarded instead of the
+        // Shaper blocking. This will cause the byte count and checksum
+        // computed by the Consumer to fail.
         
         written, failure := output.WriteTo(buffer[:size], address)
         if failure != nil {
@@ -262,15 +307,6 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         if alarmed {
             t.Logf("shaper: contract=%v!\n", that)
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
-        }
-                    
-        if count == 0 {
-            // Do nothing.
-        } else if duration <= 0 {
-            // Do nothing.
-        } else {
-            rate = float64(prior) * frequency / float64(duration)
-            if rate > peak { peak = rate }
         }
         
         fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
@@ -293,7 +329,10 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     
     after := now
     
-    buffer[0] = 0
+    // Write the end of file indicator to the Policer by sending a datagram
+    // with just a 0x00 in it.
+    
+    buffer[0] = 0x00
     size = 1
     written, failure := output.WriteTo(buffer[0:size], address)
     if failure != nil {
@@ -302,8 +341,10 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     if written != 1 {
         t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
     }
+    
+    // Calculate the sustained rate.
 
-    average := (float64(accumulated) / float64(count)) / frequency
+    average := float64(accumulated) / float64(count) / frequency
     mean := float64(total) / float64(count)
     sustained := float64(total) * frequency / float64(after - before)
 
@@ -350,13 +391,20 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
         if read <= 0 {
             t.Fatalf("policer: read=%v!\n", read);
         }
-        if buffer[read - 1] == 0 {
+        if read > burst {
+            t.Fatalf("policer: read=%v!\n", read);
+        }
+        if buffer[read - 1] == 0x00 {
             eof = true
             read -= 1
         }
         
         then = now
         now = ticks.Now()
+        
+        // If the datagram consisted of just the end of file indicator (which
+        // we don't assume above, but that will be the case because of how the
+        // Shaper sends it), than the read size of the datagram will be zero.
         
         if read > 0 {
 
@@ -379,6 +427,8 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
              for index := 0; index < read; index += 1 {
                 output <- buffer[index]
             }
+             
+            // Calculate the peak rate the same way the Shaper did.
            
             if count == 0 {
                 // Do nothing.
@@ -392,9 +442,13 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
             count += 1
 
         } else if eof {
+
             that.Update(now)
+ 
         } else {
-            // Do nothing.
+
+            // Should never happen. Should probably be fatal if it does.
+
         }
         
         ticks.Sleep(0)
@@ -404,6 +458,16 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     after := ticks.Now()
     
     close(output)
+    
+    // We kinda hope no data is ever policed, but it can happen because of
+    // jitter introduced by the use of UDP and by the Goroutine scheduler.
+    // It is possible for datagrams to pile up in the kernel, and so we
+    // receive two consecutively with zero time in betweeen. This seems
+    // to be non-deterministic. But I'm not ruling out some boneheaded
+    // mistake on my part. But in ATM (from whence the GCRA came) applies
+    // policing on a cell by call basis, not on a packet by packet basis,
+    // where all cells are the same size, but packets may be differently
+    // sized.
     
     if policed > 0 {
         t.Logf("policer: contract=%v!\n", that)
