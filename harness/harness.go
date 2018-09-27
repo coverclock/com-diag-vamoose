@@ -409,7 +409,21 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
         
         then = now
         now = ticks.Now()
-        
+                     
+        // Calculate the peak rate based on the datagram size and the
+        // interarrival time.
+       
+        if count == 0 {
+            // Do nothing.
+        } else if read == 0 {
+            // Do nothing.
+        } else if now <= then {
+            // Do nothing.
+        } else {
+            rate = float64(read) * frequency / float64(now - then)
+            if rate > peak { peak = rate }
+        }
+
         // If the datagram consisted of just the end of file indicator (which
         // we don't assume above, but that will be the case because of how the
         // Shaper sends it), than the read size of the datagram will be zero.
@@ -438,17 +452,6 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
             
              for index := 0; index < read; index += 1 {
                 output <- buffer[index]
-            }
-             
-            // Calculate the peak rate the same way the Shaper did.
-           
-            if count == 0 {
-                // Do nothing.
-            } else if now <= then {
-                // Do nothing.
-            } else {
-                rate = float64(read) * frequency / float64(now - then)
-                if rate > peak { peak = rate }
             }
             
             count += 1

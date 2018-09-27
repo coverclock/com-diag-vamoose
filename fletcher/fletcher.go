@@ -23,6 +23,10 @@
 //
 package fletcher
 
+// Checksum16 computes a running sixteen-bit Fletcher checksum based on
+// a slice of a byte buffer and the two eight-bit running checksum variables.
+// The current sixteen-bit checksum is returned by concatenating the two
+// eight-bit running values.
 func Checksum16(buffer [] byte, ap * uint8, bp * uint8) uint16 {
     var a uint16
     var b uint16

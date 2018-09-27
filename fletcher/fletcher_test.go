@@ -10,6 +10,19 @@ import (
     "testing"
 )
 
+func TestEmpty(t *testing.T) {
+    var a uint8 = 0
+    var b uint8 = 0
+    var c uint16 = 0
+    var buffer [6] byte = [...] byte { 'q', 'w', 'e', 'r', 't', 'y' }
+    
+    c = Checksum16(buffer[0:0], &a, &b)
+    
+    if (a == uint8(0)) {} else { t.Errorf("a=0x%x\n", a) }
+    if (b == uint8(0)) {} else { t.Errorf("b=0x%x\n", b) }
+    if (c == uint16(0)) {} else { t.Errorf("c=0x%x\n", c) }
+}
+
 func TestChecksum(t *testing.T) {
     var a uint8 = 0
     var b uint8 = 0
