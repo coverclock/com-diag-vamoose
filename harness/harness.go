@@ -474,25 +474,23 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     
     close(output)
     
-    // We kinda hope no data is ever policed, but it can happen because of
+    // Calculate the sustained rate.
+         
+    mean := float64(total) / float64(count)
+    sustained := float64(total) * frequency / float64(after - before)
+   
+    // We kinda hope no data is ever policed. But it can happen because of
     // jitter introduced by the use of UDP and by the Goroutine scheduler.
     // It is possible for datagrams to pile up in the kernel, and so we
-    // receive two consecutively with zero time in betweeen. This seems
+    // receive two consecutively with very little time in betweeen. This seems
     // to be non-deterministic. But I'm not ruling out some boneheaded
-    // mistake on my part. But in ATM (from whence the GCRA came) applies
+    // mistake on my part. But ATM (from whence the GCRA came) applies
     // policing on a cell by call basis, not on a packet by packet basis,
     // where all cells are the same size, but packets may be differently
     // sized.
     
-    if policed > 0 {
-        t.Logf("policer: contract=%v!\n", that)
-        t.Errorf("policer: policed=%vB!\n", policed)
-    }
-    
-    mean := float64(total) / float64(count)
-    sustained := float64(total) * frequency / float64(after - before)
-    
     mutex.Lock()
+    if policed > 0 { fmt.Printf("policer: POLICED!\n") }
     fmt.Printf("policer: end admitted=%vB policed=%vB total=%vB mean=%vB/burst maximum=%vB/burst peak=%vB/s sustained=%vB/s.\n", admitted, policed, total, mean, largest, peak, sustained)
     mutex.Unlock()
     
