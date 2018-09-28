@@ -52,29 +52,28 @@ and hence not terribly productive to use.
 During most of this time I cast about for an alternative to C and C++
 for the kinds of real-time or close-to-bare-metal work I typically do. I
 briefly considered D, but it didn't seem to catch on with the mainstream.
-I used Java in two product development efforts, one of which was
-actually an embedded project for which we used a Java compiler, but that
-was hardly mainstream either. I've done quite a bit of development in
-Python, but that was strictly in the realm of building tools to support
-my embedded work. I've been known to hack JavaScript in an emergency.
+I used Java in two product development efforts, one of which was actually
+an embedded project for which we used a Java compiler, but that was hardly
+mainstream either. I've done quite a bit of development in Python, but
+that was strictly in the realm of building tools to support my embedded
+work. I've been known to hack JavaScript in an emergency.
 
 Why Go? Moore’s Law, based on an observation made in 1965 by Gordon
-Moore, founder of Fairchild Semiconductor and Intel, on transistor
-density in integrated circuits, came to predict a doubling of
-microprocessor performance every eighteen months. This cadence of
-introducing new microprocessor generations became so predictable
-that over the past few decades it drove everything from hardware
-systems architecture, to computer software and programming language
-design, to consumer product roadmaps. In 2006, David Patterson, the
-Turing Award-winning computer scientist who was in part responsible
-for RAID disk arrays, RISC processors, and the classic books on
-computer architecture by Patterson and Hennessy, observed that the
-growth in microprocessor performance had stalled, and instead
-semiconductor manufacturers had turned to increasing the number of
-processing cores per chip. Today, Patterson says: “We are a factor
-of 15 behind where we should be if Moore’s Law were still operative.
-We are in the post-Moore’s Law era.” We can no longer throw faster
-computers at our product development requirements.
+Moore, founder of Fairchild Semiconductor and Intel, on transistor density
+in integrated circuits, came to predict a doubling of microprocessor
+performance every eighteen months. This cadence of introducing new
+microprocessor generations became so predictable that over the past
+few decades it drove everything from hardware systems architecture,
+to computer software and programming language design, to consumer
+product roadmaps. In 2006, David Patterson, the Turing Award-winning
+computer scientist who was in part responsible for RAID disk arrays, RISC
+processors, and the classic books on computer architecture by Patterson
+and Hennessy, observed that the growth in microprocessor performance had
+stalled, and instead semiconductor manufacturers had turned to increasing
+the number of processing cores per chip. Today, Patterson says: “We
+are a factor of 15 behind where we should be if Moore’s Law were
+still operative.  We are in the post-Moore’s Law era.” We can no
+longer throw faster computers at our product development requirements.
 
 The stalling of single core performance, and the surprising (to me
 anyway) growth of multi-core processors, leads me to believe we
@@ -107,12 +106,12 @@ architectures, and patterns has evolved over the years.
 All of this was in turn is based on work I did on commercial products,
 specifically, an ATM switch (A500), and an ATM interface card (TN2305),
 during my time at Bell Labs in the latter half of the 1990s. On the
-ATM switch, which applied the GCRA to hundreds of virtual circuits ingressing
-on many OC-3 optical fiber ports, the GCRA was implemented in hardware and used
-for traffic policing; my code merely computed its parameters. On the
-ATM interface card, which had a few dozen virtual circuits egressing on a single
-OC-3 port, the GCRA was used for traffic shaping, and I implemented it all in
-firmware, writing in C++.
+ATM switch, which applied the GCRA to hundreds of virtual circuits
+ingressing on many OC-3 optical fiber ports, the GCRA was implemented
+in hardware and used for traffic policing; my code merely computed its
+parameters. On the ATM interface card, which had a few dozen virtual
+circuits egressing on a single OC-3 port, the GCRA was used for traffic
+shaping, and I implemented it all in firmware, writing in C++.
 
 You would think that after having implemented the same basic algorithm,
 described in a public standard, many times, I'd pretty much have it
@@ -120,10 +119,10 @@ down. But every time I revisit it, I learn something new. And by using
 a different language, I encounter new challenges and have new insights.
 This kind of deliberate practice has served me well throughout my career.
 
-I still have a lot of affection for C and C++ (and Java and Python,
-in their place); virtually all of my paying work these days continues to
-be in C. My productivity in that language has been greatly enhanced
-by my use of my Diminuto C systems programming library, all or parts of which
+I still have a lot of affection for C and C++ (and Java and Python, in
+their place); virtually all of my paying work these days continues to be
+in C. My productivity in that language has been greatly enhanced by my
+use of my Diminuto C systems programming library, all or parts of which
 ships in a handful of commercial products from several different clients.
 It remains to be seen if Go will yield the same kind of success for me.
 
@@ -166,18 +165,19 @@ af-tm-0121.000, 1999-03
 
 ## Notes
 
-The jitter introduced by both the UDP connection between the producer/shaper
-side and the policer/consumer side of the Contract test can be seen in the
-traffic measurements. The shaper measures something very close to the contract,
-about 1024Bps peak and 512Bps sustained. The policer on the other hand measures
-a 32kBps peak yet a 512Bps sustained. I haven't ruled out some boneheaded bug
-on my part. But this attempt on my part to adapt the per-cell ATM GCRA to
-event streams containing variable length packets makes me think it might not be
-suitable for policing. (It's telling that the measured peak rate by the policer
-always seems to be around thirty-two times the actual peak rate provided by
-the shaper, even as their sustained rates are virtually the same. I'm guessing
-this has something to do with either UDP datagram queueing in the kernel and/or
-some artifact of the Go scheduler.)
+In the contract unit test, the jitter introduced by both the UDP
+connection between the producer/shaper side and the policer/consumer
+side of the Contract test can be seen in the traffic measurements. The
+shaper measures something very close to the contract, about 1024Bps peak
+and 512Bps sustained. The policer on the other hand measures a 32kBps
+peak yet a 512Bps sustained. I haven't ruled out some boneheaded bug on
+my part. But this attempt on my part to adapt the per-cell ATM GCRA to
+event streams containing variable length packets makes me think it might
+not be suitable for policing. (It's telling that the measured peak rate
+by the policer always seems to be around thirty-two times the actual peak
+rate provided by the shaper, even as their sustained rates are virtually
+the same. I'm guessing this has something to do with either UDP datagram
+queueing in the kernel and/or some artifact of the Go scheduler.)
 
     producer: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst.
     shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06352381948059542s/burst peak=1024.7240767399094B/s sustained=511.9994023345643B/s.
@@ -185,3 +185,26 @@ some artifact of the Go scheduler.)
     consumer: end total=61440B.
     Actual: produced=61440:0x1a6d
     Actual: consumed=61440:0x1a6d
+
+## Examples
+
+    $ dd if=/dev/urandom count=10 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
+    10+0 records in
+    10+0 records out
+    Total: 5120B.
+    Average: 512B/io.
+    Peak: 3.50253112600903e+07Bps.
+    Sustained: 4.069994364011711e+06Bps.
+    Checksum: 0x9b31.
+    5120 bytes (5.1 kB, 5.0 KiB) copied, 0.000438343 s, 11.7 MB/s
+    Contract: Contract@0xc00009e000[112]:{p:(Throttle@0xc00009e000[56]:{T:488282,i:488282,l:0,x:0,d:0,D:0,f:{0,0,0},e:{1,1,1},a:{0,0}}},s:{Throttle@0xc00009e038[56]:{T:976563,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,0},e:{1,1,1},a:{0,0}}}}.
+    Contract: Contract@0xc00009e000[112]:{p:(Throttle@0xc00009e000[56]:{T:0,i:488282,l:0,x:0,d:0,D:0,f:{0,0,1},e:{1,1,0},a:{0,1}}},s:{Throttle@0xc00009e038[56]:{T:0,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,1},e:{1,1,0},a:{0,1}}}}.
+    Total: 5120B.
+    Average: 512B/io.
+    Peak: 2046.466010008218Bps.
+    Sustained: 1023.9580996345629Bps.
+    Total: 5120B.
+    Average: 512B/io.
+    Peak: 2046.3564892492243Bps.
+    Sustained: 1023.5653873809865Bps.
+    Checksum: 0x9b31.
