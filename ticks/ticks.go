@@ -14,8 +14,8 @@
 package ticks
 
 import (
-	"time"
-	"runtime"
+    "time"
+    "runtime"
 )
 
 /*******************************************************************************
@@ -43,13 +43,13 @@ var epoch time.Time = time.Now()
 // Frequency returns the resolution of the time value that can be stored in a
 // Tick in units of cycles per second or Hertz.
 func Frequency() Ticks {
-	return Ticks(FREQUENCY)
+    return Ticks(FREQUENCY)
 }
 
 // Now returns the current value of Ticks for the monotonically increasing time
 // that is now.
 func Now() Ticks {
-	return Ticks(time.Now().Sub(epoch))
+    return Ticks(time.Now().Sub(epoch))
 }
 
 // Sleep delays the caller for at least as many ticks as specified. If zero

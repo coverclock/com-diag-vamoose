@@ -20,11 +20,11 @@
 package contract
 
 import (
-	"fmt"
-	"unsafe"
-	"github.com/coverclock/com-diag-vamoose/ticks"
-	"github.com/coverclock/com-diag-vamoose/gcra"
-	"github.com/coverclock/com-diag-vamoose/throttle"
+    "fmt"
+    "unsafe"
+    "github.com/coverclock/com-diag-vamoose/ticks"
+    "github.com/coverclock/com-diag-vamoose/gcra"
+    "github.com/coverclock/com-diag-vamoose/throttle"
 )
 
 /*******************************************************************************
@@ -45,7 +45,7 @@ type Contract struct {
 // String returns a printable string showing the guts of the throttle.
 func (this * Contract) String() string {
     return fmt.Sprintf("Contract@%p[%d]:{p:(%s},s:{%s}}",
-		unsafe.Pointer(this), unsafe.Sizeof(*this),
+        unsafe.Pointer(this), unsafe.Sizeof(*this),
         this.peak.String(), this.sustained.String());
 }
 
@@ -71,7 +71,7 @@ func (this * Contract) Reset(now ticks.Ticks) {
 func (this * Contract) Init(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) {
     this.peak.Init(peak, jittertolerance, now)
     this.sustained.Init(sustained, bursttolerance, now)
-	this.Reset(now)
+    this.Reset(now)
 }
 
 /*******************************************************************************
@@ -82,7 +82,8 @@ func (this * Contract) Init(peak ticks.Ticks, jittertolerance ticks.Ticks, susta
 // deferred when the throttle is constructed by New. It is also callable as
 // part of the API, although doing so may render the throttle unusable.
 func (this * Contract) Fini() {
-	// Do nothing.
+    this.peak.Fini()
+    this.sustained.Fini()
 }
 
 /*******************************************************************************
@@ -93,10 +94,10 @@ func (this * Contract) Fini() {
 // peak is the peak increment, jittertolerance is the peak limit, sustained is
 // the sustained increment, and bursttolerance is the sustained limit.
 func New(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) * Contract {
-	contract := new(Contract)
-	defer contract.Fini()
-	contract.Init(peak, jittertolerance, sustained, bursttolerance, now)
-	return contract
+    contract := new(Contract)
+    defer contract.Fini()
+    contract.Init(peak, jittertolerance, sustained, bursttolerance, now)
+    return contract
 }
 
 /*******************************************************************************
@@ -109,7 +110,7 @@ func New(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, b
 // in compliance with the traffic contract.
 func (this * Contract) Request(now ticks.Ticks) ticks.Ticks {
     var delay ticks.Ticks = 0
-    
+
     p := this.peak.Request(now)
     s := this.sustained.Request(now)
     if (p > s) {
@@ -117,7 +118,7 @@ func (this * Contract) Request(now ticks.Ticks) ticks.Ticks {
     } else {
         delay = s
     }
-    
+
     return delay
 }
 
@@ -173,7 +174,7 @@ func (this * Contract) Update(now ticks.Ticks) bool {
 // penalty accumulated.
 func (this * Contract) Comply() ticks.Ticks {
     var delay ticks.Ticks = 0
-    
+
     p := this.peak.Comply()
     s := this.sustained.Comply()
     if (p > s) {
@@ -181,7 +182,7 @@ func (this * Contract) Comply() ticks.Ticks {
     } else {
         delay = s
     }
-    
+
     return delay
 }
 
@@ -195,7 +196,7 @@ func (this * Contract) IsEmpty() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.IsEmpty()
     s := this.sustained.IsEmpty()
-	return (p && s)
+    return (p && s)
 }
 
 // IsFull returns true if the throttle is full, that is, its accumulated early
@@ -204,7 +205,7 @@ func (this * Contract) IsFull() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.IsFull()
     s := this.sustained.IsFull()
-	return (p || s)
+    return (p || s)
 }
 
 // IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
@@ -214,7 +215,7 @@ func (this * Contract) IsAlarmed() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.IsAlarmed()
     s := this.sustained.IsAlarmed()
-	return (p || s)
+    return (p || s)
 }
 
 /*******************************************************************************
@@ -226,7 +227,7 @@ func (this * Contract) Emptied() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Emptied()
     s := this.sustained.Emptied()
-	return (p || s)
+    return (p || s)
 }
 
 // Filled returns true if the throttle just filled in the last action.
@@ -234,7 +235,7 @@ func (this * Contract) Filled() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Filled()
     s := this.sustained.Filled()
-	return (p || s)
+    return (p || s)
 }
 
 // Alarmed returns true if the throttle just alarmed in the last action.
@@ -242,7 +243,7 @@ func (this * Contract) Alarmed() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Alarmed()
     s := this.sustained.Alarmed()
-	return (p || s)
+    return (p || s)
 }
 
 // Cleared returns true if the throttle just unalarmed in the last action,
@@ -252,5 +253,5 @@ func (this * Contract) Cleared() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Cleared()
     s := this.sustained.Cleared()
-	return (p || s)
+    return (p || s)
 }

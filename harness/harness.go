@@ -13,9 +13,9 @@ package harness
 
 import (
     "testing"
-	"github.com/coverclock/com-diag-vamoose/ticks"
-	"github.com/coverclock/com-diag-vamoose/gcra"
- 	"github.com/coverclock/com-diag-vamoose/fletcher"
+    "github.com/coverclock/com-diag-vamoose/ticks"
+    "github.com/coverclock/com-diag-vamoose/gcra"
+    "github.com/coverclock/com-diag-vamoose/fletcher"
     "math/rand"
     "net"
     "fmt"
@@ -32,11 +32,11 @@ var Debug bool = false
 // shaping GCRA, the policing GCRA, the maximum size of an event burst, and
 // the total number of iterations to perform.
 func SimulatedEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, burst int, iterations int) {
-	var now ticks.Ticks = 0
+    var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
-	var size gcra.Events = 0
-	var maximum gcra.Events = 0
+    var size gcra.Events = 0
+    var maximum gcra.Events = 0
     var total uint64 = 0
     var admissable bool = false
     var admitted bool = false
@@ -45,68 +45,68 @@ func SimulatedEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, burs
 
     fmt.Printf("Simulated: shape=%v.\n", shape);
     fmt.Printf("Simulated: police=%v.\n", police);
-	
-	frequency := float64(ticks.Frequency())
 
-	for ii := 0; ii < iterations; ii += 1 {
+    frequency := float64(ticks.Frequency())
 
-	    delay = shape.Request(now)
-	    now += delay
-	    if now >= 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", now) }
-	    duration += delay
-	    if duration >= 0 {} else { t.Log(shape.String()); t.Fatalf("Simulated: OVERFLOW! %v\n", duration) }
-	    
-	    if ii <= 0 {
-	        // Do nothing.
-	    } else if delay <= 0 {
-	        // Do nothing.
-	    } else {
-	        rate = float64(size) * frequency / float64(delay)
-	        if rate > peak {
-	            peak = rate
-	        }
-	    }
-	    
-	    delay = shape.Request(now)
-	    if delay == 0 {} else { t.Log(shape.String()); t.Fatalf("Simulated: FAILED! %v\n", delay);  }
+    for ii := 0; ii < iterations; ii += 1 {
+
+        delay = shape.Request(now)
+        now += delay
+        if now >= 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", now) }
+        duration += delay
+        if duration >= 0 {} else { t.Log(shape.String()); t.Fatalf("Simulated: OVERFLOW! %v\n", duration) }
+
+        if ii <= 0 {
+            // Do nothing.
+        } else if delay <= 0 {
+            // Do nothing.
+        } else {
+            rate = float64(size) * frequency / float64(delay)
+            if rate > peak {
+                peak = rate
+            }
+        }
+
+        delay = shape.Request(now)
+        if delay == 0 {} else { t.Log(shape.String()); t.Fatalf("Simulated: FAILED! %v\n", delay);  }
 
         size = gcra.Events(rand.Int63n(int64(burst))) + 1
-	    if 0 < size {} else { t.Log(shape.String()); t.Fatalf("Simulated: FAILED! %v\n", size) }
-	    if size <= gcra.Events(burst) {} else { t.Fatalf("Simulated: FAILED! %v\n", size) }
-	    if size > maximum { maximum = size }
-	    total += uint64(size)
-	    if total > 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", total) }
+        if 0 < size {} else { t.Log(shape.String()); t.Fatalf("Simulated: FAILED! %v\n", size) }
+        if size <= gcra.Events(burst) {} else { t.Fatalf("Simulated: FAILED! %v\n", size) }
+        if size > maximum { maximum = size }
+        total += uint64(size)
+        if total > 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", total) }
 
-	    admissable = shape.Commits(size)
-	    if admissable {} else { t.Log(shape.String); t.Fatalf("Simulated: FAILED! %v\n", admissable) }
-	    
-	    admitted = police.Admits(now, size)
-	    if admitted {} else { t.Log(police.String); t.Fatalf("Simulated: FAILED! %v\n", admitted) }
+        admissable = shape.Commits(size)
+        if admissable {} else { t.Log(shape.String); t.Fatalf("Simulated: FAILED! %v\n", admissable) }
 
-	}
-	
-	delay = shape.Comply()
-	now += delay
-	if now >= 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", now) }
-	duration += delay
-	if duration >= 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", duration) }
+        admitted = police.Admits(now, size)
+        if admitted {} else { t.Log(police.String); t.Fatalf("Simulated: FAILED! %v\n", admitted) }
 
-	admissable = shape.Update(now)
-	if admissable {} else { t.Log(shape.String); t.Fatalf("Simulated: FAILED! %v\n", admissable) }
+    }
 
-	admitted = police.Update(now)
-	if admitted {} else { t.Log(police.String); t.Fatalf("Simulated: FAILED! %v\n", admitted) }
+    delay = shape.Comply()
+    now += delay
+    if now >= 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", now) }
+    duration += delay
+    if duration >= 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", duration) }
+
+    admissable = shape.Update(now)
+    if admissable {} else { t.Log(shape.String); t.Fatalf("Simulated: FAILED! %v\n", admissable) }
+
+    admitted = police.Update(now)
+    if admitted {} else { t.Log(police.String); t.Fatalf("Simulated: FAILED! %v\n", admitted) }
 
     fmt.Printf("Simulated: shape=%v.\n", shape);
     fmt.Printf("Simulated: police=%v.\n", police);
-	
-	average := float64(total) / float64(iterations)
-	seconds := float64(duration) / frequency
-	mean := seconds / float64(iterations)
-	sustained := float64(total) * frequency / float64(duration)
-	
-	fmt.Printf("Simulated: total=%vB mean=%vB/io maximum=%vB/io latency=%vs/io peak=%vB/s sustained=%vB/s\n", total, average, maximum, mean, peak, sustained)
-    
+
+    average := float64(total) / float64(iterations)
+    seconds := float64(duration) / frequency
+    mean := seconds / float64(iterations)
+    sustained := float64(total) * frequency / float64(duration)
+
+    fmt.Printf("Simulated: total=%vB mean=%vB/io maximum=%vB/io latency=%vs/io peak=%vB/s sustained=%vB/s\n", total, average, maximum, mean, peak, sustained)
+
 }
 
 /*******************************************************************************
@@ -124,44 +124,44 @@ func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64,
     var a uint8 = 0
     var b uint8 = 0
     var c uint16 = 0
-    
+
     // The output channel is one byte larger than the burst size to allow for
     // the end of record character. Multiple records can be written to the
     // channel if the Producer gets ahead of the Shaper, as the two operate
     // asynchronously. We want the Producer to generate data as quickly as the
     // Shaper can consume it. We don't want the Shaper to block other than to
     // manage the traffic stream to the Policer.
-     
+
     burst := cap(output) - 1
-   
+
     mutex.Lock()
     fmt.Printf("producer: begin burst=%vB.\n", burst)
     mutex.Unlock()
-    
+
     for limit > 0 {
-        
+
         // Choose a random size somewhere in the range of one to the maximum
         // burst size.
-        
+
         size = rand.Intn(burst) + 1
         if uint64(size) > limit {
             size = int(limit)
         }
-        
+
         // Producer only generates printable characters. There's no special
         // reason for this other maybe than convenience for debugging. All
         // it really needs to do is not generate the end of record character
         // 0x00 as part of the payload.
-        
+
         for remain := size; remain > 0; remain -= 1 {
             datum[0] = byte(rand.Int31n(int32('~') - int32(' ') + 1) + int32(' '))
             c = fletcher.Checksum16(datum[:], &a, &b)
             output <- datum[0]
         }
         total += uint64(size)
-        
+
         if (size > largest) { largest = size }
-        
+
         count += 1
 
         // Write an 0x00 end of record indicator to the channel. That allows
@@ -170,30 +170,30 @@ func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64,
 
         datum[0] = 0x00
         output <- datum[0]
-        
+
         if Debug {
             mutex.Lock()
             fmt.Printf("producer: produced=%vB total=%vB remaining=%vB.\n", size, total, limit)
             mutex.Unlock()
         }
-        
+
         limit -= uint64(size)
-        
+
         ticks.Sleep(0)
 
     }
-    
+
     close(output)
-    
+
     *totalp = total
     *checksump = c
-       
+
     mean := float64(total) / float64(count)
-    
+
     mutex.Lock()
     fmt.Printf("producer: end total=%vB mean=%vB/burst maximum=%vB/burst.\n", total, mean, largest);
     mutex.Unlock()
-    
+
     done <- true
 }
 
@@ -213,47 +213,47 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     var peak float64 = 0.0
 
     burst := cap(input) - 1
-        
+
     mutex.Lock()
     fmt.Printf("shaper: begin burst=%vB.\n", burst);
     mutex.Unlock()
-    
+
     buffer := make([] byte, burst)
-    
+
     frequency := float64(ticks.Frequency())
-    
+
     before := ticks.Now()
-    
+
     for {
-        
+
         // The Shaper assumes that the Producer has filled the channel with
         // data. So it delays now assuming there will be data in the channel
         // to consume. Otherwise, there will be an additional delay that will
         // affect the traffic management.
-        
+
         now = ticks.Now()
         delay = that.Request(now)
         if delay < 0 {
             t.Fatalf("shaper: delay=%v!\n", delay)
         }
-        
+
         duration = delay
         accumulated += delay
-        
+
         ticks.Sleep(delay)
-        
+
         now = ticks.Now()
         delay = that.Request(now)
         if delay != 0 {
             t.Fatalf("shaper: delay=%v!\n", delay)
         }
-        
+
         // Calculate the peak data rate, which is based on the instantaneous
         // interarrival time between records from the Producer, and the size
         // of those records. The interarrival time is actually the traffic
         // management delay enforced by the traffic contract, since the Producer
         // constantly generates data for the Shaper to consume.
-        
+
         if count == 0 {
             // Do nothing.
         } else if duration <= 0 {
@@ -274,7 +274,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         }
         buffer[0] = datum
         size = 1
-        
+
         for {
             datum, okay = <- input
             if !okay {
@@ -292,13 +292,13 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
 
         total += uint64(size)  
         if (size > largest) { largest = size }
-        
+
         // Write a datagram to the Policer. We use UDP so that if we get
         // to far ahead of the Policer (which would indicate a failure in
         // the traffic shaping), datagrams are discarded instead of the
         // Shaper blocking. This will cause the byte count and checksum
         // computed by the Consumer to fail.
-        
+
         written, failure := output.WriteTo(buffer[:size], address)
         if failure != nil {
             t.Fatalf("shaper: failure=%v!\n", failure);
@@ -312,7 +312,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Logf("shaper: contract=%v!\n", that)
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
         }
-        
+
         if Debug {
             mutex.Lock()
             fmt.Printf("shaper: delay=%vs written=%vB total=%vB.\n", float64(duration) / frequency, written, total);
@@ -322,7 +322,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
         count += 1
 
     }
-    
+
     now = ticks.Now()
     that.Update(now)
     delay = that.Comply()
@@ -334,12 +334,12 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     ticks.Sleep(delay)
     now = ticks.Now()
     that.Update(now)
-    
+
     after := now
-    
+
     // Write the end of file indicator to the Policer by sending a datagram
     // with just a 0x00 in it.
-    
+
     buffer[0] = 0x00
     size = 1
     written, failure := output.WriteTo(buffer[0:size], address)
@@ -349,7 +349,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     if written != 1 {
         t.Fatalf("shaper: written=%v size=%v!\n", written, 1);
     }
-    
+
     // Calculate the sustained rate.
 
     average := float64(accumulated) / float64(count) / frequency
@@ -359,7 +359,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     mutex.Lock()
     fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst delay=%vs/burst peak=%vB/s sustained=%vB/s.\n", total, mean, largest, average, peak, sustained);
     mutex.Unlock()
-    
+
     done <- true
 }
 
@@ -379,19 +379,19 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     var peak float64 = 0.0
 
     burst := cap(output)
-    
+
     mutex.Lock()
     fmt.Printf("policer: begin burst=%vB.\n", burst);
     mutex.Unlock()
-    
+
     buffer := make([] byte, burst)
 
     frequency := float64(ticks.Frequency())
-    
+
     before := ticks.Now()
-    
+
     for !eof {
-    
+
         read, _, failure = input.ReadFrom(buffer)
         if failure != nil {
             t.Fatalf("policer: failure=%v!\n", failure);
@@ -406,13 +406,13 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
             eof = true
             read -= 1
         }
-        
+
         then = now
         now = ticks.Now()
-                     
+
         // Calculate the peak rate based on the datagram size and the
         // interarrival time.
-       
+
         if count == 0 {
             // Do nothing.
         } else if read == 0 {
@@ -427,7 +427,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
         // If the datagram consisted of just the end of file indicator (which
         // we don't assume above, but that will be the case because of how the
         // Shaper sends it), than the read size of the datagram will be zero.
-        
+
         if read > 0 {
 
             total += uint64(read)
@@ -449,36 +449,36 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
                     mutex.Unlock()
                 }
             }
-            
+
              for index := 0; index < read; index += 1 {
                 output <- buffer[index]
             }
-            
+
             count += 1
 
         } else if eof {
 
             that.Update(now)
- 
+
         } else {
 
             // Should never happen. Should probably be fatal if it does.
 
         }
-        
+
         ticks.Sleep(0)
-    
+
     }
-    
+
     after := ticks.Now()
-    
+
     close(output)
-    
+
     // Calculate the sustained rate.
-         
+
     mean := float64(total) / float64(count)
     sustained := float64(total) * frequency / float64(after - before)
-   
+
     // We kinda hope no data is ever policed. But it can happen because of
     // jitter introduced by the use of UDP and by the Goroutine scheduler.
     // It is possible for datagrams to pile up in the kernel, and so we
@@ -488,12 +488,12 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
     // policing on a cell by call basis, not on a packet by packet basis,
     // where all cells are the same size, but packets may be differently
     // sized.
-    
+
     mutex.Lock()
     if policed > 0 { fmt.Printf("policer: POLICED!\n") }
     fmt.Printf("policer: end admitted=%vB policed=%vB total=%vB mean=%vB/burst maximum=%vB/burst peak=%vB/s sustained=%vB/s.\n", admitted, policed, total, mean, largest, peak, sustained)
     mutex.Unlock()
-    
+
     done <- true
 }
 
@@ -505,32 +505,32 @@ func consumer(t * testing.T, input <-chan byte, totalp * uint64, checksump * uin
     var c uint16 = 0
 
     burst := cap(input)
-   
+
     mutex.Lock()
     fmt.Printf("consumer: begin burst=%vB.\n", burst);
     mutex.Unlock()
-    
+
     for buffer[0] = range input {
 
         total += 1          
         c = fletcher.Checksum16(buffer[:], &a, &b)
-        
+
         if Debug && ((total % uint64(burst)) == 0) {
             mutex.Lock()
             fmt.Printf("consumer: total=%vB.\n", total)
             mutex.Unlock()            
         }
-        
+
         ticks.Sleep(0)
     }
-    
+
     *totalp = total
     *checksump = c
-    
+
     mutex.Lock()
     fmt.Printf("consumer: end total=%vB.\n", total);
     mutex.Unlock()
-    
+
     done <- true
 }
 
@@ -544,62 +544,62 @@ func ActualEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, supply 
     var producerchecksum uint16 = 2
     var consumertotal uint64 = 3
     var consumerchecksum uint16 = 4
-    
+
     fmt.Println("Actual: Beginning.")
-       
+
     fmt.Printf("Actual: shape=%v.\n", shape);
     fmt.Printf("Actual: police=%v.\n", police);
-    
+
     done := make(chan bool, 4)
     defer close(done)
-        
+
     source, failure := net.ListenPacket("udp", ":5555")
     if failure != nil {
         t.Fatalf("Actual: FAILED! %v\n", failure)
     }
     defer source.Close()
     fmt.Printf("Actual: source=%+v.\n", source);
-           
+
     sink, failure := net.ListenPacket("udp", ":0")
     if failure != nil {
         t.Fatalf("Actual: FAILED! %v\n", failure)
     }
     defer sink.Close()
     fmt.Printf("Actual: sink=%+v.\n", sink);
- 
+
     destination, failure := net.ResolveUDPAddr("udp", "localhost:5555")
     if failure != nil {
         t.Fatalf("Actual: FAILED! %v\n", failure)
     }
     fmt.Printf("Actual: destination=%+v.\n", destination);
-   
+
     fmt.Println("Actual: Starting.")
-   
+
     go consumer(t, demand, &consumertotal, &consumerchecksum, done)
     go policer(t, source, police, demand, done)
     go shaper(t, supply, shape, sink, destination, done)
     go producer(t, total, supply, &producertotal, &producerchecksum, done)
-    
+
     mutex.Lock()
     fmt.Println("Actual: Waiting.")
     mutex.Unlock()
-    
+
     <- done
     <- done
     <- done
     <- done
-       
+
     fmt.Println("Actual: Checking.")
-    
+
     fmt.Printf("Actual: produced=%v:%#04x\n", producertotal, producerchecksum);
     fmt.Printf("Actual: consumed=%v:%#04x\n", consumertotal, consumerchecksum);
-    
+
     fmt.Printf("Actual: shape=%v.\n", shape);
     fmt.Printf("Actual: police=%v.\n", police);
 
     if (consumertotal == producertotal) {} else { t.Fatalf("Actual: FAILED! consumertotal=%v producertotal=%v\n", consumertotal, producertotal) }
     if (consumerchecksum == producerchecksum) {} else { t.Fatalf("Actual: FAILED! consumerchecksum=%v producerchecksum=%v\n", consumerchecksum, producerchecksum) }
-   
+
     fmt.Println("Actual: Ending.")
 }
 

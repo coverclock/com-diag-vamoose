@@ -31,21 +31,21 @@ func Checksum16(buffer [] byte, ap * uint8, bp * uint8) uint16 {
     var a uint16
     var b uint16
     var c uint16
-    
+
     a = uint16(*ap)
     b = uint16(*bp)
-    
+
     for _, bb := range buffer {
         a = (a + uint16(bb)) % 255
         b = (b + a) % 255
     }
-    
+
     *ap = uint8(a)
     *bp = uint8(b)
-    
+
     c = b
     c <<= 8
     c |= a
-    
+
     return c
 }

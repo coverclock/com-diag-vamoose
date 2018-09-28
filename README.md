@@ -29,7 +29,9 @@ Wheat Ridge CO 80033
 
 This repository contains the results of my attempts to learn the Go
 programming language (a.k.a. golang) by implementing some non-trivial
-and possible useful packages.
+and possible useful packages. One of these packages include yet another
+implementation on my part of the Generic Cell Rate Algorithm (GCRA),
+adapted as usual to bursts of variable length packets.
 
 ## Remarks
 
@@ -137,21 +139,27 @@ It remains to be seen if Go will yield the same kind of success for me.
 
 ## Articles
 
-C. Overclock, "Traffic Management", 2006-12,
+C. Overclock, "Traffic Management", 2006-12-25,
 <http://coverclock.blogspot.com/2006/12/traffic-management.html>
 
-C. Overclock, "Rate Control and Throttles", 2007-01,
+C. Overclock, "Rate Control and Throttles", 2007-01-12,
 <http://coverclock.blogspot.com/2007/01/rate-control-and-throttles.html>
 
-C. Overclock, "Traffic Contracts", 2007-01,
+C. Overclock, "Traffic Contracts", 2007-01-17,
 <http://coverclock.blogspot.com/2007/01/traffic-contracts.html>
+
+## Presentations
+
+J. Sloan, "Going, Going, Gone: Why I'm Learning Yet Another Programming
+Language", Gogo Business Aviation, Broomfield Colorado, 2018-10-05,
+<https://www.dropbox.com/s/mudrxf8vwf6og2r/Vamoose.pdf?dl=0>
 
 ## References
 
-J. Sloan, "ATM Traffic Management", Digital Aggregates Corporation, 2005-08,
+J. Sloan, "ATM Traffic Management", Digital Aggregates Corporation, 2005-08-29,
 <http://www.diag.com/reports/ATMTrafficManagement.html>
 
-N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,
+N. Giroux et al., "Traffic Management Specification Version 4.1", ATM Forum,
 af-tm-0121.000, 1999-03
 
 <https://golang.org/doc/>
@@ -165,7 +173,11 @@ about 1024Bps peak and 512Bps sustained. The policer on the other hand measures
 a 32kBps peak yet a 512Bps sustained. I haven't ruled out some boneheaded bug
 on my part. But this attempt on my part to adapt the per-cell ATM GCRA to
 event streams containing variable length packets makes me think it might not be
-suitable for policing.
+suitable for policing. (It's telling that the measured peak rate by the policer
+always seems to be around thirty-two times the actual peak rate provided by
+the shaper, even as their sustained rates are virtually the same. I'm guessing
+this has something to do with either UDP datagram queueing in the kernel and/or
+some artifact of the Go scheduler.)
 
     producer: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst.
     shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06352381948059542s/burst peak=1024.7240767399094B/s sustained=511.9994023345643B/s.

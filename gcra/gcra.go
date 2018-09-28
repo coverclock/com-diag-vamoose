@@ -34,7 +34,7 @@
 package gcra
 
 import (
-	"github.com/coverclock/com-diag-vamoose/ticks"
+    "github.com/coverclock/com-diag-vamoose/ticks"
 )
 
 /*******************************************************************************
