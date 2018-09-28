@@ -15,7 +15,11 @@
 //
 // EXAMPLES
 //
-// yes | head -100 | ./shape -V -p 64 -s 32 -b 32 > TEMP
+// yes | head -100 | ./shape -V -p 64 -s 32 -b 32 > /dev/null
+//
+// dd if=/dev/zero count=10 | ./shape -V -p 2048 -s 1024 -b 512 | dd of=/dev/null
+//
+// dd if=/dev/urandom count=10 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
 //
 package main
 
@@ -32,8 +36,8 @@ const APP_VERSION = "0.0"
 
 //                                      "h",        "Print the help menu."
 var versionFlag     * bool  = flag.Bool("v", false, "Print the version number.")
-var debugFlag       * bool  = flag.Bool("D", false, "Print the version number.")
-var verboseFlag     * bool  = flag.Bool("V", false, "Print the version number.")
+var debugFlag       * bool  = flag.Bool("D", false, "Enable debug output.")
+var verboseFlag     * bool  = flag.Bool("V", false, "Enable verbose output.")
 var peakFlag        * int64 = flag.Int64("p", 1, "Set the peak rate in bytes per second.")
 var sustainedFlag   * int64 = flag.Int64("s", 1, "Set the sustained rate in bytes per second.")
 var burstFlag       * int64 = flag.Int64("b", 1, "Set the maximum burst size in bytes.")
