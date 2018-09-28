@@ -7,11 +7,15 @@
 //
 // ABSTRACT
 //
+// Shapes data stream read from standard input and emits it to standard output.
+//
 // USAGE
 //
 // shape [ -h ] [ -v ] [ -D ] [ -V ] [ -p PEAKBYTESPERSECOND ] [ -s SUSTAINEDBYTESPERSECOND ] [ -b BURSTBYTES ]
 //
 // EXAMPLES
+//
+// yes | head -100 | ./shape -V -p 64 -s 32 -b 32 > TEMP
 //
 package main
 
@@ -19,7 +23,6 @@ import (
     "flag"
     "fmt"
     "os"
-    "io"
     "github.com/coverclock/com-diag-vamoose/ticks"
     "github.com/coverclock/com-diag-vamoose/gcra"
     "github.com/coverclock/com-diag-vamoose/contract"
@@ -36,14 +39,15 @@ var sustainedFlag   * int64 = flag.Int64("s", 1, "Set the sustained rate in byte
 var burstFlag       * int64 = flag.Int64("b", 1, "Set the maximum burst size in bytes.")
 
 func main() {
-
+    
     flag.Parse()
 
     if *versionFlag {
         fmt.Fprintf(os.Stderr, "Version: %s.\n", APP_VERSION)
     }
 
-    frequency := ticks.Frequency()
+    var frequency = ticks.Frequency()
+    var now = ticks.Now()
 
     peakrate := gcra.Events(*peakFlag)
     peakincrement := gcra.Increment(peakrate, 1, frequency)
@@ -53,9 +57,7 @@ func main() {
     sustainedincrement := gcra.Increment(sustainedrate, 1, frequency)
     bursttolerance := gcra.BurstTolerance(peakincrement, jittertolerance, sustainedincrement, burstsize)
 
-    now := ticks.Now()
-
-    shape := contract.New(peakincrement, 0, sustainedincrement, bursttolerance, now)
+    var shape gcra.Gcra = contract.New(peakincrement, 0, sustainedincrement, bursttolerance, now)
 
     if *verboseFlag {
         fmt.Fprintf(os.Stderr, "Contract: %v.\n", shape)
@@ -71,11 +73,17 @@ func main() {
     var admissable bool = false
     var before ticks.Ticks = 0
     var after ticks.Ticks = 0
+    var then ticks.Ticks = 0
+    var rate float64 = 0.0
+    var peak float64 = 0.0
+    
+    before = ticks.Now()
 
     for {
         
-        read, eof = io.ReadAtLeast(os.Stdin, buffer[:], 1)
+        read, eof = os.Stdin.Read(buffer)
         if eof != nil {
+            if *debugFlag { fmt.Fprintf(os.Stderr, "Read: EOF.\n") }
             break
         }
         if *debugFlag { fmt.Fprintf(os.Stderr, "Read: %vB.\n", read) }
@@ -101,9 +109,23 @@ func main() {
             fmt.Fprintf(os.Stderr, "Short: %v:%v!\n", read, written)
         }
         
+        then = now
         now = ticks.Now()
         admissable = shape.Admits(now, gcra.Events(written))
         if !admissable { fmt.Fprintf(os.Stderr, "Admissable: %v!\n", admissable) }
+        
+        if written <= 0 {
+            // Should never happen.
+        } else if count <= 0 {
+            // Do nothing.
+        } else if now <= then {
+            // Should never happen.
+        } else {
+            rate = float64(written) * float64(frequency) / float64(now - then)
+            if rate > peak {
+                peak = rate
+            }
+        }
         
         total += int64(written)
         count += 1
@@ -128,6 +150,7 @@ func main() {
         fmt.Fprintf(os.Stderr, "Contract: %v.\n", shape)
         fmt.Fprintf(os.Stderr, "Total: %vB.\n", total)
         fmt.Fprintf(os.Stderr, "Average: %vB/io.\n", float64(total) / float64(count))
+        fmt.Fprintf(os.Stderr, "Peak: %vBps.\n", peak)
         fmt.Fprintf(os.Stderr, "Sustained: %vBps.\n", float64(total) * float64(frequency) / float64(after - before))
     }
 
