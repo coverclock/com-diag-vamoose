@@ -12,6 +12,8 @@
 //
 // USAGE
 //
+// fletch [ -h ] [ -v ] [ -D ] [ -V ] [ -b BUFFERBYTES ]
+//
 // EXAMPLES
 //
 // dd if=/dev/urandom count=10 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
