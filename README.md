@@ -163,6 +163,10 @@ af-tm-0121.000, 1999-03
 
 <https://golang.org/doc/>
 
+## Miscellaneous
+
+<https://gopherize.me>
+
 ## Notes
 
 In the contract unit test, the jitter introduced by both the UDP
