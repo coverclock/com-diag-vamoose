@@ -69,15 +69,6 @@ type Gcra interface {
     Reset(now ticks.Ticks)
 
     /***************************************************************************
-     * DESTRUCTORS
-     **************************************************************************/
-
-    // Fini handles any cleanup necessary before a Gcra is deallocated. It is
-    // deferred when the Gcra is constructed by New. It is also callable as
-    // part of the API, although doing so may render the Gcra unusable.
-    Fini()
-
-    /***************************************************************************
      * MUTATORS
      **************************************************************************/
 

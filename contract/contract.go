@@ -75,18 +75,6 @@ func (this * Contract) Init(peak ticks.Ticks, jittertolerance ticks.Ticks, susta
 }
 
 /*******************************************************************************
- * DESTRUCTORS
- ******************************************************************************/
-
-// Fini handles any cleanup necessary before a throttle is deallocated. It is
-// deferred when the throttle is constructed by New. It is also callable as
-// part of the API, although doing so may render the throttle unusable.
-func (this * Contract) Fini() {
-    this.peak.Fini()
-    this.sustained.Fini()
-}
-
-/*******************************************************************************
  * ALLOCATORS
  ******************************************************************************/
 
@@ -95,7 +83,6 @@ func (this * Contract) Fini() {
 // the sustained increment, and bursttolerance is the sustained limit.
 func New(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) * Contract {
     contract := new(Contract)
-    defer contract.Fini()
     contract.Init(peak, jittertolerance, sustained, bursttolerance, now)
     return contract
 }

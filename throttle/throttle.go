@@ -119,17 +119,6 @@ func (this * Throttle) Init(increment ticks.Ticks, limit ticks.Ticks, now ticks.
 }
 
 /*******************************************************************************
- * DESTRUCTORS
- ******************************************************************************/
-
-// Fini handles any cleanup necessary before a throttle is deallocated. It is
-// deferred when the throttle is constructed by New. It is also callable as
-// part of the API, although doing so may render the throttle unusable.
-func (this * Throttle) Fini() {
-    // Do nothing.
-}
-
-/*******************************************************************************
  * ALLOCATORS
  ******************************************************************************/
 
@@ -140,7 +129,6 @@ func (this * Throttle) Fini() {
 // alarmed; and its dynamic state, which is the current monotonic time in ticks.
 func New(increment ticks.Ticks, limit ticks.Ticks, now ticks.Ticks) * Throttle {
     throttle := new(Throttle)
-    defer throttle.Fini()
     throttle.Init(increment, limit, now)
     return throttle
 }
