@@ -33,6 +33,20 @@ and possible useful packages. One of these packages include yet another
 implementation on my part of the Generic Cell Rate Algorithm (GCRA),
 adapted as usual to bursts of variable length packets.
 
+## Packages
+
+* contract - Implements a traffic contract throttle consisting of peak and sustained GCRAs.
+* fletcher - Implements the Fletcher sixteen-bit checksum algorithm.
+* gcra - Implements a Generic Cell Rate Algorithm (GCRA) throttle using a virtual scheduler.
+* harness - Provides at test harness for exercising throttles.
+* throttle - Describes the interface for a rate control algorithm.
+* ticks - Implements basic monotonic time functions for use in rate control.
+
+## Commands
+
+* fletch - Computes the Fletcher-16 checksum of a data stream admitted from standard input and emitted to standard output.
+* shape - Shapes the data stream admitted from standard input and emitted to standard output.
+
 ## Remarks
 
 My systems programming language of choice has changed over the decades,
