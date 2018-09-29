@@ -14,7 +14,7 @@ package harness
 import (
     "testing"
     "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/gcra"
+    "github.com/coverclock/com-diag-vamoose/throttle"
     "github.com/coverclock/com-diag-vamoose/fletcher"
     "math/rand"
     "net"
@@ -31,12 +31,12 @@ var Debug bool = false
 // SimulatedEventStream provides a virtual-time test of a GCRA given the
 // shaping GCRA, the policing GCRA, the maximum size of an event burst, and
 // the total number of iterations to perform.
-func SimulatedEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, burst int, iterations int) {
+func SimulatedEventStream(t * testing.T, shape throttle.Throttle, police throttle.Throttle, burst int, iterations int) {
     var now ticks.Ticks = 0
     var delay ticks.Ticks = 0
     var duration ticks.Ticks = 0
-    var size gcra.Events = 0
-    var maximum gcra.Events = 0
+    var size throttle.Events = 0
+    var maximum throttle.Events = 0
     var total uint64 = 0
     var admissable bool = false
     var admitted bool = false
@@ -70,9 +70,9 @@ func SimulatedEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, burs
         delay = shape.Request(now)
         if delay == 0 {} else { t.Log(shape.String()); t.Fatalf("Simulated: FAILED! %v\n", delay);  }
 
-        size = gcra.Events(rand.Int63n(int64(burst))) + 1
+        size = throttle.Events(rand.Int63n(int64(burst))) + 1
         if 0 < size {} else { t.Log(shape.String()); t.Fatalf("Simulated: FAILED! %v\n", size) }
-        if size <= gcra.Events(burst) {} else { t.Fatalf("Simulated: FAILED! %v\n", size) }
+        if size <= throttle.Events(burst) {} else { t.Fatalf("Simulated: FAILED! %v\n", size) }
         if size > maximum { maximum = size }
         total += uint64(size)
         if total > 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", total) }
@@ -197,7 +197,7 @@ func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64,
     done <- true
 }
 
-func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.PacketConn, address net.Addr, done chan<- bool) {
+func shaper(t * testing.T, input <- chan byte, that throttle.Throttle, output net.PacketConn, address net.Addr, done chan<- bool) {
     var total uint64 = 0
     var datum byte = 0
     var okay bool = true
@@ -307,7 +307,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
             t.Fatalf("shaper: written=%v size=%v!\n", written, size);
         }
 
-        alarmed = !that.Commits(gcra.Events(size))
+        alarmed = !that.Commits(throttle.Events(size))
         if alarmed {
             t.Logf("shaper: contract=%v!\n", that)
             t.Fatalf("shaper: alarmed=%v!\n", alarmed);
@@ -363,7 +363,7 @@ func shaper(t * testing.T, input <- chan byte, that gcra.Gcra, output net.Packet
     done <- true
 }
 
-func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- byte, done chan<- bool) {
+func policer(t * testing.T, input net.PacketConn, that throttle.Throttle, output chan<- byte, done chan<- bool) {
     var eof bool = false
     var read int = 0
     var failure error
@@ -433,7 +433,7 @@ func policer(t * testing.T, input net.PacketConn, that gcra.Gcra, output chan<- 
             total += uint64(read)
             if (read > largest) { largest = read }
 
-            admissable = that.Admits(now, gcra.Events(read))
+            admissable = that.Admits(now, throttle.Events(read))
             if admissable {
                 admitted += uint64(read)
                 if Debug {
@@ -538,7 +538,7 @@ func consumer(t * testing.T, input <-chan byte, totalp * uint64, checksump * uin
 // used for traffic shaping, a GCRA used for traffic policing, a supply
 // channel used for supply-side bursts, a demand channel used for demand-
 // side bursts, and the total number of events in the event stream.
-func ActualEventStream(t * testing.T, shape gcra.Gcra, police gcra.Gcra, supply chan byte, demand chan byte, total uint64) {
+func ActualEventStream(t * testing.T, shape throttle.Throttle, police throttle.Throttle, supply chan byte, demand chan byte, total uint64) {
     var failure error
     var producertotal uint64 = 1
     var producerchecksum uint16 = 2

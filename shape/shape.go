@@ -28,7 +28,7 @@ import (
     "fmt"
     "os"
     "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/gcra"
+    "github.com/coverclock/com-diag-vamoose/throttle"
     "github.com/coverclock/com-diag-vamoose/contract"
 )
 
@@ -53,15 +53,15 @@ func main() {
     var frequency = ticks.Frequency()
     var now = ticks.Now()
 
-    peakrate := gcra.Events(*peakFlag)
-    peakincrement := gcra.Increment(peakrate, 1, frequency)
-    burstsize := gcra.Events(*burstFlag)
-    jittertolerance := gcra.JitterTolerance(peakincrement, burstsize)
-    sustainedrate := gcra.Events(*sustainedFlag)
-    sustainedincrement := gcra.Increment(sustainedrate, 1, frequency)
-    bursttolerance := gcra.BurstTolerance(peakincrement, jittertolerance, sustainedincrement, burstsize)
+    peakrate := throttle.Events(*peakFlag)
+    peakincrement := throttle.Increment(peakrate, 1, frequency)
+    burstsize := throttle.Events(*burstFlag)
+    jittertolerance := throttle.JitterTolerance(peakincrement, burstsize)
+    sustainedrate := throttle.Events(*sustainedFlag)
+    sustainedincrement := throttle.Increment(sustainedrate, 1, frequency)
+    bursttolerance := throttle.BurstTolerance(peakincrement, jittertolerance, sustainedincrement, burstsize)
 
-    var shape gcra.Gcra = contract.New(peakincrement, 0, sustainedincrement, bursttolerance, now)
+    var shape throttle.Throttle = contract.New(peakincrement, 0, sustainedincrement, bursttolerance, now)
 
     if *verboseFlag {
         fmt.Fprintf(os.Stderr, "Contract: %v.\n", shape)
@@ -115,7 +115,7 @@ func main() {
         
         then = now
         now = ticks.Now()
-        admissable = shape.Admits(now, gcra.Events(written))
+        admissable = shape.Admits(now, throttle.Events(written))
         if !admissable { fmt.Fprintf(os.Stderr, "Admissable: %v!\n", admissable) }
         
         if written <= 0 {

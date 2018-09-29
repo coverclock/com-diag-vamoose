@@ -4,12 +4,13 @@
 // Licensed under the terms in LICENSE.txt
 // Chip Overclock <coverclock@diag.com>
 // https://github.com/coverclock/com-diag-vamoose
+//
 package contract
 
 import (
     "testing"
     "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/gcra"
+    "github.com/coverclock/com-diag-vamoose/throttle"
     "github.com/coverclock/com-diag-vamoose/harness"
     "fmt"
 )
@@ -22,14 +23,14 @@ func TestContractSandbox(t * testing.T) {
     const PEAK ticks.Ticks = 4
     const JITTER ticks.Ticks = 2
     const SUSTAINED ticks.Ticks = 8
-    const BURST gcra.Events = 16
+    const BURST throttle.Events = 16
     var now ticks.Ticks = 1000000000
     var delay ticks.Ticks = 0
     var admissable bool = false
     var expected ticks.Ticks = 0
 
     fmt.Printf("now=%v\n", now)
-    bt := gcra.BurstTolerance(PEAK, JITTER, SUSTAINED, BURST)
+    bt := throttle.BurstTolerance(PEAK, JITTER, SUSTAINED, BURST)
     that := New(PEAK, JITTER, SUSTAINED, bt, now)
     fmt.Printf("that=%s\n", that.String())
 
@@ -74,11 +75,11 @@ func TestContractSimulated(t * testing.T) {
     const OPERATIONS int = 1000000
 
     frequency := ticks.Frequency()
-    peak := gcra.Increment(gcra.Events(PEAK), 1, frequency)
-    burst := gcra.Events(BURST)
-    jt := gcra.JitterTolerance(peak, burst)
-    sustained := gcra.Increment(gcra.Events(SUSTAINED), 1, frequency)
-    bt := gcra.BurstTolerance(peak, jt, sustained, burst)
+    peak := throttle.Increment(throttle.Events(PEAK), 1, frequency)
+    burst := throttle.Events(BURST)
+    jt := throttle.JitterTolerance(peak, burst)
+    sustained := throttle.Increment(throttle.Events(SUSTAINED), 1, frequency)
+    bt := throttle.BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
 
     shape := New(peak, 0, sustained, bt, now)
@@ -102,11 +103,11 @@ func TestContractActual(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes.
 
     frequency := ticks.Frequency()
-    peak := gcra.Increment(gcra.Events(PEAK), 1, frequency)
-    burst := gcra.Events(BURST)
-    jt := gcra.JitterTolerance(peak, burst)
-    sustained := gcra.Increment(gcra.Events(SUSTAINED), 1, frequency)
-    bt := gcra.BurstTolerance(peak, jt, sustained, burst)
+    peak := throttle.Increment(throttle.Events(PEAK), 1, frequency)
+    burst := throttle.Events(BURST)
+    jt := throttle.JitterTolerance(peak, burst)
+    sustained := throttle.Increment(throttle.Events(SUSTAINED), 1, frequency)
+    bt := throttle.BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
 
     shape := New(peak, 0, sustained, bt, now)

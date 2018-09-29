@@ -189,26 +189,3 @@ queueing in the kernel and/or some artifact of the Go scheduler.)
     consumer: end total=61440B.
     Actual: produced=61440:0x1a6d
     Actual: consumed=61440:0x1a6d
-
-## Examples
-
-    $ dd if=/dev/urandom count=10 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
-    10+0 records in
-    10+0 records out
-    Total: 5120B.
-    Average: 512B/io.
-    Peak: 3.50253112600903e+07Bps.
-    Sustained: 4.069994364011711e+06Bps.
-    Checksum: 0x9b31.
-    5120 bytes (5.1 kB, 5.0 KiB) copied, 0.000438343 s, 11.7 MB/s
-    Contract: Contract@0xc00009e000[112]:{p:(Throttle@0xc00009e000[56]:{T:488282,i:488282,l:0,x:0,d:0,D:0,f:{0,0,0},e:{1,1,1},a:{0,0}}},s:{Throttle@0xc00009e038[56]:{T:976563,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,0},e:{1,1,1},a:{0,0}}}}.
-    Contract: Contract@0xc00009e000[112]:{p:(Throttle@0xc00009e000[56]:{T:0,i:488282,l:0,x:0,d:0,D:0,f:{0,0,1},e:{1,1,0},a:{0,1}}},s:{Throttle@0xc00009e038[56]:{T:0,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,1},e:{1,1,0},a:{0,1}}}}.
-    Total: 5120B.
-    Average: 512B/io.
-    Peak: 2046.466010008218Bps.
-    Sustained: 1023.9580996345629Bps.
-    Total: 5120B.
-    Average: 512B/io.
-    Peak: 2046.3564892492243Bps.
-    Sustained: 1023.5653873809865Bps.
-    Checksum: 0x9b31.

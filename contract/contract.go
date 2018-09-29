@@ -11,9 +11,9 @@
 // describes the peak rate, and one that describes the sustainable rate. The
 // event stream must conform to both GCRAs. The interface still appears to be
 // a single GCRA from the point of view of the calling application. The
-// implementation consists of two throttles, one for the peak GCRA, the other
-// for the sustained GCRA. The peak throttle contains the peak increment, and
-// the peak limit that is the jitter tolerance. The sustained throttle contains
+// implementation consists of two gcras, one for the peak GCRA, the other
+// for the sustained GCRA. The peak gcra contains the peak increment, and
+// the peak limit that is the jitter tolerance. The sustained gcra contains
 // the sustained increment, and the sustained limit computed from maximum burst
 // size and the jitter tolerance.
 //
@@ -23,26 +23,26 @@ import (
     "fmt"
     "unsafe"
     "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/gcra"
     "github.com/coverclock/com-diag-vamoose/throttle"
+    "github.com/coverclock/com-diag-vamoose/gcra"
 )
 
 /*******************************************************************************
  * TYPES
  ******************************************************************************/
 
-// Contract is a gcra that is a composite of a sustained throttle
-// and a peak throttle.
+// Contract is a gcra that is a composite of a sustained gcra
+// and a peak gcra.
 type Contract struct {
-    peak throttle.Throttle
-    sustained throttle.Throttle
+    peak gcra.Gcra
+    sustained gcra.Gcra
 }
 
 /*******************************************************************************
  * HELPERS
  ******************************************************************************/
 
-// String returns a printable string showing the guts of the throttle.
+// String returns a printable string showing the guts of the gcra.
 func (this * Contract) String() string {
     return fmt.Sprintf("Contract@%p[%d]:{p:(%s},s:{%s}}",
         unsafe.Pointer(this), unsafe.Sizeof(*this),
@@ -53,7 +53,7 @@ func (this * Contract) String() string {
  * SETTERS
  ******************************************************************************/
 
-// Reset a throttle back to its initial state. This is used during construction,
+// Reset a gcra back to its initial state. This is used during construction,
 // but can also be used by an application when a calamitous happenstance
 // occurs, like the far end disconnecting and reconnecting.
 func (this * Contract) Reset(now ticks.Ticks) {
@@ -65,7 +65,7 @@ func (this * Contract) Reset(now ticks.Ticks) {
  * CONSTRUCTORS
  ******************************************************************************/
 
-// Init initialize a throttle, setting its traffic contract parameters: peak is
+// Init initialize a gcra, setting its traffic contract parameters: peak is
 // the peak increment, jittertolerance is the peak limit, sustained is the
 // sustained increment, and bursttolerance is the sustained limit.
 func (this * Contract) Init(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) {
@@ -78,7 +78,7 @@ func (this * Contract) Init(peak ticks.Ticks, jittertolerance ticks.Ticks, susta
  * ALLOCATORS
  ******************************************************************************/
 
-// New allocates initialize a throttle, setting its traffic contract parameters:
+// New allocates initialize a gcra, setting its traffic contract parameters:
 // peak is the peak increment, jittertolerance is the peak limit, sustained is
 // the sustained increment, and bursttolerance is the sustained limit.
 func New(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) * Contract {
@@ -109,11 +109,11 @@ func (this * Contract) Request(now ticks.Ticks) ticks.Ticks {
     return delay
 }
 
-// Commits updates the throttle with the number of events having been emitted
+// Commits updates the gcra with the number of events having been emitted
 // starting at the time specified in the previous Request, and returns false
-// if the throttle is alarmed, indicating the application might want to slow it
+// if the gcra is alarmed, indicating the application might want to slow it
 // down a bit, true otherwise.
-func (this * Contract) Commits(events gcra.Events) bool {
+func (this * Contract) Commits(events throttle.Events) bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Commits(events)
     s := this.sustained.Commits(events)
@@ -130,7 +130,7 @@ func (this * Contract) Commit() bool {
 
 // Admits combines calling Request with the current time in ticks with calling
 // and returning the value of Commits with the number of events.
-func (this * Contract) Admits(now ticks.Ticks, events gcra.Events) bool {
+func (this * Contract) Admits(now ticks.Ticks, events throttle.Events) bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Admits(now, events)
     s := this.sustained.Admits(now, events)
@@ -146,9 +146,9 @@ func (this * Contract) Admit(now ticks.Ticks) bool {
 }
 
 // Update is equivalent to calling Admits with zero events. It is a way to
-// update the throttle with the current time, with no event emission. This
+// update the gcra with the current time, with no event emission. This
 // marks the passage of time during which the emission stream is idle, which
-// may bring the throttle back into compliance with the traffic contract.
+// may bring the gcra back into compliance with the traffic contract.
 func (this * Contract) Update(now ticks.Ticks) bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Update(now)
@@ -177,7 +177,7 @@ func (this * Contract) Comply() ticks.Ticks {
  * GETTERS
  ******************************************************************************/
 
-// isEmpty returns true if the throttle is empty, that is, it has no accumulated
+// isEmpty returns true if both gcras are empty, that is, neother has accumulated
 // early ticks.
 func (this * Contract) IsEmpty() bool {
     // Both calls must be executed! Beware refactoring!
@@ -186,7 +186,7 @@ func (this * Contract) IsEmpty() bool {
     return (p && s)
 }
 
-// IsFull returns true if the throttle is full, that is, its accumulated early
+// IsFull returns true if either gcra is full, that is, its accumulated early
 // ticks is greater than or equal to its limit.
 func (this * Contract) IsFull() bool {
     // Both calls must be executed! Beware refactoring!
@@ -195,7 +195,7 @@ func (this * Contract) IsFull() bool {
     return (p || s)
 }
 
-// IsAlarmed returns true if the throttle is alarmed, that is, its accumulated
+// IsAlarmed returns true if either gcra is alarmed, that is, its accumulated
 // early ticks is greater than its limit, indicating that the event emission
 // stream is out of compliance with the traffic contract.
 func (this * Contract) IsAlarmed() bool {
@@ -209,7 +209,7 @@ func (this * Contract) IsAlarmed() bool {
  * SENSORS
  ******************************************************************************/
 
-// Emptied returns true if the throttle just emptied in the last action.
+// Emptied returns true if either gcra just emptied in the last action.
 func (this * Contract) Emptied() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Emptied()
@@ -217,7 +217,7 @@ func (this * Contract) Emptied() bool {
     return (p || s)
 }
 
-// Filled returns true if the throttle just filled in the last action.
+// Filled returns true if either gcra just filled in the last action.
 func (this * Contract) Filled() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Filled()
@@ -225,7 +225,7 @@ func (this * Contract) Filled() bool {
     return (p || s)
 }
 
-// Alarmed returns true if the throttle just alarmed in the last action.
+// Alarmed returns true if either gcra just alarmed in the last action.
 func (this * Contract) Alarmed() bool {
     // Both calls must be executed! Beware refactoring!
     p := this.peak.Alarmed()
@@ -233,7 +233,7 @@ func (this * Contract) Alarmed() bool {
     return (p || s)
 }
 
-// Cleared returns true if the throttle just unalarmed in the last action,
+// Cleared returns true if either gcra just unalarmed in the last action,
 // indicating that the event emission stream has returned to being compliant
 // with the traffic contract.
 func (this * Contract) Cleared() bool {
