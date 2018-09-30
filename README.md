@@ -163,8 +163,9 @@ C. Overclock, "Traffic Contracts", 2007-01-17,
 
 ## Presentations
 
-J. Sloan, "Going, Going, Gone: Why I'm Learning Yet Another Programming
-Language", Gogo Business Aviation, Broomfield Colorado, 2018-10-05,
+J. Sloan, "Going, Going, Gone: Learning A Systems Programming
+Language for the Post-Moore's Law World", Gogo Business Aviation,
+Broomfield Colorado, 2018-10-05,
 <https://www.dropbox.com/s/mudrxf8vwf6og2r/Vamoose.pdf?dl=0>
 
 ## References
