@@ -182,7 +182,23 @@ af-tm-0121.000, 1999-03
 
 <https://gopherize.me>
 
+## Unit Tests
+
+    go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks
+    go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/fletcher
+    go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle
+    go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/gcra
+    go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/contract
+
+## Functional Tests
+
+    go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch
+    go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/shape
+    dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
+
 ## Notes
+
+### Policing
 
 In the contract unit test, the jitter introduced by both the UDP
 connection between the producer/shaper side and the policer/consumer
