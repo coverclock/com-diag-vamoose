@@ -35,17 +35,17 @@ adapted as usual to bursts of variable length packets.
 
 ## Packages
 
-* contract - Implements a traffic contract throttle consisting of peak and sustained GCRAs.
-* fletcher - Implements the Fletcher sixteen-bit checksum algorithm.
-* gcra - Implements a Generic Cell Rate Algorithm (GCRA) throttle using a virtual scheduler.
-* harness - Provides at test harness for exercising throttles.
-* throttle - Describes the interface for a rate control algorithm.
-* ticks - Implements basic monotonic time functions for use in rate control.
+* com-diag-vamoose/Vamoose/pkg/contract - Implements a traffic contract throttle consisting of peak and sustained GCRAs.
+* com-diag-vamoose/Vamoose/pkg/fletcher - Implements the Fletcher sixteen-bit checksum algorithm.
+* com-diag-vamoose/Vamoose/pkg/gcra - Implements a Generic Cell Rate Algorithm (GCRA) throttle using a virtual scheduler.
+* com-diag-vamoose/Vamoose/pkg/harness - Provides at test harness for exercising throttles.
+* com-diag-vamoose/Vamoose/pkg/throttle - Describes the interface for a rate control algorithm.
+* com-diag-vamoose/Vamoose/pkg/ticks - Implements basic monotonic time functions for use in rate control.
 
 ## Commands
 
-* fletch - Computes the Fletcher-16 checksum of a data stream admitted from standard input and emitted to standard output.
-* shape - Shapes the data stream admitted from standard input and emitted to standard output.
+* com-diag-vamoose/Vamoose/cmd/fletch - Computes the Fletcher-16 checksum of a data stream admitted from standard input and emitted to standard output.
+* com-diag-vamoose/Vamoose/cmd/shape - Shapes the data stream admitted from standard input and emitted to standard output.
 
 ## Remarks
 
@@ -182,8 +182,46 @@ af-tm-0121.000, 1999-03
 
 <https://gopherize.me>
 
+## Targets
+
+Verious versions of this software has at one time or another been installed
+and tested with the following combinations of hardware and software. Your
+mileage may vary.
+
+"Nickel"
+Intel NUC5i7RYH    
+Intel x86_64 64-bit    
+Intel Core i7-5557U @ 3.10GHz x 8    
+Ubuntu 18.04 "bionic"    
+Linux 4.15.0    
+go version go1.11 linux/amd64    
+
+"Gold"    
+Raspberry Pi 3B+    
+ARM ARMv7 64-bit    
+Broadcom BCM2837B0 Cortex-A53 @ 1.4GHz x 4      
+Raspbian 9.4 "stretch"    
+Linux 4.14.34    
+go version go1.11 linux/arm    
+
+## Installation
+
+This is a mash-up of the directory structure expected by the standard Go
+toolchain and the directory structure I use for my Digital Aggregates
+projects. Your mileage may vary.
+
+    export GOPATH="${HOME}/go"
+    mkdir -p ${HOME}/src
+    cd ${HOME}/src
+    git clone https://github.com/coverclock/com-diag-vamoose
+    mkdir -p ${GOPATH}/bin ${GOPATH}/pkg ${GOPATH}/src/github.com/coverclock
+    cd ${GOPATH}/src/github.com/coverclock
+    ln -s ${HOME}/src/com-diag-vamoose
+
 ## Unit Tests
 
+    export GOPATH="${HOME}/go"
+    cd ${GOPATH}/src
     go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks
     go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/fletcher
     go test -test.v github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle
@@ -192,6 +230,8 @@ af-tm-0121.000, 1999-03
 
 ## Functional Tests
 
+    export GOPATH="${HOME}/go"
+    cd ${GOPATH}/src
     go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch
     go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/shape
     dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
