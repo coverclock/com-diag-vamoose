@@ -27,9 +27,9 @@ import (
     "flag"
     "fmt"
     "os"
-    "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/throttle"
-    "github.com/coverclock/com-diag-vamoose/contract"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/contract"
 )
 
 const APP_VERSION = "0.0"

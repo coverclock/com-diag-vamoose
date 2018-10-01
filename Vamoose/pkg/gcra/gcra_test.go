@@ -9,9 +9,9 @@ package gcra
 
 import (
     "testing"
-    "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/throttle"
-    "github.com/coverclock/com-diag-vamoose/harness"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/harness"
     "math/rand"
 )
 

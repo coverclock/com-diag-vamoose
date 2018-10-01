@@ -47,8 +47,8 @@ package gcra
 import (
     "fmt"
     "unsafe"
-    "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/throttle"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle"
 )
 
 /*******************************************************************************

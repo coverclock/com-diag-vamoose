@@ -9,7 +9,7 @@ package throttle
 
 import (
     "testing"
-    "github.com/coverclock/com-diag-vamoose/ticks"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
     "unsafe"
     "fmt"
 )

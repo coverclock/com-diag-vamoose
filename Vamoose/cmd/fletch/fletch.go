@@ -24,8 +24,8 @@ import (
     "flag"
     "fmt"
     "os"
-    "github.com/coverclock/com-diag-vamoose/ticks"
-    "github.com/coverclock/com-diag-vamoose/fletcher"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/fletcher"
 )
 
 const APP_VERSION = "0.0"

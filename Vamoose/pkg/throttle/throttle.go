@@ -15,7 +15,7 @@
 package throttle
 
 import (
-    "github.com/coverclock/com-diag-vamoose/ticks"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
 )
 
 /*******************************************************************************
