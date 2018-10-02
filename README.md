@@ -267,3 +267,18 @@ queueing in the kernel and/or some artifact of the Go scheduler.)
     consumer: end total=61440B.
     Actual: produced=61440:0x1a6d
     Actual: consumed=61440:0x1a6d
+
+### gccgo
+
+There are two Go compilers: the official Google compiler accessed via the
+"go" command, and the Go front-end to the GNU compiler suite used via
+the "gccgo" command (but it also has a "go" front end you can use). The
+gccgo compiler has the potential to generate better code since the
+GCC backend has generally good optimization. But the GCC Go run-time
+library currently lags behind the offical compiler by several releases.
+
+I did all my development using the official Google compiler, and that's
+what I recommend you do too. But I have compiled and run functional tests
+using gccgo via the Makefile that is part of this repo. I consider this
+experimental.
+

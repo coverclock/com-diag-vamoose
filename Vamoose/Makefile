@@ -81,14 +81,12 @@ STRIP				:=	$(CROSS_COMPILE)strip
 
 ########## Build Artifacts
 
-TARGETPACKAGES		:=	$(addprefix $(OUT)/,$(addsuffix .o,$(basename $(filter-out *_test.go,$(wildcard $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(PKG_DIR)/*/*.go)))))
-TARGETCOMMANDS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(CMD_DIR)/*.go)))
+TARGETPACKAGES		:=	$(addprefix $(OUT)/,$(addsuffix .o,$(basename $(filter-out $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(PKG_DIR)/*/*_test.go,$(wildcard $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(PKG_DIR)/*/*.go)))))
+TARGETCOMMANDS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(CMD_DIR)/*/*.go)))
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED)) $(addprefix $(OUT)/$(SYM_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
 stuff:
-	echo $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(PKG_DIR)
-	ls $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(PKG_DIR)/*
 	echo $(TARGETPACKAGES)
 	echo $(TARGETCOMMANDS)
 
