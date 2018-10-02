@@ -173,11 +173,8 @@ Broomfield Colorado, 2018-10-05,
 "The Go Programming Language - Documentation",
 <https://golang.org/doc/>
 
-W. Kennedy, "Scheduling In Go - Part I", 2018-08-12,
-<https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html>
-
-W. Kennedy, "Scheduling In Go - Part II", 2018-09-27,
-<https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part2.html>
+W. Kennedy, Blog, Ardan labs,
+<https://www.ardanlabs.com/all-posts/>
 
 J. Sloan, "ATM Traffic Management", Digital Aggregates Corporation, 2005-08-29,
 <http://www.diag.com/reports/ATMTrafficManagement.html>
@@ -191,7 +188,7 @@ af-tm-0121.000, 1999-03
 
 ## Targets
 
-Verious versions of this software has at one time or another been installed
+Various versions of this software has at one time or another been installed
 and tested with the following combinations of hardware and software. Your
 mileage may vary.
 

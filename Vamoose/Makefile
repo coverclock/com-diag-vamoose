@@ -29,7 +29,7 @@ SYMBOL				:=	$(shell echo $(TITLE) | tr '[a-z]' '[A-Z]')
 PROVIDER			:=	github.com
 AUTHOR				:=	coverclock
 REPOSITORY			:=	$(PROVIDER)/$(AUTHOR)/com-diag-$(PROJECT)
-RESOURCE			:=	$(REPOSITORY)/$(TITLE)
+NAMESPACE			:=	$(REPOSITORY)/$(TITLE)
 TARGET				:=	host
 
 COPYRIGHT			:=	2018 Digital Aggregates Corporation
@@ -81,14 +81,14 @@ STRIP				:=	$(CROSS_COMPILE)strip
 
 ########## Build Artifacts
 
-TARGETPACKAGES		:=	$(addprefix $(OUT)/,$(addsuffix .o,$(basename $(filter-out $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(PKG_DIR)/*/*_test.go,$(wildcard $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(PKG_DIR)/*/*.go)))))
-TARGETCOMMANDS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(GOPATH)/$(SRC_DIR)/$(RESOURCE)/$(CMD_DIR)/*/*.go)))
+TARGETPACKAGES		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(addsuffix .o,$(basename $(filter-out $(wildcard $(PKG_DIR)/*/*_test.go),$(wildcard $(PKG_DIR)/*/*.go)))))
+TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(basename $(wildcard $(CMD_DIR)/*/*.go)))
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED)) $(addprefix $(OUT)/$(SYM_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
 stuff:
-	echo $(TARGETPACKAGES)
-	echo $(TARGETCOMMANDS)
+	echo PACKAGES $(TARGETPACKAGES)
+	echo COMMANDS $(TARGETCOMMANDS)
 
 TARGETSHARED		:=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO).$(MAJOR).$(MINOR)
 TARGETSHARED		+=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO).$(MAJOR)
@@ -117,16 +117,16 @@ clobber:	pristine
 	rm -f .cscope.lst .cscope.out .cscope.out.in .cscope.out.po
 
 try:
-	mkdir -p $(OUT)/$(RESOURCE)/$(PKG_DIR)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
-	mkdir -p $(OUT)/$(RESOURCE)/$(CMD_DIR)
-	$(GO) $(GOFLAGS)    -o $(OUT)/$(RESOURCE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(RESOURCE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
-	$(GO) $(GOFLAGS)    -o $(OUT)/$(RESOURCE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(RESOURCE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	mkdir -p $(OUT)/$(NAMESPACE)/$(PKG_DIR)
+	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
+	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
+	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
+	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
+	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
+	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
+	mkdir -p $(OUT)/$(NAMESPACE)/$(CMD_DIR)
+	$(GO) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	$(GO) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 
 ########## Target Go Packages
 
