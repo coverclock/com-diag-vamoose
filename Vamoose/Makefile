@@ -6,8 +6,10 @@
 # https://github.com/coverclock/com-diag-vamoose
 # "Chip Overclock" is a registered trademark.
 # "Digital Aggregates Corporation" is a registered trademark.
-# This is a *highly* _experimental_ attempt to use the gccgo compiler.
-#
+
+##
+## This is a *highly* _experimental_ attempt to use the gccgo compiler.
+##
 
 .PHONY:	default
 
@@ -67,7 +69,7 @@ GCCGOMACHINE		:=	x86_64-linux-gnu
 GCCGOVERSION		:=	8
 GCCGOPATH			:=	$(GCCGOPREFIX)/$(GCCGODIRECTORY)/gcc/$(GCCGOMACHINE)/$(GCCGOVERSION)
 
-GOFLAGS				:=	-L $(OUT)
+GOFLAGS				:=	-I $(OUT)
 GOLDFLAGS			:=	-Wl,-R,$(GCCGOPATH)
 
 ########## Commands and Option Flags
@@ -117,13 +119,16 @@ clobber:	pristine
 	rm -f .cscope.lst .cscope.out .cscope.out.in .cscope.out.po
 
 try:
-	mkdir -p $(OUT)/$(BIN_DIR) $(OUT)/$(RESOURCE)/$(CMD_DIR) $(OUT)/$(RESOURCE)/$(PKG_DIR)
+	mkdir -p $(OUT)/$(RESOURCE)/$(PKG_DIR)
 	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
 	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
 	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
 	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
 	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
 	$(GO) $(GOFLAGS) -c -o $(OUT)/$(RESOURCE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
+	mkdir -p $(OUT)/$(RESOURCE)/$(CMD_DIR)
+	$(GO) $(GOFLAGS)    -o $(OUT)/$(RESOURCE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(RESOURCE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	$(GO) $(GOFLAGS)    -o $(OUT)/$(RESOURCE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(RESOURCE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 
 ########## Target Go Packages
 
