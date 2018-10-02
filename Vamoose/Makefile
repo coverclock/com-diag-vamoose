@@ -81,8 +81,10 @@ STRIP				:=	$(CROSS_COMPILE)strip
 
 ########## Build Artifacts
 
-TARGETPACKAGES		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(addsuffix .o,$(basename $(filter-out $(wildcard $(PKG_DIR)/*/*_test.go),$(wildcard $(PKG_DIR)/*/*.go)))))
-TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(basename $(wildcard $(CMD_DIR)/*/*.go)))
+TARGETPACKAGES		:=	$(filter-out $(wildcard $(PKG_DIR)/*/*_test.go), $(wildcard $(PKG_DIR)/*/*.go))
+TARGETPACKAGES2		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(addsuffix .o,$(basename $(filter-out $(wildcard $(PKG_DIR)/*/*_test.go),$(wildcard $(PKG_DIR)/*/*.go)))))
+TARGETCOMMANDS		:=	$(wildcard $(CMD_DIR)/*/*.go)
+TARGETCOMMANDS2		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(basename $(wildcard $(CMD_DIR)/*/*.go)))
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED)) $(addprefix $(OUT)/$(SYM_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
