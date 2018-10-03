@@ -1,4 +1,5 @@
 # vi: set ts=4 shiftwidth=4:
+
 # Copyright 2018 Digital Aggregates Corporation
 # Licensed under the terms in LICENSE.txt
 # author:Chip Overclock
@@ -8,14 +9,20 @@
 # "Digital Aggregates Corporation" is a registered trademark.
 
 ##
-## This is a *highly* _experimental_ attempt to use the gccgo compiler.
+## This is a *highly* _experimental_ attempt to use the gccgo compiler. This
+## is a lot more complicated than it really needs to be. In order to follow
+## the typical directory layout of my projects, Go-based and otherwise, and
+## to also support the directory layout expected of the Google go toolchain,
+## a softlink from the GOPATH to the repo directory is used. This allows me
+## to use the facilities provided by the go command, but also some tools I
+## use to support my own workflow. Because the import paths in the source code
+## assumes the GOPATH layout, this Makefile for the most part assumes that as
+## well. It's not pretty.
 ##
-
-# go list -f '{{ join .Deps "\n"}}' PACKAGEPATH
 
 .PHONY:	default
 
-default:	try
+default:	all
 
 ########## Customizations
 
@@ -73,6 +80,8 @@ GCCPATH				:=	$(GCCPREFIX)/$(GCCDIRECTORY)/gcc/$(GCCMACHINE)/$(GCCVERSION)
 GOCCFLAGS			:=	-I $(OUT)
 GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
 
+GOROOT				:=	$(GOPATH)/$(SRC_DIR)/$(NAMESPACE)
+
 ########## Commands and Option Flags
 
 GO					:=	go
@@ -88,6 +97,7 @@ SOURCECOMMANDS		:=	$(wildcard $(CMD_DIR)/*/*.go)
 
 TARGETPACKAGES		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(addsuffix .o,$(basename $(SOURCEPACKAGES))))
 TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(basename $(SOURCECOMMANDS)))
+
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
@@ -98,12 +108,6 @@ TARGETSHARED		+=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO)
 TARGETLIBRARIES		:=	$(TARGETPACKAGES)
 TARGETPROGRAMS		:=	$(TARGETCOMMANDS) $(TARGETGENERATED) $(TARGETSCRIPTS)
 TARGETALL			:=	$(TARGETLIBRARIES) $(TARGETPROGRAMS)
-
-deps:	$(SOURCECOMMANDS)
-	for CC in $<; do \
-		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$CC | grep '^$(NAMESPACE)/' | tac | awk '{ print "$(OUT)/$$1.o" }' ); \
-		echo "$(OUT)/$(BIN_DIR)/$(notdir $(basename $<)):\t$$PP"; \
-	done
 
 ########## Main Entry Points
 
@@ -137,10 +141,29 @@ try:
 
 ########## Helpers
 
-gopath:
-	test -n $(GOPATH)
+.PHONY:	gopath depends
+
+gopath:	$(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)/$(REPOROOT)
+
+$(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)/$(REPOROOT):
+	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(BIN_DIR) $(GOPATH)/$(PKG_DIR) $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
-	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -s $(realpath ..)
+	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
+
+depends:	depends.mk
+
+depends.mk:	$(SOURCECOMMANDS)
+	for GG in $^; do \
+		DD=$$(dirname $$GG); \
+		BB=$$(basename $$GG .go); \
+		CC=$(OUT)/$(BIN_DIR)/$$BB; \
+		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
+		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$GG | grep '^$(NAMESPACE)/' | tac | awk '{ printf("$(OUT)/%s.o ",$$1); }'); \
+		echo "$$CC:\t$$PP$$OO"; \
+	done > $@
+	cat $@
+
+-include depends.mk
 
 ########## Target Go Packages
 
