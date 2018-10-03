@@ -138,7 +138,8 @@ func main() {
     
     now = ticks.Now()
     shape.Update(now)
-    delay = shape.Comply()
+
+    delay = shape.GetExpected()
     if *debugFlag {
         fmt.Fprintf(os.Stderr, "Delay: %vs.\n", float64(delay) / float64(frequency))
     }

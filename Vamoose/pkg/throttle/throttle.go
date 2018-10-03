@@ -81,15 +81,15 @@ type Throttle interface {
     // will do so if time has advanced at least as much as the value returned by
     // GetDeficit).
     Update(now ticks.Ticks) bool
-    
-    // Comply computes the number of ticks it would be necessary for the
-    // caller to delay for the event stream  to comply to the traffic contract
-    // with no limit penalty accumulated, given the current state of the throttle.
-    Comply() ticks.Ticks
 
     /***************************************************************************
      * GETTERS
      **************************************************************************/
+    
+    // GetExpected returns the number of ticks that would be necessary for the
+    // caller to delay for the event stream  to comply to the traffic contract with
+    // no limit penalty accumulated given the current state of the gcra.
+    GetExpected() ticks.Ticks
     
     // isEmpty returns true if the throttle is empty, that is, it has no accumulated
     // deficit ticks.

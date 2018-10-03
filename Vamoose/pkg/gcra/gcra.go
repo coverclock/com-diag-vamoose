@@ -239,16 +239,16 @@ func (this * Gcra) Update(now ticks.Ticks) bool {
     return this.Admits(now, 0)
 }
 
-// Comply computes the number of ticks that would be necessary for the caller
-// to delay for the event stream  to comply to the traffic contract with no
-// limit penalty accumulated given the current state of the gcra.
-func (this * Gcra) Comply() ticks.Ticks {
-    return this.expected
-}
-
 /*******************************************************************************
  * GETTERS
  ******************************************************************************/
+
+// GetExpected returns the number of ticks that would be necessary for the
+// caller to delay for the event stream  to comply to the traffic contract with
+// no limit penalty accumulated given the current state of the gcra.
+func (this * Gcra) GetExpected() ticks.Ticks {
+    return this.expected
+}
 
 // isEmpty returns true if the gcra is empty, that is, it has no accumulated
 // deficit ticks.

@@ -17,6 +17,23 @@
 // the sustained increment, and the sustained limit computed from maximum burst
 // size and the jitter tolerance.
 //
+// REFERENCES
+//
+// N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,
+// af-tm-0121.000, 1999-03
+//
+// C. Overclock, "Traffic Management", 2006-12,
+// http://coverclock.blogspot.com/2006/12/traffic-management.html
+//
+// C. Overclock, "Rate Control Using Throttles", 2007-01,
+// http://coverclock.blogspot.com/2007/01/rate-control-and-throttles.html
+//
+// C. Overclock, "Traffic Contracts", 2007-01,
+// http://coverclock.blogspot.com/2007/01/traffic-contracts.html
+//
+// J. Sloan, "ATM Traffic Management", 2005-08,
+// http://www.diag.com/reports/ATMTrafficManagement.html
+//
 package contract
 
 import (
@@ -156,14 +173,18 @@ func (this * Contract) Update(now ticks.Ticks) bool {
     return (p && s)
 }
 
-// Comply computes the number of ticks it would be necessary for the caller to
-// delay for the event stream  to comply to the traffic contract with no limit
-// penalty accumulated.
-func (this * Contract) Comply() ticks.Ticks {
+/*******************************************************************************
+ * GETTERS
+ ******************************************************************************/
+
+// GetExpected returns the number of ticks that would be necessary for the
+// caller to delay for the event stream  to comply to the traffic contract with
+// no limit penalty accumulated given the current state of the gcra.
+func (this * Contract) GetExpected() ticks.Ticks {
     var delay ticks.Ticks = 0
 
-    p := this.peak.Comply()
-    s := this.sustained.Comply()
+    p := this.peak.GetExpected()
+    s := this.sustained.GetExpected()
     if (p > s) {
         delay = p
     } else {
@@ -172,10 +193,6 @@ func (this * Contract) Comply() ticks.Ticks {
 
     return delay
 }
-
-/*******************************************************************************
- * GETTERS
- ******************************************************************************/
 
 // isEmpty returns true if both gcras are empty, that is, neother has accumulated
 // early ticks.

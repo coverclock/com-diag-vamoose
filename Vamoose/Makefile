@@ -11,6 +11,8 @@
 ## This is a *highly* _experimental_ attempt to use the gccgo compiler.
 ##
 
+# go list -f '{{ join .Deps "\n"}}' PACKAGEPATH
+
 .PHONY:	default
 
 default:	try
@@ -50,6 +52,7 @@ CMD_DIR				:=	cmd# Command components
 OUT_DIR				:=	out# Build artifacts
 PKG_DIR				:=	pkg# Package components
 SRC_DIR				:=	src# Source directory
+TMP_DIR				:=	/tmp
 
 ########## Configuration
 
@@ -57,40 +60,36 @@ HERE				:=	$(shell pwd)
 
 OUT					:=	$(OUT_DIR)/$(TARGET)
 
-TEMP_DIR			:=	/tmp
-
 GITURL				:=	https://$(REPOSITORY).git
 
 GENERATED			:=	generate setup
 
-GCCGOPREFIX			:=	/usr
-GCCGODIRECTORY		:=	lib
-GCCGOMACHINE		:=	x86_64-linux-gnu
-GCCGOVERSION		:=	8
-GCCGOPATH			:=	$(GCCGOPREFIX)/$(GCCGODIRECTORY)/gcc/$(GCCGOMACHINE)/$(GCCGOVERSION)
+GCCPREFIX			:=	/usr
+GCCDIRECTORY		:=	lib
+GCCMACHINE			:=	x86_64-linux-gnu
+GCCVERSION			:=	8
+GCCPATH				:=	$(GCCPREFIX)/$(GCCDIRECTORY)/gcc/$(GCCMACHINE)/$(GCCVERSION)
 
-GOFLAGS				:=	-I $(OUT)
-GOLDFLAGS			:=	-Wl,-R,$(GCCGOPATH)
+GOCCFLAGS			:=	-I $(OUT)
+GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
 
 ########## Commands and Option Flags
 
-GO					:=	$(CROSS_COMPILE)gccgo
+GO					:=	go
+GOCC				:=	$(CROSS_COMPILE)gccgo
 AR					:=	$(CROSS_COMPILE)ar
 RANLIB				:=	$(CROSS_COMPILE)ranlib
 STRIP				:=	$(CROSS_COMPILE)strip
 
 ########## Build Artifacts
 
-TARGETPACKAGES		:=	$(filter-out $(wildcard $(PKG_DIR)/*/*_test.go), $(wildcard $(PKG_DIR)/*/*.go))
-TARGETPACKAGES2		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(addsuffix .o,$(basename $(filter-out $(wildcard $(PKG_DIR)/*/*_test.go),$(wildcard $(PKG_DIR)/*/*.go)))))
-TARGETCOMMANDS		:=	$(wildcard $(CMD_DIR)/*/*.go)
-TARGETCOMMANDS2		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(basename $(wildcard $(CMD_DIR)/*/*.go)))
-TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED)) $(addprefix $(OUT)/$(SYM_DIR)/,$(GENERATED))
-TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
+SOURCEPACKAGES		:=	$(filter-out $(wildcard $(PKG_DIR)/*/*_test.go), $(wildcard $(PKG_DIR)/*/*.go))
+SOURCECOMMANDS		:=	$(wildcard $(CMD_DIR)/*/*.go)
 
-stuff:
-	echo PACKAGES $(TARGETPACKAGES)
-	echo COMMANDS $(TARGETCOMMANDS)
+TARGETPACKAGES		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(addsuffix .o,$(basename $(SOURCEPACKAGES))))
+TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(basename $(SOURCECOMMANDS)))
+TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED))
+TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
 TARGETSHARED		:=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO).$(MAJOR).$(MINOR)
 TARGETSHARED		+=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO).$(MAJOR)
@@ -100,14 +99,20 @@ TARGETLIBRARIES		:=	$(TARGETPACKAGES)
 TARGETPROGRAMS		:=	$(TARGETCOMMANDS) $(TARGETGENERATED) $(TARGETSCRIPTS)
 TARGETALL			:=	$(TARGETLIBRARIES) $(TARGETPROGRAMS)
 
+deps:	$(SOURCECOMMANDS)
+	for CC in $<; do \
+		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$CC | grep '^$(NAMESPACE)/' | tac | awk '{ print "$(OUT)/$$1.o" }' ); \
+		echo "$(OUT)/$(BIN_DIR)/$(notdir $(basename $<)):\t$$PP"; \
+	done
+
 ########## Main Entry Points
 
-.PHONY:	all tidy clean pristine clobber
+.PHONY:	all tidy clean pristine clobber gopath
 
 all:	$(TARGETALL)
 
 tidy:
-	rm -rf $(OUT)/$(BIN_DIR) $(OUT)/$(CMD_DIR) $(OUT)/$(PKG_DIR)
+	rm -rf $(OUT)/$(BIN_DIR) $(OUT)/$(NAMESPACE)/$(CMD_DIR) $(OUT)/$(NAMESPACE)/$(PKG_DIR)
 
 clean:
 	rm -rf $(OUT)
@@ -120,15 +125,22 @@ clobber:	pristine
 
 try:
 	mkdir -p $(OUT)/$(NAMESPACE)/$(PKG_DIR)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
-	$(GO) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
 	mkdir -p $(OUT)/$(NAMESPACE)/$(CMD_DIR)
-	$(GO) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
-	$(GO) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+
+########## Helpers
+
+gopath:
+	test -n $(GOPATH)
+	mkdir -p $(GOPATH)/$(BIN_DIR) $(GOPATH)/$(PKG_DIR) $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
+	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -s $(realpath ..)
 
 ########## Target Go Packages
 
@@ -175,13 +187,14 @@ $(OUT)/$(BIN_DIR)/setup:	$(OUT)/$(BIN_DIR)/generate
 
 ########## Rules
 
-$(OUT)/%.o:	%.go
+$(OUT)/$(NAMESPACE)/%.o:	%.go
 	D=`dirname $@`; mkdir -p $$D
-	$(GO) $(GOFLAGS) -o $@ -c $<
+	$(GOCC) $(GOFLAGS) -o $@ -c $< $(GOLDFLAGS)
+	
 
-$(OUT)/%:	%.go
+$(OUT)/$(NAMESPACE)/%:	%.go
 	D=`dirname $@`; mkdir -p $$D
-	$(GO) $(GOFLAGS) -o $@ -c $<
+	$(GOCC) $(GOFLAGS) -o $@ $< $(GOLDFLAGS)
 
 $(OUT)/%:	%.sh
 	D=`dirname $@`; mkdir -p $$D

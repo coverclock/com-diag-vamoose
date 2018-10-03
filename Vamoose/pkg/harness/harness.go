@@ -85,7 +85,7 @@ func SimulatedEventStream(t * testing.T, shape throttle.Throttle, police throttl
 
     }
 
-    delay = shape.Comply()
+    delay = shape.GetExpected()
     now += delay
     if now >= 0 {} else { t.Fatalf("Simulated: OVERFLOW! %v\n", now) }
     duration += delay
@@ -325,7 +325,7 @@ func shaper(t * testing.T, input <- chan byte, that throttle.Throttle, output ne
 
     now = ticks.Now()
     that.Update(now)
-    delay = that.Comply()
+    delay = that.GetExpected()
 
     mutex.Lock()
     fmt.Printf("shaper: delay=%vs.\n", float64(delay) / frequency);
