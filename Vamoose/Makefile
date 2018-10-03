@@ -9,13 +9,13 @@
 # "Digital Aggregates Corporation" is a registered trademark.
 
 ##
-## This is a *highly* _experimental_ attempt to use the gccgo compiler. This
-## is a lot more complicated than it really needs to be. In order to follow
-## the typical directory layout of my projects, Go-based and otherwise, and
-## to also support the directory layout expected of the Google go toolchain,
-## a softlink from the GOPATH to the repo directory is used. This allows me
-## to use the facilities provided by the go command, but also some tools I
-## use to support my own workflow. Because the import paths in the source code
+## This is a *highly* _experimental_ attempt to use the gccgo compiler. It's
+## a lot more complicated than it really needs to be. In order to follow the
+## typical directory layout of my projects, Go-based and otherwise, and to
+## also support the directory layout expected of the Google go toolchain, a
+## softlink from the GOPATH to the repo directory is used. This allows me to
+## use the facilities provided by the go command, but also some tools I use
+## to support my own workflow. Because the import paths in the Go source code
 ## assumes the GOPATH layout, this Makefile for the most part assumes that as
 ## well. It's not pretty.
 ##
@@ -92,12 +92,15 @@ STRIP				:=	$(CROSS_COMPILE)strip
 
 ########## Build Artifacts
 
-SOURCEPACKAGES		:=	$(filter-out $(wildcard $(PKG_DIR)/*/*_test.go), $(wildcard $(PKG_DIR)/*/*.go))
-SOURCECOMMANDS		:=	$(wildcard $(CMD_DIR)/*/*.go)
+ABSOLUTEPACKAGES	:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
+ABSOLUTECOMMANDS	:=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
 
-TARGETPACKAGES		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(addsuffix .o,$(basename $(SOURCEPACKAGES))))
-TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(basename $(SOURCECOMMANDS)))
+RELATIVEPACKAGES	:=	$(subst $(GOROOT)/,,$(ABSOLUTEPACKAGES))
+RELATIVECOMMANDS	:=	$(subst $(GOROOT)/,,$(ABSOLUTECOMMANDS))
 
+TARGETPACKAGES		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(subst .go,.o,$(RELATIVEPACKAGES)))
+TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(subst .go,.o,$(RELATIVECOMMANDS)))
+TARGETEXECUTABLES	:=  $(addprefix $(OUT)/$(BIN_DIR)/,$(notdir $(basename $(ABSOLUTECOMMANDS))))
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
@@ -141,29 +144,64 @@ try:
 
 ########## Helpers
 
-.PHONY:	gopath depends
+.PHONY:	manifest gopath depend
 
-gopath:	$(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)/$(REPOROOT)
+manifest:
+	@echo "ABSOLUTEPACKAGES="$(ABSOLUTEPACKAGES)
+	@echo "ABSOLUTECOMMANDS="$(ABSOLUTECOMMANDS)
+	@echo "RELATIVEPACKAGES="$(RELATIVEPACKAGES)
+	@echo "RELATIVECOMMANDS="$(RELATIVECOMMANDS)
+	@echo "TARGETPACKAGES="$(TARGETPACKAGES)
+	@echo "TARGETCOMMANDS="$(TARGETCOMMANDS)
+	@echo "TARGETEXECUTABLES="$(TARGETEXECUTABLES)
+	@echo "TARGETGENERATED="$(TARGETGENERATED)
+	@echo "TARGETSCRIPTS="$(TARGETSCRIPTS)
 
-$(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)/$(REPOROOT):
+goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(BIN_DIR) $(GOPATH)/$(PKG_DIR) $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
-depends:	depends.mk
-
-depends.mk:	$(SOURCECOMMANDS)
-	for GG in $^; do \
+$(OUT)/depend.mk:
+	mkdir -p $(dir $@)
+	cp /dev/null $@
+	for GG in $(RELATIVEPACKAGES); do \
+		DD=$$(dirname $$GG); \
+		BB=$$(basename $$GG .go); \
+		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
+		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$GG | grep '^$(NAMESPACE)/' | tac); \
+		LLL=""; \
+		for FFF in $$PP; do \
+			DDD=$$(dirname $$FFF); \
+			BBB=$$(basename $$FFF); \
+			LLL="$$LLL $(OUT)/$(NAMESPACE)/$$BBB/$$BBB.o"; \
+		done; \
+		echo "$$OO:\t$(GOROOT)/$$GG $$LLL"; \
+	done >> $@
+	for GG in $(RELATIVECOMMANDS); do \
+		DD=$$(dirname $$GG); \
+		BB=$$(basename $$GG .go); \
+		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
+		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$GG | grep '^$(NAMESPACE)/' | tac); \
+		LLL=""; \
+		for FFF in $$PP; do \
+			DDD=$$(dirname $$FFF); \
+			BBB=$$(basename $$FFF); \
+			LLL="$$LLL $(OUT)/$(NAMESPACE)/$$BBB/$$BBB.o"; \
+		done; \
+		echo "$$OO:\t$(GOROOT)/$$GG $$LLL"; \
+	done >> $@
+	for GG in $(RELATIVECOMMANDS); do \
 		DD=$$(dirname $$GG); \
 		BB=$$(basename $$GG .go); \
 		CC=$(OUT)/$(BIN_DIR)/$$BB; \
 		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
-		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$GG | grep '^$(NAMESPACE)/' | tac | awk '{ printf("$(OUT)/%s.o ",$$1); }'); \
-		echo "$$CC:\t$$PP$$OO"; \
-	done > $@
-	cat $@
+		echo "$$CC:\t$$OO"; \
+	done >> $@
 
--include depends.mk
+-include $(OUT)/depend.mk
+
+depend:	$(OUT)/depend.mk
 
 ########## Target Go Packages
 
