@@ -80,7 +80,9 @@ GCCPATH				:=	$(GCCPREFIX)/$(GCCDIRECTORY)/gcc/$(GCCMACHINE)/$(GCCVERSION)
 GOCCFLAGS			:=	-I $(OUT)
 GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
 
-GOROOT				:=	$(GOPATH)/$(SRC_DIR)/$(NAMESPACE)
+GOSOURCE			:=	$(GOPATH)/$(SRC_DIR)# GOPATH/src
+GOLINK				:=	$(GOSOURCE)/$(REPOSITORY)# GOPATH/src/github.com/coverclock/com-diag-vamoose
+GOROOT				:=	$(GOLINK)/$(TITLE)# GOPATH/src/github.com/coverclock/com-diag-vamoose/Vamoose
 
 ########## Commands and Option Flags
 
@@ -144,9 +146,7 @@ try:
 
 ########## Helpers
 
-.PHONY:	manifest gopath depend
-
-manifest:
+.PHONY:	manifest goroot manifest:
 	@echo "ABSOLUTEPACKAGES="$(ABSOLUTEPACKAGES)
 	@echo "ABSOLUTECOMMANDS="$(ABSOLUTECOMMANDS)
 	@echo "RELATIVEPACKAGES="$(RELATIVEPACKAGES)
@@ -159,41 +159,45 @@ manifest:
 
 goroot:
 	test -n "$(GOPATH)"
-	mkdir -p $(GOPATH)/$(BIN_DIR) $(GOPATH)/$(PKG_DIR) $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
+	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
 $(OUT)/depend.mk:
 	mkdir -p $(dir $@)
 	cp /dev/null $@
-	for GG in $(RELATIVEPACKAGES); do \
-		DD=$$(dirname $$GG); \
-		BB=$$(basename $$GG .go); \
+	for FF in $(RELATIVEPACKAGES); do \
+		DD=$$(dirname $$FF); \
+		BB=$$(basename $$FF .go); \
 		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
-		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$GG | grep '^$(NAMESPACE)/' | tac); \
-		LLL=""; \
+		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(NAMESPACE)/' | tac); \
+		LL=""; \
 		for FFF in $$PP; do \
-			DDD=$$(dirname $$FFF); \
-			BBB=$$(basename $$FFF); \
-			LLL="$$LLL $(OUT)/$(NAMESPACE)/$$BBB/$$BBB.o"; \
+			MMM=$$(cd $(GOSOURCE); ls $$FFF/*.go); \
+			for FFFF in $$MMM; do \
+				BBBB=$$(basename $$FFFF .go); \
+				LL="$$LL $(OUT)/$(NAMESPACE)/$$DDD/$$BBBB.o"; \
+			done \
 		done; \
-		echo "$$OO:\t$(GOROOT)/$$GG $$LLL"; \
+		echo "$$OO:\t$(GOLINK)/$$FF $$LLL"; \
 	done >> $@
-	for GG in $(RELATIVECOMMANDS); do \
-		DD=$$(dirname $$GG); \
-		BB=$$(basename $$GG .go); \
+	for FF in $(RELATIVECOMMANDS); do \
+		DD=$$(dirname $$FF); \
+		BB=$$(basename $$FF .go); \
 		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
-		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$GG | grep '^$(NAMESPACE)/' | tac); \
-		LLL=""; \
+		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(NAMESPACE)/' | tac); \
+		LL=""; \
 		for FFF in $$PP; do \
-			DDD=$$(dirname $$FFF); \
-			BBB=$$(basename $$FFF); \
-			LLL="$$LLL $(OUT)/$(NAMESPACE)/$$BBB/$$BBB.o"; \
+			MMM=$$(cd $(GOSOURCE); ls $$FFF/*.go); \
+			for FFFF in $$MMM; do \
+				BBBB=$$(basename $$FFFF .go); \
+				LL="$$LL $(OUT)/$(NAMESPACE)/$$DDD/$$BBBB.o"; \
+			done \
 		done; \
-		echo "$$OO:\t$(GOROOT)/$$GG $$LLL"; \
+		echo "$$OO:\t$(GOLINK)/$$FF $$LLL"; \
 	done >> $@
-	for GG in $(RELATIVECOMMANDS); do \
-		DD=$$(dirname $$GG); \
-		BB=$$(basename $$GG .go); \
+	for FF in $(RELATIVECOMMANDS); do \
+		DD=$$(dirname $$FF); \
+		BB=$$(basename $$FF .go); \
 		CC=$(OUT)/$(BIN_DIR)/$$BB; \
 		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
 		echo "$$CC:\t$$OO"; \
