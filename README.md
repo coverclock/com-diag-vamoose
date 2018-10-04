@@ -208,6 +208,13 @@ Raspbian 9.4 "stretch"
 Linux 4.14.34    
 go version go1.11 linux/arm    
 
+"Magnetite"    
+MacBook Pro 13" Late 2013    
+Intel x86_64 64-bit    
+Intel Core i7 @ 2.8GHz x 2    
+macOS 10.13.6 "High Sierra"    
+go version go1.11 darwin/amd64    
+
 ## Installation
 
 This is a mash-up of the directory structure expected by the standard Go
