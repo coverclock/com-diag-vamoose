@@ -94,16 +94,17 @@ STRIP				:=	$(CROSS_COMPILE)strip
 
 ########## Build Artifacts
 
-ABSOLUTESOURCES		:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
-ABSOLUTESOURCES		+=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
-RELATIVESOURCES		:=	$(subst $(GOROOT)/,,$(ABSOLUTESOURCES))
+ABSOLUTEPACKAGES	:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
+RELATIVEPACKAGES	:=	$(subst $(GOROOT)/,,$(ABSOLUTEPACKAGES))
 
 ABSOLUTECOMMANDS	:=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
 RELATIVECOMMANDS	:=	$(subst $(GOROOT)/,,$(ABSOLUTECOMMANDS))
 
-TARGETPACKAGES		:=	$(addprefix $(OUT)/$(GONAMESPACE)/,$(subst .go,.o,$(RELATIVEPACKAGES)))
-TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(GONAMESPACE)/,$(subst .go,.o,$(RELATIVECOMMANDS)))
-TARGETEXECUTABLES	:=  $(addprefix $(OUT)/$(BIN_DIR)/,$(notdir $(basename $(ABSOLUTECOMMANDS))))
+ABSOLUTESOURCES		:=	$(ABSOLUTEPACKAGES) $(ABSOLUTECOMMANDS)
+RELATIVESOURCES		:=	$(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
+
+TARGETPACKAGES		:=	$(addprefix $(OUT)/$(GONAMESPACE)/,$(addsuffix .o,$(basename $(RELATIVEPACKAGES))))
+TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(notdir $(basename $(RELATIVECOMMANDS))))
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
@@ -147,22 +148,28 @@ try:
 
 ########## Helpers
 
-.PHONY:	manifest goroot
+.PHONY:	depend manifest goroot
 
 manifest:
 	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
 	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
+
+artifacts:
+	@for FF in $(TARGETPACKAGES);  do echo "TARGETPACKAGE   "$$FF; done
+	@for FF in $(TARGETCOMMANDS);  do echo "TARGETCOMMAND   "$$FF; done
+	@for FF in $(TARGETGENERATED); do echo "TARGETGENERATED "$$FF; done
+	@for FF in $(TARGETSCRIPTS);   do echo "TARGETSCRIPT    "$$FF; done
 
 goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
-$(OUT)/depend.mk:	Makefile $(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
+depend:	$(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
 	mkdir -p $(dir $@)
 	cp /dev/null $@
 	for FF in $(RELATIVESOURCES); do \
-		echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$(GOSOURCE)/$(GONAMESPACE)/$$FF"; \
+		echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$$FF"; \
 		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(GONAMESPACE)/' | tac); \
 		for DD in $$PP; do \
 			GG=$$(cd $(GOSOURCE); ls $$DD/*.go | grep -v "/[^/]*_test.go$$"); \
@@ -172,16 +179,14 @@ $(OUT)/depend.mk:	Makefile $(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
 		done; \
 	done >> $@
 	for FF in $(RELATIVECOMMANDS); do \
-		DD=$$(cd $(GOSOURCE); ls $$GG/*.go); \
+		DD=$$(dirname $$FF); \
 		for II in $$DD; do \
 			echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF .go):\t$(OUT)/$${II%.go}.o"; \
 		done; \
 	done >> $@
+	cat $@
 
 -include $(OUT)/depend.mk
-
-depend:	$(OUT)/depend.mk
-	cat $(OUT)/depend.mk
 
 ########## Target Go Packages
 
