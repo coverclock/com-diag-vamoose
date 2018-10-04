@@ -165,9 +165,9 @@ goroot:
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
-depend:	$(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
-	mkdir -p $(dir $@)
-	cp /dev/null $@
+depend:
+	mkdir -p $(OUT)
+	cp /dev/null $(OUT)/depend.mk
 	for FF in $(RELATIVESOURCES); do \
 		echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$$FF"; \
 		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(GONAMESPACE)/' | tac); \
@@ -177,14 +177,18 @@ depend:	$(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
 				echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$(OUT)/$${II%.go}.o"; \
 			done; \
 		done; \
-	done >> $@
+	done >> $(OUT)/depend.mk
 	for FF in $(RELATIVECOMMANDS); do \
 		DD=$$(dirname $$FF); \
-		for II in $$DD; do \
-			echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF .go):\t$(OUT)/$${II%.go}.o"; \
+		GG=$$(ls $$DD); \
+		for II in $$GG; do \
+			echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF .go):\t$(OUT)/$(GONAMESPACE)/$$DD/$${II%.go}.o"; \
 		done; \
-	done >> $@
-	cat $@
+	done >> $(OUT)/depend.mk
+	cat $(OUT)/depend.mk
+
+$(OUT)/depend.mk:	$(RELATIVESOURCES) $(RELATIVECOMMANDS)
+	make $(MAKEFLAGS) depend
 
 -include $(OUT)/depend.mk
 
