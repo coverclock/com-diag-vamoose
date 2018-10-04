@@ -76,7 +76,7 @@ GCCMACHINE			:=	x86_64-linux-gnu
 GCCVERSION			:=	8
 GCCPATH				:=	$(GCCPREFIX)/$(GCCDIRECTORY)/gcc/$(GCCMACHINE)/$(GCCVERSION)
 
-GOCCFLAGS			:=	-I $(OUT)
+GOFLAGS				:=	-I $(OUT)
 GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
 
 GOSOURCE			:=	$(GOPATH)/$(SRC_DIR)# GOPATH/src
@@ -108,13 +108,9 @@ TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(notdir $(basename $(RELATIVE
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
 
-TARGETSHARED		:=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO).$(MAJOR).$(MINOR)
-TARGETSHARED		+=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO).$(MAJOR)
-TARGETSHARED		+=	$(OUT)/$(LIB_DIR)/$(PROJECT_SO)
-
-TARGETLIBRARIES		:=	$(TARGETPACKAGES)
 TARGETPROGRAMS		:=	$(TARGETCOMMANDS) $(TARGETGENERATED) $(TARGETSCRIPTS)
-TARGETALL			:=	$(TARGETLIBRARIES) $(TARGETPROGRAMS)
+
+TARGETALL			:=	$(TARGETPACKAGES) $(TARGETPROGRAMS)
 
 ########## Main Entry Points
 
@@ -148,26 +144,31 @@ try:
 
 ########## Helpers
 
-.PHONY:	depend manifest goroot
-
-manifest:
-	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
-	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
-
-artifacts:
-	@for FF in $(TARGETPACKAGES);  do echo "TARGETPACKAGE   "$$FF; done
-	@for FF in $(TARGETCOMMANDS);  do echo "TARGETCOMMAND   "$$FF; done
-	@for FF in $(TARGETGENERATED); do echo "TARGETGENERATED "$$FF; done
-	@for FF in $(TARGETSCRIPTS);   do echo "TARGETSCRIPT    "$$FF; done
+.PHONY:	sources targets goroot depend
 
 goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
-depend:
-	mkdir -p $(OUT)
-	cp /dev/null $(OUT)/depend.mk
+sources:
+	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
+	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
+
+targets:
+	@for FF in $(TARGETPACKAGES);  do echo "TARGETPACKAGE   "$$FF; done
+	@for FF in $(TARGETCOMMANDS);  do echo "TARGETCOMMAND   "$$FF; done
+	@for FF in $(TARGETGENERATED); do echo "TARGETGENERATED "$$FF; done
+	@for FF in $(TARGETSCRIPTS);   do echo "TARGETSCRIPT    "$$FF; done
+	
+
+########## Dependencies
+
+DEPEND := $(OUT)/depend.mk
+
+$(DEPEND):	$(RELATIVESOURCES) $(RELATIVECOMMANDS)
+	mkdir -p $(dir $@)
+	cp /dev/null $@
 	for FF in $(RELATIVESOURCES); do \
 		echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$$FF"; \
 		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(GONAMESPACE)/' | tac); \
@@ -177,47 +178,29 @@ depend:
 				echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$(OUT)/$${II%.go}.o"; \
 			done; \
 		done; \
-	done >> $(OUT)/depend.mk
+	done >> $@
 	for FF in $(RELATIVECOMMANDS); do \
 		DD=$$(dirname $$FF); \
 		GG=$$(ls $$DD); \
 		for II in $$GG; do \
 			echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF .go):\t$(OUT)/$(GONAMESPACE)/$$DD/$${II%.go}.o"; \
 		done; \
-	done >> $(OUT)/depend.mk
-	cat $(OUT)/depend.mk
-
-$(OUT)/depend.mk:	$(RELATIVESOURCES) $(RELATIVECOMMANDS)
-	make $(MAKEFLAGS) depend
+	done >> $@
+	cat $@
 
 -include $(OUT)/depend.mk
 
+depend:	$(OUT)/depend.mk
+
+# out/host/github.com/coverclock/com-diag-vamoose/Vamoose/pkg/gcra/gcra.o:	out/host/github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle/throttle.o
+# out/host/github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch/fletch.o:	cmd/fletch/fletch.go
+# out/host/bin/fletch:	out/host/github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch/fletch.o
+
 ########## Target Go Packages
 
-$(OUT)/$(ARC_DIR)/$(PROJECT_A):	$(TARGETOBJECTS)
-	D=`dirname $@`; mkdir -p $$D
-	$(AR) $(ARFLAGS) $@ $^
-	$(RANLIB) $@
-
-$(OUT)/$(LIB_DIR)/lib$(PROJECT).$(SO).$(MAJOR).$(MINOR):	$(TARGETOBJECTS)
-	D=`dirname $@`; mkdir -p $$D
-	$(CC) $(CFLAGS) $(A2SOARCH) -o $@ $(SOFLAGS) $(TARGETOBJECTS)
-
-$(OUT)/$(LIB_DIR)/lib$(PROJECT).$(SO).$(MAJOR):	$(OUT)/$(LIB_DIR)/lib$(PROJECT).$(SO).$(MAJOR).$(MINOR)
-	D=`dirname $<`; F=`basename $<`; T=`basename $@`; ( cd $$D; ln -s -f $$F $$T ) 
-
-$(OUT)/$(LIB_DIR)/lib$(PROJECT).$(SO):	$(OUT)/$(LIB_DIR)/lib$(PROJECT).$(SO).$(MAJOR)
-	D=`dirname $<`; F=`basename $<`; T=`basename $@`; ( cd $$D; ln -s -f $$F $$T ) 
 
 ########## Target Go Commands
 
-$(OUT)/$(SYM_DIR)/%:	$(OUT)/$(OBC_DIR)/$(BIN_DIR)/%.o $(TARGETLIBRARIES)
-	D=`dirname $@`; mkdir -p $$D
-	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
-
-$(OUT)/$(SYM_DIR)/%:	$(OUT)/$(OBX_DIR)/$(BIN_DIR)/%.o $(TARGETLIBRARIESXX) $(TARGETLIBRARIES)
-	D=`dirname $@`; mkdir -p $$D
-	$(CXX) $(CXXFLAGS) -o $@ $< $(LDXXFLAGS)
 
 ########## Generated Files
 
