@@ -38,7 +38,6 @@ SYMBOL				:=	$(shell echo $(TITLE) | tr '[a-z]' '[A-Z]')
 PROVIDER			:=	github.com
 AUTHOR				:=	coverclock
 REPOSITORY			:=	$(PROVIDER)/$(AUTHOR)/com-diag-$(PROJECT)
-NAMESPACE			:=	$(REPOSITORY)/$(TITLE)
 TARGET				:=	host
 
 COPYRIGHT			:=	2018 Digital Aggregates Corporation
@@ -83,6 +82,7 @@ GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
 GOSOURCE			:=	$(GOPATH)/$(SRC_DIR)# GOPATH/src
 GOLINK				:=	$(GOSOURCE)/$(REPOSITORY)# GOPATH/src/github.com/coverclock/com-diag-vamoose
 GOROOT				:=	$(GOLINK)/$(TITLE)# GOPATH/src/github.com/coverclock/com-diag-vamoose/Vamoose
+GONAMESPACE			:=	$(REPOSITORY)/$(TITLE)# github.com/coverclock/com-diag-vamoose/Vamoose
 
 ########## Commands and Option Flags
 
@@ -94,14 +94,15 @@ STRIP				:=	$(CROSS_COMPILE)strip
 
 ########## Build Artifacts
 
-ABSOLUTEPACKAGES	:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
-ABSOLUTECOMMANDS	:=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
+ABSOLUTESOURCES		:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
+ABSOLUTESOURCES		+=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
+RELATIVESOURCES		:=	$(subst $(GOROOT)/,,$(ABSOLUTESOURCES))
 
-RELATIVEPACKAGES	:=	$(subst $(GOROOT)/,,$(ABSOLUTEPACKAGES))
+ABSOLUTECOMMANDS	:=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
 RELATIVECOMMANDS	:=	$(subst $(GOROOT)/,,$(ABSOLUTECOMMANDS))
 
-TARGETPACKAGES		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(subst .go,.o,$(RELATIVEPACKAGES)))
-TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(NAMESPACE)/,$(subst .go,.o,$(RELATIVECOMMANDS)))
+TARGETPACKAGES		:=	$(addprefix $(OUT)/$(GONAMESPACE)/,$(subst .go,.o,$(RELATIVEPACKAGES)))
+TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(GONAMESPACE)/,$(subst .go,.o,$(RELATIVECOMMANDS)))
 TARGETEXECUTABLES	:=  $(addprefix $(OUT)/$(BIN_DIR)/,$(notdir $(basename $(ABSOLUTECOMMANDS))))
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
@@ -121,7 +122,7 @@ TARGETALL			:=	$(TARGETLIBRARIES) $(TARGETPROGRAMS)
 all:	$(TARGETALL)
 
 tidy:
-	rm -rf $(OUT)/$(BIN_DIR) $(OUT)/$(NAMESPACE)/$(CMD_DIR) $(OUT)/$(NAMESPACE)/$(PKG_DIR)
+	rm -rf $(OUT)/$(BIN_DIR) $(OUT)/$(GONAMESPACE)/$(CMD_DIR) $(OUT)/$(GONAMESPACE)/$(PKG_DIR)
 
 clean:
 	rm -rf $(OUT)
@@ -133,79 +134,54 @@ clobber:	pristine
 	rm -f .cscope.lst .cscope.out .cscope.out.in .cscope.out.po
 
 try:
-	mkdir -p $(OUT)/$(NAMESPACE)/$(PKG_DIR)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(NAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
-	mkdir -p $(OUT)/$(NAMESPACE)/$(CMD_DIR)
-	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(NAMESPACE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(NAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	mkdir -p $(OUT)/$(GONAMESPACE)/$(PKG_DIR)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
+	mkdir -p $(OUT)/$(GONAMESPACE)/$(CMD_DIR)
+	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 
 ########## Helpers
 
-.PHONY:	manifest goroot manifest:
-	@echo "ABSOLUTEPACKAGES="$(ABSOLUTEPACKAGES)
-	@echo "ABSOLUTECOMMANDS="$(ABSOLUTECOMMANDS)
-	@echo "RELATIVEPACKAGES="$(RELATIVEPACKAGES)
-	@echo "RELATIVECOMMANDS="$(RELATIVECOMMANDS)
-	@echo "TARGETPACKAGES="$(TARGETPACKAGES)
-	@echo "TARGETCOMMANDS="$(TARGETCOMMANDS)
-	@echo "TARGETEXECUTABLES="$(TARGETEXECUTABLES)
-	@echo "TARGETGENERATED="$(TARGETGENERATED)
-	@echo "TARGETSCRIPTS="$(TARGETSCRIPTS)
+.PHONY:	manifest goroot
+
+manifest:
+	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
+	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
 
 goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
-$(OUT)/depend.mk:
+$(OUT)/depend.mk:	Makefile $(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
 	mkdir -p $(dir $@)
 	cp /dev/null $@
-	for FF in $(RELATIVEPACKAGES); do \
-		DD=$$(dirname $$FF); \
-		BB=$$(basename $$FF .go); \
-		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
-		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(NAMESPACE)/' | tac); \
-		LL=""; \
-		for FFF in $$PP; do \
-			MMM=$$(cd $(GOSOURCE); ls $$FFF/*.go); \
-			for FFFF in $$MMM; do \
-				BBBB=$$(basename $$FFFF .go); \
-				LL="$$LL $(OUT)/$(NAMESPACE)/$$DDD/$$BBBB.o"; \
-			done \
+	for FF in $(RELATIVESOURCES); do \
+		echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$(GOSOURCE)/$(GONAMESPACE)/$$FF"; \
+		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(GONAMESPACE)/' | tac); \
+		for DD in $$PP; do \
+			GG=$$(cd $(GOSOURCE); ls $$DD/*.go | grep -v "/[^/]*_test.go$$"); \
+			for II in $$GG; do \
+				echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$(OUT)/$${II%.go}.o"; \
+			done; \
 		done; \
-		echo "$$OO:\t$(GOLINK)/$$FF $$LLL"; \
 	done >> $@
 	for FF in $(RELATIVECOMMANDS); do \
-		DD=$$(dirname $$FF); \
-		BB=$$(basename $$FF .go); \
-		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
-		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(NAMESPACE)/' | tac); \
-		LL=""; \
-		for FFF in $$PP; do \
-			MMM=$$(cd $(GOSOURCE); ls $$FFF/*.go); \
-			for FFFF in $$MMM; do \
-				BBBB=$$(basename $$FFFF .go); \
-				LL="$$LL $(OUT)/$(NAMESPACE)/$$DDD/$$BBBB.o"; \
-			done \
+		DD=$$(cd $(GOSOURCE); ls $$GG/*.go); \
+		for II in $$DD; do \
+			echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF .go):\t$(OUT)/$${II%.go}.o"; \
 		done; \
-		echo "$$OO:\t$(GOLINK)/$$FF $$LLL"; \
-	done >> $@
-	for FF in $(RELATIVECOMMANDS); do \
-		DD=$$(dirname $$FF); \
-		BB=$$(basename $$FF .go); \
-		CC=$(OUT)/$(BIN_DIR)/$$BB; \
-		OO=$(OUT)/$(NAMESPACE)/$$DD/$$BB.o; \
-		echo "$$CC:\t$$OO"; \
 	done >> $@
 
 -include $(OUT)/depend.mk
 
 depend:	$(OUT)/depend.mk
+	cat $(OUT)/depend.mk
 
 ########## Target Go Packages
 
@@ -252,12 +228,12 @@ $(OUT)/$(BIN_DIR)/setup:	$(OUT)/$(BIN_DIR)/generate
 
 ########## Rules
 
-$(OUT)/$(NAMESPACE)/%.o:	%.go
+$(OUT)/$(GONAMESPACE)/%.o:	%.go
 	D=`dirname $@`; mkdir -p $$D
 	$(GOCC) $(GOFLAGS) -o $@ -c $< $(GOLDFLAGS)
 	
 
-$(OUT)/$(NAMESPACE)/%:	%.go
+$(OUT)/$(GONAMESPACE)/%:	%.go
 	D=`dirname $@`; mkdir -p $$D
 	$(GOCC) $(GOFLAGS) -o $@ $< $(GOLDFLAGS)
 
