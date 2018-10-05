@@ -177,14 +177,14 @@ func (this * Contract) Update(now ticks.Ticks) bool {
  * GETTERS
  ******************************************************************************/
 
-// GetExpected returns the number of ticks that would be necessary for the
+// Expected returns the number of ticks that would be necessary for the
 // caller to delay for the event stream  to comply to the traffic contract with
 // no limit penalty accumulated given the current state of the gcra.
-func (this * Contract) GetExpected() ticks.Ticks {
+func (this * Contract) Expected() ticks.Ticks {
     var delay ticks.Ticks = 0
 
-    p := this.peak.GetExpected()
-    s := this.sustained.GetExpected()
+    p := this.peak.Expected()
+    s := this.sustained.Expected()
     if (p > s) {
         delay = p
     } else {

@@ -54,7 +54,7 @@ func TestContractSandbox(t * testing.T) {
     fmt.Printf("Commits=%v\n", admissable)
     fmt.Printf("that=%s\n", that.String())
 
-    expected = that.GetExpected()
+    expected = that.Expected()
     fmt.Printf("Comply=%v\n", expected);
 
     now += expected

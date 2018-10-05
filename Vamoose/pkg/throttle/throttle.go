@@ -86,10 +86,10 @@ type Throttle interface {
      * GETTERS
      **************************************************************************/
     
-    // GetExpected returns the number of ticks that would be necessary for the
+    // Expected returns the number of ticks that would be necessary for the
     // caller to delay for the event stream  to comply to the traffic contract with
     // no limit penalty accumulated given the current state of the gcra.
-    GetExpected() ticks.Ticks
+    Expected() ticks.Ticks
     
     // isEmpty returns true if the throttle is empty, that is, it has no accumulated
     // deficit ticks.
