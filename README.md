@@ -199,6 +199,7 @@ Intel Core i7-5557U @ 3.10GHz x 8
 Ubuntu 18.04 "bionic"    
 Linux 4.15.0    
 go version go1.11 linux/amd64    
+gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0    
 
 "Gold"    
 Raspberry Pi 3B+    
@@ -207,6 +208,7 @@ Broadcom BCM2837B0 Cortex-A53 @ 1.4GHz x 4
 Raspbian 9.4 "stretch"    
 Linux 4.14.34    
 go version go1.11 linux/arm    
+gcc (Raspbian 6.3.0-18+rpi1+deb9u1) 6.3.0 20170516    
 
 "Magnetite"    
 MacBook Pro 13" Late 2013    
@@ -246,6 +248,16 @@ projects. Your mileage may vary.
     go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch
     go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/shape
     dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
+
+or if I have the Makefile working with the GNU Compiler Collection (which is
+kinda sporadic on my part)
+
+    export GOPATH="${HOME}/go"
+    cd Vamoose
+    make goroot
+    make all
+    . out/host/bin/setup
+    dd if=/dev/urandom count=1000 | fletch -V -b 512 | shape -V -p 2048 -s 1024 -b 512 | fletch -V -b 512 > /dev/null
 
 ## Notes
 

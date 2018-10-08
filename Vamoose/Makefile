@@ -142,7 +142,7 @@ clobber:	pristine
 goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
-	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
+	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(ROOT)
 
 list:
 	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
@@ -215,7 +215,8 @@ $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o:	$(wildcard $(CMD_DIR)/%/*.go)
 
 $(OUT)/$(BIN_DIR)/%:	$(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o
 	DD=`dirname $@`; mkdir -p $$DD
-	$(GOLD) $(GOFLAGS) -o $@ $(filter %.o,$^) $(GOLDFLAGS)
+	#$(GOLD) $(GOFLAGS) -o $@ $< $(GOLDFLAGS)
+	$(GOLD) $(GOFLAGS) -o $@ $< $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 
 $(OUT)/%:	%.sh
 	DD=`dirname $@`; mkdir -p $$DD
