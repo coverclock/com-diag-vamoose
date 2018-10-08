@@ -104,10 +104,6 @@ RELATIVEPACKAGES	:=	$(subst $(GOROOT)/,,$(ABSOLUTEPACKAGES))
 ABSOLUTECOMMANDS	:=	$(wildcard $(GOROOT)/$(CMD_DIR)/*)
 RELATIVECOMMANDS	:=	$(subst $(GOROOT)/,,$(ABSOLUTECOMMANDS))
 
-ABSOLUTEMODULES		:=	$(wildcard $(GOROOT)/$(PKG_DIR)/*)
-ABSOLUTEMODULES		+=	$(wildcard $(GOROOT)/$(CMD_DIR)/*)
-RELATIVEMODULES		:=	$(subst $(GOROOT)/,,$(ABSOLUTEMODULES))
-
 ABSOLUTESOURCES		:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
 ABSOLUTESOURCES		+=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
 RELATIVESOURCES		:=	$(subst $(GOROOT)/,,$(ABSOLUTESOURCES))
@@ -141,26 +137,24 @@ clobber:	pristine
 
 ########## Helpers
 
-.PHONY:	goroot artifacts modules sources
+.PHONY:	goroot list
 
 goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
-artifacts:
+list:
+	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
+	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
+	@for FF in $(ABSOLUTEPACKAGES); do echo -n "ABSOLUTEPACKAGE "; ls -d $$FF; done
+	@for FF in $(RELATIVEPACKAGES); do echo -n "RELATIVEPACKAGE "; ls -d $$FF; done
+	@for FF in $(ABSOLUTECOMMANDS); do echo -n "ABSOLUTECOMMAND "; ls -d $$FF; done
+	@for FF in $(RELATIVECOMMANDS); do echo -n "RELATIVECOMMAND "; ls -d $$FF; done
 	@for FF in $(TARGETPACKAGES);  do echo "TARGETPACKAGE   "$$FF; done
 	@for FF in $(TARGETCOMMANDS);  do echo "TARGETCOMMAND   "$$FF; done
 	@for FF in $(TARGETGENERATED); do echo "TARGETGENERATED "$$FF; done
 	@for FF in $(TARGETSCRIPTS);   do echo "TARGETSCRIPT    "$$FF; done
-
-modules:
-	@for FF in $(ABSOLUTEMODULES); do echo -n "ABSOLUTEMODULE "; ls -d $$FF; done
-	@for FF in $(RELATIVEMODULES); do echo -n "RELATIVEMODULE "; ls -d $$FF; done
-
-sources:
-	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
-	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
 	
 ########## Dependencies
 
@@ -168,7 +162,7 @@ sources:
 
 DEPEND := $(OUT)/depend.mk
 
-$(DEPEND):	$(RELATIVEMODULES) $(RELATIVESOURCES) $(RELATIVECOMMANDS) Makefile
+$(DEPEND):	$(RELATIVESOURCES) $(RELATIVECOMMANDS) Makefile
 	mkdir -p $(dir $@)
 	echo "# GENERATED FILE: DO NOT EDIT; CHANGES WILL BE LOST!" > $@
 	for FF in $(RELATIVESOURCES); do \
@@ -180,11 +174,7 @@ $(DEPEND):	$(RELATIVEMODULES) $(RELATIVESOURCES) $(RELATIVECOMMANDS) Makefile
 		done; \
 	done >> $@
 	for FF in $(RELATIVECOMMANDS); do \
-		DD=$$(dirname $$FF); \
-		GG=$$(ls $$DD); \
-		for II in $$GG; do \
-			echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF .go):\t$(OUT)/$(GONAMESPACE)/$$DD/$${II%.go}.o"; \
-		done; \
+		echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF):\t$(OUT)/$(GONAMESPACE)/$(CMD_DIR)/$$(basename $$FF).o"; \
 	done >> $@
 
 -include $(DEPEND)
@@ -210,6 +200,10 @@ $(OUT)/$(BIN_DIR)/setup:	$(OUT)/$(BIN_DIR)/generate
 	chmod 664 $@
 
 ########## Rules
+
+#@echo "@="$@
+#@echo "^="$^
+#@echo "<="$<
 
 $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/%.o:	$(wildcard $(PKG_DIR)/%/*.go)
 	DD=`dirname $@`; mkdir -p $$DD
