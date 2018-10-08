@@ -87,6 +87,8 @@ GOLINK				:=	$(GOSOURCE)/$(REPOSITORY)# GOPATH/src/github.com/coverclock/com-dia
 GOROOT				:=	$(GOLINK)/$(TITLE)# GOPATH/src/github.com/coverclock/com-diag-vamoose/Vamoose
 GONAMESPACE			:=	$(REPOSITORY)/$(TITLE)# github.com/coverclock/com-diag-vamoose/Vamoose
 
+DEPEND				:=	$(OUT)/depend.mk
+
 ########## Commands and Option Flags
 
 GO					:=	go
@@ -143,6 +145,7 @@ goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(ROOT)
+	rm -f $(DEPEND)
 
 list:
 	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
@@ -159,8 +162,6 @@ list:
 ########## Dependencies
 
 .PHONY:	depend
-
-DEPEND := $(OUT)/depend.mk
 
 $(DEPEND):	$(RELATIVESOURCES) $(RELATIVECOMMANDS) Makefile
 	mkdir -p $(dir $@)
