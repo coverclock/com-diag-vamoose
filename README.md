@@ -286,7 +286,7 @@ queueing in the kernel and/or some artifact of the Go scheduler.)
 
 ### gccgo
 
-There are two Go compilers: the official Google compiler accessed via the
+There are two Go compilers: the official Google compiler "gc" accessed via the
 "go" command, and the Go front-end to the GNU compiler suite used via
 the "gccgo" command (but it also has a "go" front end you can use). The
 gccgo compiler has the potential to generate better code since the
@@ -299,6 +299,6 @@ using gccgo via the Makefile that is part of this repo. I consider this
 experimental.
 
 Casual testing suggests that gccgo produces much smaller executables (like,
-an order of magnitude) that may run a bit slower, than those produced by Google
-go. At least some of both differences are probably due to gccgo by default
+an order of magnitude) that may run a bit slower, than those produced by gc.
+At least some of both differences are probably due to gccgo by default
 being dynamically linked, while go by default being statically linked.
