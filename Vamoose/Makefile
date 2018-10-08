@@ -80,6 +80,7 @@ GCCPATH				:=	$(GCCPREFIX)/$(GCCDIRECTORY)/gcc/$(GCCMACHINE)/$(GCCVERSION)
 
 GOFLAGS				:=	-I $(OUT)
 GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
+GOLDMORE			:=	-L $(OUT)
 ARFLAGS				:=	crsv
 
 GOSOURCE			:=	$(GOPATH)/$(SRC_DIR)# GOPATH/src
@@ -216,7 +217,7 @@ $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o:	$(wildcard $(CMD_DIR)/%/*.go)
 
 $(OUT)/$(BIN_DIR)/%:	$(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o
 	DD=`dirname $@`; mkdir -p $$DD
-	#$(GOLD) $(GOFLAGS) -o $@ $< $(GOLDFLAGS)
+	#$(GOLD) $(GOFLAGS) -o $@ $< $(GOLDMORE) $(GOLDFLAGS)
 	$(GOLD) $(GOFLAGS) -o $@ $< $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 
 $(OUT)/%:	%.sh

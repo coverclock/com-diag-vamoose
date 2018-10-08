@@ -249,8 +249,8 @@ projects. Your mileage may vary.
     go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/shape
     dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
 
-or if I have the Makefile working with the GNU Compiler Collection (which is
-kinda sporadic on my part)
+or if I have the Makefile working with the gccgo front-end to the GNU Compiler
+Collection (which is kinda sporadic on my part)
 
     export GOPATH="${HOME}/go"
     cd Vamoose
