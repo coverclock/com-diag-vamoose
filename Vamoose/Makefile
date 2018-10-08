@@ -58,7 +58,9 @@ CMD_DIR				:=	cmd# Command components
 OUT_DIR				:=	out# Build artifacts
 PKG_DIR				:=	pkg# Package components
 SRC_DIR				:=	src# Source directory
-TMP_DIR				:=	/tmp
+
+TMPDIR				?=	/tmp
+TMP_DIR				:=	$(TMPDIR)
 
 ########## Configuration
 
@@ -78,6 +80,7 @@ GCCPATH				:=	$(GCCPREFIX)/$(GCCDIRECTORY)/gcc/$(GCCMACHINE)/$(GCCVERSION)
 
 GOFLAGS				:=	-I $(OUT)
 GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
+ARFLAGS				:=	crsv
 
 GOSOURCE			:=	$(GOPATH)/$(SRC_DIR)# GOPATH/src
 GOLINK				:=	$(GOSOURCE)/$(REPOSITORY)# GOPATH/src/github.com/coverclock/com-diag-vamoose
@@ -88,20 +91,26 @@ GONAMESPACE			:=	$(REPOSITORY)/$(TITLE)# github.com/coverclock/com-diag-vamoose/
 
 GO					:=	go
 GOCC				:=	$(CROSS_COMPILE)gccgo
+GOLD				:=	$(CROSS_COMPILE)gccgo
 AR					:=	$(CROSS_COMPILE)ar
 RANLIB				:=	$(CROSS_COMPILE)ranlib
 STRIP				:=	$(CROSS_COMPILE)strip
 
-########## Build Artifacts
+########## Build Sources, Modules, and Artifacts
 
-ABSOLUTEPACKAGES	:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
+ABSOLUTEPACKAGES	:=	$(wildcard $(GOROOT)/$(PKG_DIR)/*)
 RELATIVEPACKAGES	:=	$(subst $(GOROOT)/,,$(ABSOLUTEPACKAGES))
 
-ABSOLUTECOMMANDS	:=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
+ABSOLUTECOMMANDS	:=	$(wildcard $(GOROOT)/$(CMD_DIR)/*)
 RELATIVECOMMANDS	:=	$(subst $(GOROOT)/,,$(ABSOLUTECOMMANDS))
 
-ABSOLUTESOURCES		:=	$(ABSOLUTEPACKAGES) $(ABSOLUTECOMMANDS)
-RELATIVESOURCES		:=	$(RELATIVEPACKAGES) $(RELATIVECOMMANDS)
+ABSOLUTEMODULES		:=	$(wildcard $(GOROOT)/$(PKG_DIR)/*)
+ABSOLUTEMODULES		+=	$(wildcard $(GOROOT)/$(CMD_DIR)/*)
+RELATIVEMODULES		:=	$(subst $(GOROOT)/,,$(ABSOLUTEMODULES))
+
+ABSOLUTESOURCES		:=	$(filter-out $(wildcard $(GOROOT)/$(PKG_DIR)/*/*_test.go), $(wildcard $(GOROOT)/$(PKG_DIR)/*/*.go))
+ABSOLUTESOURCES		+=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
+RELATIVESOURCES		:=	$(subst $(GOROOT)/,,$(ABSOLUTESOURCES))
 
 TARGETPACKAGES		:=	$(addprefix $(OUT)/$(GONAMESPACE)/,$(addsuffix .o,$(basename $(RELATIVEPACKAGES))))
 TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(notdir $(basename $(RELATIVECOMMANDS))))
@@ -130,53 +139,44 @@ pristine:	clean
 clobber:	pristine
 	rm -f .cscope.lst .cscope.out .cscope.out.in .cscope.out.po
 
-try:
-	mkdir -p $(OUT)/$(GONAMESPACE)/$(PKG_DIR)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
-	mkdir -p $(OUT)/$(GONAMESPACE)/$(CMD_DIR)
-	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/fletch $(CMD_DIR)/fletch/fletch.go $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/shape $(CMD_DIR)/shape/shape.go $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
-
 ########## Helpers
 
-.PHONY:	sources targets goroot depend
+.PHONY:	goroot artifacts modules sources
 
 goroot:
 	test -n "$(GOPATH)"
 	mkdir -p $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR)
 	cd $(GOPATH)/$(SRC_DIR)/$(PROVIDER)/$(AUTHOR); ln -f -s $(REPOROOT)
 
-sources:
-	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
-	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
-
-targets:
+artifacts:
 	@for FF in $(TARGETPACKAGES);  do echo "TARGETPACKAGE   "$$FF; done
 	@for FF in $(TARGETCOMMANDS);  do echo "TARGETCOMMAND   "$$FF; done
 	@for FF in $(TARGETGENERATED); do echo "TARGETGENERATED "$$FF; done
 	@for FF in $(TARGETSCRIPTS);   do echo "TARGETSCRIPT    "$$FF; done
-	
 
+modules:
+	@for FF in $(ABSOLUTEMODULES); do echo -n "ABSOLUTEMODULE "; ls -d $$FF; done
+	@for FF in $(RELATIVEMODULES); do echo -n "RELATIVEMODULE "; ls -d $$FF; done
+
+sources:
+	@for FF in $(ABSOLUTESOURCES); do echo -n "ABSOLUTESOURCE "; ls $$FF; done
+	@for FF in $(RELATIVESOURCES); do echo -n "RELATIVESOURCE "; ls $$FF; done
+	
 ########## Dependencies
+
+.PHONY:	depend
 
 DEPEND := $(OUT)/depend.mk
 
-$(DEPEND):	$(RELATIVESOURCES) $(RELATIVECOMMANDS)
+$(DEPEND):	$(RELATIVEMODULES) $(RELATIVESOURCES) $(RELATIVECOMMANDS) Makefile
 	mkdir -p $(dir $@)
-	cp /dev/null $@
+	echo "# GENERATED FILE: DO NOT EDIT; CHANGES WILL BE LOST!" > $@
 	for FF in $(RELATIVESOURCES); do \
-		echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$$FF"; \
-		PP=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(GONAMESPACE)/' | tac); \
-		for DD in $$PP; do \
-			GG=$$(cd $(GOSOURCE); ls $$DD/*.go | grep -v "/[^/]*_test.go$$"); \
-			for II in $$GG; do \
-				echo "$(OUT)/$(GONAMESPACE)/$${FF%.go}.o:\t$(OUT)/$${II%.go}.o"; \
-			done; \
+		MM=$$(dirname $$FF); \
+		echo "$(OUT)/$(GONAMESPACE)/$$MM.o:\t$$FF"; \
+		DD=$$(${GO} list -f '{{ join .Deps "\n" }}' $$FF | grep '^$(GONAMESPACE)/' | tac); \
+		for PP in $$DD; do \
+			echo "$(OUT)/$(GONAMESPACE)/$$MM.o:\t$(OUT)/$$PP.o"; \
 		done; \
 	done >> $@
 	for FF in $(RELATIVECOMMANDS); do \
@@ -186,29 +186,20 @@ $(DEPEND):	$(RELATIVESOURCES) $(RELATIVECOMMANDS)
 			echo "$(OUT)/$(BIN_DIR)/$$(basename $$FF .go):\t$(OUT)/$(GONAMESPACE)/$$DD/$${II%.go}.o"; \
 		done; \
 	done >> $@
-	cat $@
 
--include $(OUT)/depend.mk
+-include $(DEPEND)
 
-depend:	$(OUT)/depend.mk
-
-# out/host/github.com/coverclock/com-diag-vamoose/Vamoose/pkg/gcra/gcra.o:	out/host/github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle/throttle.o
-# out/host/github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch/fletch.o:	cmd/fletch/fletch.go
-# out/host/bin/fletch:	out/host/github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch/fletch.o
-
-########## Target Go Packages
-
-
-########## Target Go Commands
-
+depend:	$(DEPEND)
+	cat $^
 
 ########## Generated Files
 
 # For generating a setup script for a bash shell (for example, "bash generate > setup").
 # (Because the Android bash doesn't seem to implement BASH_ARGV.)
 $(OUT)/$(BIN_DIR)/generate:	Makefile
-	D=`dirname $@`; mkdir -p $$D
-	echo 'COM_DIAG_$(SYMBOL)_PATH=`dirname $$0`; COM_DIAG_$(SYMBOL)_ROOT=`cd $$COM_DIAG_$(SYMBOL)_PATH; pwd`' > $@
+	DD=`dirname $@`; mkdir -p $$DD
+	echo "# GENERATED FILE: DO NOT EDIT; CHANGES WILL BE LOST!" > $@
+	echo 'COM_DIAG_$(SYMBOL)_PATH=`dirname $$0`; COM_DIAG_$(SYMBOL)_ROOT=`cd $$COM_DIAG_$(SYMBOL)_PATH; pwd`' >> $@
 	echo 'echo export PATH=\\$$PATH:$$COM_DIAG_$(SYMBOL)_ROOT/../$(BIN_DIR):$$COM_DIAG_$(SYMBOL)_ROOT/../$(CMD_DIR)' >> $@
 	echo 'echo export LD_LIBRARY_PATH=\\$$LD_LIBRARY_PATH:$$COM_DIAG_$(SYMBOL)_ROOT/../$(PKG_DIR):$(GCCPATH)' >> $@
 	chmod 755 $@
@@ -220,16 +211,42 @@ $(OUT)/$(BIN_DIR)/setup:	$(OUT)/$(BIN_DIR)/generate
 
 ########## Rules
 
-$(OUT)/$(GONAMESPACE)/%.o:	%.go
-	D=`dirname $@`; mkdir -p $$D
-	$(GOCC) $(GOFLAGS) -o $@ -c $< $(GOLDFLAGS)
-	
+$(OUT)/$(GONAMESPACE)/$(PKG_DIR)/%.o:	$(wildcard $(PKG_DIR)/%/*.go)
+	DD=`dirname $@`; mkdir -p $$DD
+	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
 
-$(OUT)/$(GONAMESPACE)/%:	%.go
-	D=`dirname $@`; mkdir -p $$D
-	$(GOCC) $(GOFLAGS) -o $@ $< $(GOLDFLAGS)
+$(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o:	$(wildcard $(CMD_DIR)/%/*.go)
+	DD=`dirname $@`; mkdir -p $$DD
+	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
+
+$(OUT)/$(BIN_DIR)/%:	$(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o
+	DD=`dirname $@`; mkdir -p $$DD
+	$(GOLD) $(GOFLAGS) -o $@ $(filter %.o,$^) $(GOLDFLAGS)
 
 $(OUT)/%:	%.sh
-	D=`dirname $@`; mkdir -p $$D
+	DD=`dirname $@`; mkdir -p $$DD
 	cp $< $@
 	chmod 755 $@
+
+########## Prototype
+
+try:
+	mkdir -p $(OUT)/$(GONAMESPACE)/$(PKG_DIR)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
+	# This next statement exhibits interesting behavior: both Google go and
+	# GNU gccgo handle forward references for separate compilation units in
+	# the same package. You can tell this because helpers.go refers to a type
+	# defined in throttle.go. This vastly simplifies splitting packages or
+	# commands into separate files.
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/helpers.go $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
+	mkdir -p $(OUT)/$(GONAMESPACE)/$(CMD_DIR)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/fletch.o $(CMD_DIR)/fletch/fletch.go $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/shape.o $(CMD_DIR)/shape/shape.go $(GOLDFLAGS)
+	mkdir -p $(OUT)/$(BIN_DIR)
+	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(BIN_DIR)/fletch $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/fletch.o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(BIN_DIR)/shape $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/shape.o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
+	
