@@ -298,3 +298,7 @@ what I recommend you do too. But I have compiled and run functional tests
 using gccgo via the Makefile that is part of this repo. I consider this
 experimental.
 
+Casual testing suggests that gccgo produces much smaller executables (like,
+an order of magnitude) that may run a bit slower, than those produced by Google
+go. At least some of both differences are probably due to gccgo by default
+being dynamically linked, while go by default being statically linked.

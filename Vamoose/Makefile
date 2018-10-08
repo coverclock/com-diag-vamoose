@@ -16,8 +16,8 @@
 ## softlink from the GOPATH to the repo directory is used. This allows me to
 ## use the facilities provided by the go command, but also some tools I use
 ## to support my own workflow. Because the import paths in the Go source code
-## assumes the GOPATH layout, this Makefile for the most part assumes that as
-## well. It's not pretty.
+## assumes the GOPATH layout, this Makefile has to deal with that as well.
+## It's not pretty.
 ##
 
 .PHONY:	default
@@ -78,15 +78,15 @@ GCCMACHINE			:=	x86_64-linux-gnu
 GCCVERSION			:=	8
 GCCPATH				:=	$(GCCPREFIX)/$(GCCDIRECTORY)/gcc/$(GCCMACHINE)/$(GCCVERSION)
 
-GOFLAGS				:=	-I $(OUT)
-GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
-GOLDMORE			:=	-L $(OUT)
-ARFLAGS				:=	crsv
-
 GOSOURCE			:=	$(GOPATH)/$(SRC_DIR)# GOPATH/src
 GOLINK				:=	$(GOSOURCE)/$(REPOSITORY)# GOPATH/src/github.com/coverclock/com-diag-vamoose
 GOROOT				:=	$(GOLINK)/$(TITLE)# GOPATH/src/github.com/coverclock/com-diag-vamoose/Vamoose
 GONAMESPACE			:=	$(REPOSITORY)/$(TITLE)# github.com/coverclock/com-diag-vamoose/Vamoose
+
+GOFLAGS				:=	-I $(OUT)
+GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
+GOLDMORE			:=	-L $(OUT)/$(GONAMESPACE)/$(PKG_DIR)
+ARFLAGS				:=	crsv
 
 DEPEND				:=	$(OUT)/depend.mk
 
@@ -203,9 +203,9 @@ $(OUT)/$(BIN_DIR)/setup:	$(OUT)/$(BIN_DIR)/generate
 
 ########## Rules
 
-#@echo "@="$@
-#@echo "^="$^
-#@echo "<="$<
+#	@echo "@="$@
+#	@echo "^="$^
+#	@echo "<="$<
 
 $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/%.o:	$(wildcard $(PKG_DIR)/%/*.go)
 	DD=`dirname $@`; mkdir -p $$DD
@@ -217,7 +217,9 @@ $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o:	$(wildcard $(CMD_DIR)/%/*.go)
 
 $(OUT)/$(BIN_DIR)/%:	$(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o
 	DD=`dirname $@`; mkdir -p $$DD
-	#$(GOLD) $(GOFLAGS) -o $@ $< $(GOLDMORE) $(GOLDFLAGS)
+	# man gold indicates that the package object files must be "included in
+	# the link command". Empirical evidence shows that this cannot be done
+	# via the -I (gccgo) or -L (gold) command line options. This seems wrong.
 	$(GOLD) $(GOFLAGS) -o $@ $< $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 
 $(OUT)/%:	%.sh
