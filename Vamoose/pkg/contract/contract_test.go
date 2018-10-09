@@ -11,9 +11,39 @@ import (
     "testing"
     "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
     "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/gcra"
     "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/harness"
     "fmt"
 )
+
+/*******************************************************************************
+ * ANCILLARY
+ ******************************************************************************/
+
+func TestBurstTolerance(t * testing.T) {
+    var bt ticks.Ticks
+
+    // func BurstTolerance(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, burstsize Events) ticks.Ticks
+
+    bt = BurstTolerance(2, 3, 7, 5) // Nominal
+    if (bt == ticks.Ticks(23)) {} else { t.Errorf("FAILED! bt=%v", bt) }
+
+    bt = BurstTolerance(2, 0, 7, 5) // No CDVT
+    if (bt == ticks.Ticks(20)) {} else { t.Errorf("FAILED! bt=%v", bt) }
+
+    bt = BurstTolerance(0, 0, 2, 5) // No PCR, CDVT
+    if (bt == ticks.Ticks(8)) {} else { t.Errorf("FAILED! bt=%v", bt) }
+
+    bt = BurstTolerance(7, 3, 7, 5) // PCR == SCR
+    if (bt == ticks.Ticks(3)) {} else { t.Errorf("FAILED! bt=%v", bt) }
+
+    bt = BurstTolerance(2, 3, 7, 1) // MBS <= 1
+    if (bt == ticks.Ticks(3)) {} else { t.Errorf("FAILED! bt=%v", bt) }
+
+    bt = BurstTolerance(2, 3, 7, 0) // MBS <= 1
+    if (bt == ticks.Ticks(3)) {} else { t.Errorf("FAILED! bt=%v", bt) }
+
+}
 
 /*******************************************************************************
  * MANUAL
@@ -30,7 +60,7 @@ func TestContractSandbox(t * testing.T) {
     var expected ticks.Ticks = 0
 
     fmt.Printf("now=%v\n", now)
-    bt := throttle.BurstTolerance(PEAK, JITTER, SUSTAINED, BURST)
+    bt := BurstTolerance(PEAK, JITTER, SUSTAINED, BURST)
     that := New(PEAK, JITTER, SUSTAINED, bt, now)
     fmt.Printf("that=%s\n", that.String())
 
@@ -75,11 +105,11 @@ func TestContractSimulated(t * testing.T) {
     const OPERATIONS int = 1000000
 
     frequency := ticks.Frequency()
-    peak := throttle.Increment(throttle.Events(PEAK), 1, frequency)
+    peak := gcra.Increment(throttle.Events(PEAK), 1, frequency)
     burst := throttle.Events(BURST)
-    jt := throttle.JitterTolerance(peak, burst)
-    sustained := throttle.Increment(throttle.Events(SUSTAINED), 1, frequency)
-    bt := throttle.BurstTolerance(peak, jt, sustained, burst)
+    jt := gcra.JitterTolerance(peak, burst)
+    sustained := gcra.Increment(throttle.Events(SUSTAINED), 1, frequency)
+    bt := BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
 
     shape := New(peak, 0, sustained, bt, now)
@@ -103,11 +133,11 @@ func TestContractActual(t * testing.T) {
     demand := make(chan byte, BURST) // Policer closes.
 
     frequency := ticks.Frequency()
-    peak := throttle.Increment(throttle.Events(PEAK), 1, frequency)
+    peak := gcra.Increment(throttle.Events(PEAK), 1, frequency)
     burst := throttle.Events(BURST)
-    jt := throttle.JitterTolerance(peak, burst)
-    sustained := throttle.Increment(throttle.Events(SUSTAINED), 1, frequency)
-    bt := throttle.BurstTolerance(peak, jt, sustained, burst)
+    jt := gcra.JitterTolerance(peak, burst)
+    sustained := gcra.Increment(throttle.Events(SUSTAINED), 1, frequency)
+    bt := BurstTolerance(peak, jt, sustained, burst)
     now := ticks.Now()
 
     shape := New(peak, 0, sustained, bt, now)

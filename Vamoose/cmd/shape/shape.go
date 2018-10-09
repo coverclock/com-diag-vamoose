@@ -29,6 +29,7 @@ import (
     "os"
     "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/ticks"
     "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/throttle"
+    "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/gcra"
     "github.com/coverclock/com-diag-vamoose/Vamoose/pkg/contract"
 )
 
@@ -54,12 +55,12 @@ func main() {
     var now = ticks.Now()
 
     peakrate := throttle.Events(*peakFlag)
-    peakincrement := throttle.Increment(peakrate, 1, frequency)
+    peakincrement := gcra.Increment(peakrate, 1, frequency)
     burstsize := throttle.Events(*burstFlag)
-    jittertolerance := throttle.JitterTolerance(peakincrement, burstsize)
+    jittertolerance := gcra.JitterTolerance(peakincrement, burstsize)
     sustainedrate := throttle.Events(*sustainedFlag)
-    sustainedincrement := throttle.Increment(sustainedrate, 1, frequency)
-    bursttolerance := throttle.BurstTolerance(peakincrement, jittertolerance, sustainedincrement, burstsize)
+    sustainedincrement := gcra.Increment(sustainedrate, 1, frequency)
+    bursttolerance := contract.BurstTolerance(peakincrement, jittertolerance, sustainedincrement, burstsize)
 
     var shape throttle.Throttle = contract.New(peakincrement, 0, sustainedincrement, bursttolerance, now)
 

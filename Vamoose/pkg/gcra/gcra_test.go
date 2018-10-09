@@ -16,6 +16,47 @@ import (
 )
 
 /*******************************************************************************
+ * ANCILLARY
+ ******************************************************************************/
+
+func TestIncrement(t * testing.T) {
+    var i ticks.Ticks
+
+    // func Increment(numerator Events, denominator Events, frequency ticks.Ticks) ticks.Ticks
+
+    i = Increment(2, 1, 4) // 2/s @ 4Hz = 2t
+    if (i == ticks.Ticks(2)) {} else { t.Errorf("FAILED! i=%v", i) }
+
+    i = Increment(1, 2, 4) // 0.5/s @ 4Hz = 8t
+    if (i == ticks.Ticks(8)) {} else { t.Errorf("FAILED! i=%v", i) }
+
+    i = Increment(2, 1, 5) // 2/s @ 5Hz = 3t
+    if (i == ticks.Ticks(3)) {} else { t.Errorf("FAILED! i=%v", i) }
+
+    i = Increment(1, 2, 5) // 0.5/s @ 5Hz = 10t
+    if (i == ticks.Ticks(10)) {} else { t.Errorf("FAILED! i=%v", i) }
+
+}
+
+func TestJitterTolerance(t * testing.T) {
+    var jt ticks.Ticks
+
+    // func JitterTolerance(peak ticks.Ticks, burstsize Events) ticks.Ticks
+
+    jt = JitterTolerance(2, 3) // Nominal
+    if (jt == ticks.Ticks(4)) {} else { t.Errorf("FAILED! jt=%v", jt) }
+
+    jt = JitterTolerance(2, 0) // MBS <= 1
+    if (jt == ticks.Ticks(0)) {} else { t.Errorf("FAILED! jt=%v", jt) }
+
+    jt = JitterTolerance(2, 1) // MSB <= 1
+    if (jt == ticks.Ticks(0)) {} else { t.Errorf("FAILED! jt=%v", jt) }
+
+    jt = JitterTolerance(3, 2) // Nominal
+    if (jt == ticks.Ticks(3)) {} else { t.Errorf("FAILED! jt=%v", jt) }
+}
+
+/*******************************************************************************
  * SANITY
  ******************************************************************************/
 
@@ -1215,9 +1256,9 @@ func TestGcraActualSustained(t * testing.T) {
 
     frequency := ticks.Frequency()
     rate := throttle.Events(BANDWIDTH)
-    increment := throttle.Increment(rate, 1, frequency)
+    increment := Increment(rate, 1, frequency)
     burst := throttle.Events(BURST)
-    limit := throttle.JitterTolerance(increment, burst)
+    limit := JitterTolerance(increment, burst)
     now := ticks.Now()
 
     shape := New(increment, 0, now)
@@ -1237,9 +1278,9 @@ func TestGcraActualPeak(t * testing.T) {
 
     frequency := ticks.Frequency()
     rate := throttle.Events(BANDWIDTH)
-    increment := throttle.Increment(rate, 1, frequency)
+    increment := Increment(rate, 1, frequency)
     burst := throttle.Events(BURST)
-    limit := throttle.JitterTolerance(increment, burst)
+    limit := JitterTolerance(increment, burst)
     now := ticks.Now()
 
     shape := New(increment, 0, now)
