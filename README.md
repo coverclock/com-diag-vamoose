@@ -249,8 +249,10 @@ projects. Your mileage may vary.
     go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/shape
     dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
 
-or if I have the Makefile working with the gccgo front-end to the GNU Compiler
-Collection (which is kinda sporadic on my part)
+Or, if I have the Makefile working with the gccgo front-end to the GNU Compiler
+Collection (which is kinda sporadic on my part), you can use gccgo instead. I
+do all my Go development using the standard Google gc compiler, but have
+experimented with gccgo.
 
     export GOPATH="${HOME}/go"
     cd Vamoose
@@ -261,21 +263,15 @@ Collection (which is kinda sporadic on my part)
 
 ## Notes
 
-### Policing
+### Jitter
 
 In the contract unit test, the jitter introduced by both the UDP
 connection between the producer/shaper side and the policer/consumer
-side of the Contract test can be seen in the traffic measurements. The
+side of the Contract unit test can be seen in the traffic measurements. The
 shaper measures something very close to the contract, about 1024Bps peak
 and 512Bps sustained. The policer on the other hand measures a 32kBps
-peak yet a 512Bps sustained. I haven't ruled out some boneheaded bug on
-my part. But this attempt on my part to adapt the per-cell ATM GCRA to
-event streams containing variable length packets makes me think it might
-not be suitable for policing. (It's telling that the measured peak rate
-by the policer always seems to be around thirty-two times the actual peak
-rate provided by the shaper, even as their sustained rates are virtually
-the same. I'm guessing this has something to do with either UDP datagram
-queueing in the kernel and/or some artifact of the Go scheduler.)
+peak yet a 512Bps sustained. The peak rate is measured by using the minimum
+interarrival time.
 
     producer: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst.
     shaper: end total=61440B mean=32.66347687400319B/burst maximum=64B/burst delay=0.06352381948059542s/burst peak=1024.7240767399094B/s sustained=511.9994023345643B/s.
@@ -284,11 +280,34 @@ queueing in the kernel and/or some artifact of the Go scheduler.)
     Actual: produced=61440:0x1a6d
     Actual: consumed=61440:0x1a6d
 
-### gccgo
+You will notice in the functional test, which uses the default kernel
+scheduler applied to standard Linux heavy-weight processes communicating over
+a pipe, that this extreme jitter weirdness does not occur. The contract was
+for 1024Bps sustained and 2048Bps peak.
 
-There are two Go compilers: the official Google compiler "gc" accessed via the
-"go" command, and the Go front-end to the GNU compiler suite used via
-the "gccgo" command (but it also has a "go" front end you can use). The
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 2046.9698828761414Bps.
+    Sustained: 1023.9985036617065Bps.
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 2049.0436434970297Bps.
+    Sustained: 1023.9980410364516Bps.
+    Checksum: 0xce87.
+
+I haven't ruled out some boneheaded bug on my part. But this attempt by me to
+adapt the per-cell ATM GCRA to event streams containing variable length packets
+makes me think it might not be suitable for policing when using goroutines.
+
+It's interesting that the measured peak rate by the policer always seems to be
+around thirty-two times the actual peak rate provided by the shaper, even as
+their sustained rates are virtually the same.
+
+### gc versus gccgo
+
+There are two Go compilers: the official Google compiler "gc" (accessed via the
+"go" command), and the Go front-end to the GNU compiler suite used via
+the "gccgo" command (which also has a "go" front end you can use). The
 gccgo compiler has the potential to generate better code since the
 GCC backend has generally good optimization. But the GCC Go run-time
 library currently lags behind the offical compiler by several releases.
@@ -301,4 +320,5 @@ experimental.
 Casual testing suggests that gccgo produces much smaller executables (like,
 an order of magnitude) that may run a bit slower, than those produced by gc.
 At least some of both differences are probably due to gccgo by default
-being dynamically linked, while go by default being statically linked.
+being dynamically linked, while go by default being statically linked. Both
+of course have the overhead of garbage collection.

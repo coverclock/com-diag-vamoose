@@ -7,7 +7,7 @@
 //
 // ABSTRACT
 //
-// Provides a test harnesses for testing GCRA implementations.
+// Provides a test harnesses for testing throttle implementations.
 //
 package harness
 
