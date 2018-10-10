@@ -235,6 +235,10 @@ $(OUT)/$(GEN_DIR)/$(PROJECT)/$(PROJECT).go:	Makefile
 	echo 'const USER        string = "$(USER)"' >> $@
 	echo 'const VINTAGE     string = "$(VINTAGE)"' >> $@
 
+$(OUT)/$(GONAMESPACE)/$(PKG_DIR)/$(PROJECT).o:	$(OUT)/$(GEN_DIR)/$(PROJECT)/$(PROJECT).go
+	DD=`dirname $@`; mkdir -p $$DD
+	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
+
 ########## Rules
 
 #	@echo "@="$@
@@ -242,10 +246,6 @@ $(OUT)/$(GEN_DIR)/$(PROJECT)/$(PROJECT).go:	Makefile
 #	@echo "<="$<
 
 $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/%.o:	$(wildcard $(PKG_DIR)/%/*.go)
-	DD=`dirname $@`; mkdir -p $$DD
-	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
-
-$(OUT)/$(GONAMESPACE)/$(PKG_DIR)/$(PROJECT).o:	$(OUT)/$(GEN_DIR)/$(PROJECT)/$(PROJECT).go
 	DD=`dirname $@`; mkdir -p $$DD
 	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
 
