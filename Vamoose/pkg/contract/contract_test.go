@@ -98,10 +98,10 @@ func TestContractSandbox(t * testing.T) {
  * SIMULATED EVENT STREAM
  ******************************************************************************/
 
-func TestContractSimulated(t * testing.T) {
+func TestContractSimulated1(t * testing.T) {
     const PEAK ticks.Ticks = 1024 // Bytes per second.
     const SUSTAINED ticks.Ticks = 512 // Bytes per second.
-    const BURST int = 32768
+    const BURST int = 32768// Bytes
     const OPERATIONS int = 1000000
 
     frequency := ticks.Frequency()
@@ -113,6 +113,27 @@ func TestContractSimulated(t * testing.T) {
     now := ticks.Now()
 
     shape := New(peak, 0, sustained, bt, now)
+    police := New(peak, jt, sustained, bt, now)
+
+    harness.SimulatedEventStream(t, shape, police, BURST, OPERATIONS)
+
+}
+
+func TestContractSimulated2(t * testing.T) {
+    const PEAK ticks.Ticks = 2048 // Bytes per second.
+    const SUSTAINED ticks.Ticks = 1024 // Bytes per second.
+    const BURST int = 512// Bytes
+    const OPERATIONS int = 1000000
+
+    frequency := ticks.Frequency()
+    peak := gcra.Increment(throttle.Events(PEAK), 1, frequency)
+    burst := throttle.Events(BURST)
+    jt := gcra.JitterTolerance(peak, burst)
+    sustained := gcra.Increment(throttle.Events(SUSTAINED), 1, frequency)
+    bt := BurstTolerance(peak, jt, sustained, burst)
+    now := ticks.Now()
+
+    shape := New(peak, 0 /* jt */, sustained, bt, now)
     police := New(peak, jt, sustained, bt, now)
 
     harness.SimulatedEventStream(t, shape, police, BURST, OPERATIONS)

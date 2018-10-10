@@ -9,15 +9,16 @@
 # "Digital Aggregates Corporation" is a registered trademark.
 
 ##
-## This is a *highly* _experimental_ attempt to use the gccgo compiler. It's
-## a lot more complicated than it really needs to be. In order to follow the
-## typical directory layout of my projects, Go-based and otherwise, and to
-## also support the directory layout expected of the Google go toolchain, a
+## This is a *highly* _experimental_ attempt to use the GNU gccgo compiler,
+## an alternative to the Google gc compiler. This Makefile is a lot more
+## complicated than it probably needs to be. In order to follow the canonical
+## directory layout of my projects, Go-based and otherwise, and to also
+## support the directory layout expected by the Google go toolchain, a
 ## softlink from the GOPATH to the repo directory is used. This allows me to
 ## use the facilities provided by the go command, but also some tools I use
 ## to support my own workflow. Because the import paths in the Go source code
-## assumes the GOPATH layout, this Makefile has to deal with that as well.
-## It's not pretty.
+## assumes the GOPATH layout, this Makefile has to deal both the repo layout
+## and the GOPATH layout. It's not pretty.
 ##
 
 .PHONY:	default
@@ -50,11 +51,16 @@ REVISION			:=	$(shell git rev-parse HEAD)
 MODIFIED			:=	$(shell date -u -d @$(shell git log -1 --format="%at") +%Y-%m-%dT%H:%M:%S.%N%z)
 ROOT				:=	$(shell git rev-parse --show-toplevel)
 VINTAGE				:=	$(shell date -u +%Y-%m-%dT%H:%M:%S.%N%z)
+OS					:=	$(shell uname -s)
+KERNEL				:=	$(shell uname -r)
+ARCH				:=	$(shell go version | cut -d ' ' -f 4)
+PLATFORM			:=	$(shell go version | cut -d ' ' -f 3)
 
 ########## Directories
 
 BIN_DIR				:=	bin# Shell components
 CMD_DIR				:=	cmd# Command components
+GEN_DIR				:=	gen# Generated sources
 OUT_DIR				:=	out# Build artifacts
 PKG_DIR				:=	pkg# Package components
 SRC_DIR				:=	src# Source directory
@@ -82,6 +88,8 @@ GOSOURCE			:=	$(GOPATH)/$(SRC_DIR)# GOPATH/src
 GOLINK				:=	$(GOSOURCE)/$(REPOSITORY)# GOPATH/src/github.com/coverclock/com-diag-vamoose
 GOROOT				:=	$(GOLINK)/$(TITLE)# GOPATH/src/github.com/coverclock/com-diag-vamoose/Vamoose
 GONAMESPACE			:=	$(REPOSITORY)/$(TITLE)# github.com/coverclock/com-diag-vamoose/Vamoose
+
+CROSS_COMPILE		:=	$(TOOLCHAIN)
 
 GOFLAGS				:=	-I $(OUT)
 GOLDFLAGS			:=	-Wl,-R,$(GCCPATH)
@@ -112,6 +120,7 @@ ABSOLUTESOURCES		+=	$(wildcard $(GOROOT)/$(CMD_DIR)/*/*.go)
 RELATIVESOURCES		:=	$(subst $(GOROOT)/,,$(ABSOLUTESOURCES))
 
 TARGETPACKAGES		:=	$(addprefix $(OUT)/$(GONAMESPACE)/,$(addsuffix .o,$(basename $(RELATIVEPACKAGES))))
+TARGETPACKAGES		+=	$(OUT)/$(GONAMESPACE)/$(PKG_DIR)/$(PROJECT).o
 TARGETCOMMANDS		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(notdir $(basename $(RELATIVECOMMANDS))))
 TARGETGENERATED		:=	$(addprefix $(OUT)/$(BIN_DIR)/,$(GENERATED))
 TARGETSCRIPTS		:=	$(addprefix $(OUT)/,$(basename $(wildcard $(BIN_DIR)/*.sh)))
@@ -201,6 +210,31 @@ $(OUT)/$(BIN_DIR)/setup:	$(OUT)/$(BIN_DIR)/generate
 	$< > $@
 	chmod 664 $@
 
+$(OUT)/$(GEN_DIR)/$(PROJECT)/$(PROJECT).go:	Makefile
+	D=`dirname $@`; mkdir -p $$D
+	echo '/* GENERATED FILE: DO NOT EDIT; CHANGES WILL BE LOST! */' > $@
+	echo 'package $(PROJECT)' >> $@
+	echo 'const ARCH        string = "$(ARCH)"' >> $@
+	echo 'const BRANCH      string = "$(BRANCH)"' >> $@
+	echo 'const CONTACT     string = "$(CONTACT)"' >> $@
+	echo 'const COPYRIGHT   string = "$(COPYRIGHT)"' >> $@
+	echo 'const HOMEPAGE    string = "$(HOMEPAGE)"' >> $@
+	echo 'const HOST        string = "$(HOST)"' >> $@
+	echo 'const KERNEL      string = "$(KERNEL)"' >> $@
+	echo 'const LICENSE     string = "$(LICENSE)"' >> $@
+	echo 'const MODIFIED    string = "$(MODIFIED)"' >> $@
+	echo 'const OS          string = "$(OS)"' >> $@
+	echo 'const PLATFORM    string = "$(PLATFORM)"' >> $@
+	echo 'const RELEASE     string = "$(MAJOR).$(MINOR).$(BUILD)"' >> $@
+	echo 'const REPOSITORY  string = "$(REPOSITORY)"' >> $@
+	echo 'const REVISION    string = "$(REVISION)"' >> $@
+	echo 'const ROOT        string = "$(ROOT)"' >> $@
+	echo 'const TARGET      string = "$(TARGET)"' >> $@
+	echo 'const TITLE       string = "$(TITLE)"' >> $@
+	echo 'const TOOLCHAIN   string = "$(TOOLCHAIN)"' >> $@
+	echo 'const USER        string = "$(USER)"' >> $@
+	echo 'const VINTAGE     string = "$(VINTAGE)"' >> $@
+
 ########## Rules
 
 #	@echo "@="$@
@@ -208,6 +242,10 @@ $(OUT)/$(BIN_DIR)/setup:	$(OUT)/$(BIN_DIR)/generate
 #	@echo "<="$<
 
 $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/%.o:	$(wildcard $(PKG_DIR)/%/*.go)
+	DD=`dirname $@`; mkdir -p $$DD
+	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
+
+$(OUT)/$(GONAMESPACE)/$(PKG_DIR)/$(PROJECT).o:	$(OUT)/$(GEN_DIR)/$(PROJECT)/$(PROJECT).go
 	DD=`dirname $@`; mkdir -p $$DD
 	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
 
@@ -228,26 +266,4 @@ $(OUT)/%:	%.sh
 	DD=`dirname $@`; mkdir -p $$DD
 	cp $< $@
 	chmod 755 $@
-
-########## Prototype
-
-try:
-	mkdir -p $(OUT)/$(GONAMESPACE)/$(PKG_DIR)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/ticks.o $(PKG_DIR)/ticks/ticks.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/fletcher.o $(PKG_DIR)/fletcher/fletcher.go $(GOLDFLAGS)
-	# This next statement exhibits interesting behavior: both Google go and
-	# GNU gccgo handle forward references for separate compilation units in
-	# the same package. You can tell this because helpers.go refers to a type
-	# defined in throttle.go. This vastly simplifies splitting packages or
-	# commands into separate files.
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/throttle.o $(PKG_DIR)/throttle/helpers.go $(PKG_DIR)/throttle/throttle.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/harness.o $(PKG_DIR)/harness/harness.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/gcra.o $(PKG_DIR)/gcra/gcra.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/contract.o $(PKG_DIR)/contract/contract.go $(GOLDFLAGS)
-	mkdir -p $(OUT)/$(GONAMESPACE)/$(CMD_DIR)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/fletch.o $(CMD_DIR)/fletch/fletch.go $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS) -c -o $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/shape.o $(CMD_DIR)/shape/shape.go $(GOLDFLAGS)
-	mkdir -p $(OUT)/$(BIN_DIR)
-	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(BIN_DIR)/fletch $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/fletch.o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
-	$(GOCC) $(GOFLAGS)    -o $(OUT)/$(BIN_DIR)/shape $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/shape.o $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 	
