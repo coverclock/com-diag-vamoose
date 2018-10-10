@@ -13,6 +13,11 @@
 //
 // vintage
 //
+// REMARKS
+//
+// Without some effort, this only builds under gccgo using the Makefile, which
+// generates the vamoose package.
+//
 package main 
 
 import (

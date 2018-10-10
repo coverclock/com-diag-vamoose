@@ -249,17 +249,18 @@ $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/$(PROJECT).o:	$(OUT)/$(GEN_DIR)/$(PROJECT)/$(PR
 	DD=`dirname $@`; mkdir -p $$DD
 	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
 
+# The gold manual page indicates that the package object files must be
+# "included in the link command". golang.org documentation about gccgo says
+# the compiler does not "record the file name of imported packages in the
+# object file. You must arrange for the imported data to be linked into the
+# program." Empirical evidence supports this, unfortunately.
+
 $(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o:	$(wildcard $(CMD_DIR)/%/*.go)
 	DD=`dirname $@`; mkdir -p $$DD
 	$(GOCC) $(GOFLAGS) -o $@ -c $(filter %.go,$^) $(GOLDFLAGS)
 
 $(OUT)/$(BIN_DIR)/%:	$(OUT)/$(GONAMESPACE)/$(CMD_DIR)/%.o
 	DD=`dirname $@`; mkdir -p $$DD
-	# The gold manual page indicates that the package object files must be
-	# "included in the link command". golang.org documentation about gccgo says
-	# the compiler does not "record the file name of imported packages in the
-	# object file. You must arrange for the imported data to be linked into the
-	# program." Empirical evidence supports this, unfortunately.
 	$(GOLD) $(GOFLAGS) -o $@ $< $(OUT)/$(GONAMESPACE)/$(PKG_DIR)/*.o $(GOLDFLAGS)
 
 $(OUT)/%:	%.sh
