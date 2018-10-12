@@ -25,6 +25,10 @@
 // be used to smooth out low frequency events over a long duration, or to
 // implement a leaky bucket algorithm.
 //
+// This package was based on the C implementation diminuto_throttle in the
+// Diminuto repository. Some improvements were made in the Go implementation,
+// and then those changes were back-ported from Vamoose to Diminuto 53.0.1.
+//
 // REFERENCES
 //
 // N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,

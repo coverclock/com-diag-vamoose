@@ -88,7 +88,10 @@ type Throttle interface {
     
     // Expected returns the number of ticks that would be necessary for the
     // caller to delay for the event stream  to comply to the traffic contract with
-    // no limit penalty accumulated given the current state of the gcra.
+    // no limit penalty accumulated given the current state of the throttle. For
+    // throttles whose implementations differ from that of the Generic Cell Rate
+    // Algorithm, the value returned may be the same as that returned by Request
+    // given the current state of the throttle, or some other value entirely.
     Expected() ticks.Ticks
     
     // isEmpty returns true if the throttle is empty, that is, it has no accumulated

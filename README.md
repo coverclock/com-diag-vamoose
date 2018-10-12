@@ -31,7 +31,12 @@ This repository contains the results of my attempts to learn the Go
 programming language (a.k.a. golang) by implementing some non-trivial
 and possible useful packages. One of these packages include yet another
 implementation on my part of the Generic Cell Rate Algorithm (GCRA),
-adapted as usual to bursts of variable length packets.
+adapted as usual to bursts of variable length packets, a rate-limiting
+algorithm that I have previously implemented in C++, C, and Java. I did
+all my development using the Google gc compiler via the usual go command
+interface. But it also includes a Makefile that uses the GNU gccgo compiler.
+The unit tests only work with gc/go, but the functional test runs with the
+results of gccgo.
 
 ## Packages
 
@@ -195,7 +200,7 @@ mileage may vary.
 "Nickel"
 Intel NUC5i7RYH    
 Intel x86_64 64-bit    
-Intel Core i7-5557U @ 3.10GHz x 8    
+Intel Core i7-5557U @ 3.10GHz x 2 x 2    
 Ubuntu 18.04 "bionic"    
 Linux 4.15.0    
 go version go1.11 linux/amd64    
@@ -255,8 +260,9 @@ do all my Go development using the standard Google gc compiler, but have
 experimented with gccgo.
 
     export GOPATH="${HOME}/go"
-    cd Vamoose
+    cd ${HOME}/src/com-diag-vamoose/Vamoose
     make goroot
+    make depend
     make all
     . out/host/bin/setup
     dd if=/dev/urandom count=1000 | fletch -V -b 512 | shape -V -p 2048 -s 1024 -b 512 | fletch -V -b 512 > /dev/null
@@ -295,9 +301,9 @@ for 1024Bps sustained and 2048Bps peak.
     Sustained: 1023.9980410364516Bps.
     Checksum: 0xce87.
 
-I haven't ruled out some boneheaded bug on my part. But this attempt by me to
-adapt the per-cell ATM GCRA to event streams containing variable length packets
-makes me think it might not be suitable for policing when using goroutines.
+I haven't ruled out some boneheaded bug on my part. But this result makes me
+think Vamoose throttles might not be suitable for policing when using
+goroutines.
 
 It's interesting that the measured peak rate by the policer always seems to be
 around thirty-two times the actual peak rate provided by the shaper, even as
@@ -306,9 +312,9 @@ their sustained rates are virtually the same.
 ### gc versus gccgo
 
 There are two Go compilers: the official Google compiler "gc" (accessed via the
-"go" command), and the Go front-end to the GNU compiler suite used via
+"go" command), and the golang front-end to the GNU compiler suite used via
 the "gccgo" command (which also has a "go" front end you can use). The
-gccgo compiler has the potential to generate better code since the
+gccgo compiler might have the potential to generate better code since the
 GCC backend has generally good optimization. But the GCC Go run-time
 library currently lags behind the offical compiler by several releases.
 

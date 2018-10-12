@@ -17,6 +17,10 @@
 // the sustained increment, and the sustained limit computed from maximum burst
 // size and the jitter tolerance.
 //
+// This package was based on the C implementation diminuto_shaper in the
+// Diminuto repository. Some improvements were made in the Go implementation,
+// and then those changes were back-ported from Vamoose to Diminuto 53.0.1.
+//
 // REFERENCES
 //
 // N. Giroux et al., Traffic Management Specification Version 4.1, ATM Forum,
