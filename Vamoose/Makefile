@@ -31,7 +31,7 @@ TITLE				:=	Vamoose
 
 MAJOR				:=	5# API changes that may require that applications be modified.
 MINOR				:=	0# Only functionality or features added with no legacy API changes.
-BUILD				:=	0# Only bugs fixed with no API changes or new functionality.
+BUILD				:=	1# Only bugs fixed with no API changes or new functionality.
 
 PROJECT				:=	$(shell echo $(TITLE) | tr '[A-Z]' '[a-z]')
 SYMBOL				:=	$(shell echo $(TITLE) | tr '[a-z]' '[A-Z]')

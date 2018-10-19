@@ -92,7 +92,6 @@ func (this * Contract) Reset(now ticks.Ticks) {
 func (this * Contract) Init(peak ticks.Ticks, jittertolerance ticks.Ticks, sustained ticks.Ticks, bursttolerance ticks.Ticks, now ticks.Ticks) {
     this.peak.Init(peak, jittertolerance, now)
     this.sustained.Init(sustained, bursttolerance, now)
-    this.Reset(now)
 }
 
 /*******************************************************************************
