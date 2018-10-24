@@ -294,6 +294,29 @@ experimented with gccgo.
 
 ## Notes
 
+### Functional Test Output
+
+    $ dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
+    Contract: Contract@0xc000056070[112]:{p:{Gcra@0xc000056070[56]:{T:488282,i:488282,l:0,x:0,d:0,D:0,f:{0,0,0},e:{1,1,1},a:{0,0}}},s:{Gcra@0xc0000560a8[56]:{T:976563,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,0},e:{1,1,1},a:{0,0}}}}.
+    1000+0 records in
+    1000+0 records out
+    512000 bytes (512 kB, 500 KiB) copied, 375.002 s, 1.4 kB/s
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 1.2692117005453645e+08Bps.
+    Sustained: 1177.0055695558794Bps.
+    Checksum: 0xa34a.
+    Contract: Contract@0xc000056070[112]:{p:{Gcra@0xc000056070[56]:{T:0,i:488282,l:0,x:0,d:0,D:0,f:{0,0,1},e:{1,1,0},a:{0,1}}},s:{Gcra@0xc0000560a8[56]:{T:0,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,1},e:{1,1,0},a:{0,1}}}}.
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 2046.9638596456691Bps.
+    Sustained: 1023.9982577918921Bps.
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 2047.1884944807878Bps.
+    Sustained: 1023.9966466710773Bps.
+    Checksum: 0xa34a.
+
 ### Jitter
 
 In the contract unit test, the jitter introduced by both the UDP
@@ -353,26 +376,3 @@ an order of magnitude) that may run a bit slower, than those produced by gc.
 At least some of both differences are probably due to gccgo by default
 being dynamically linked, while go by default being statically linked. Both
 of course have the overhead of garbage collection.
-
-### Functional Test Output
-
-    $ dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
-    Contract: Contract@0xc000056070[112]:{p:(Gcra@0xc000056070[56]:{T:488282,i:488282,l:0,x:0,d:0,D:0,f:{0,0,0},e:{1,1,1},a:{0,0}}},s:{Gcra@0xc0000560a8[56]:{T:976563,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,0},e:{1,1,1},a:{0,0}}}}.
-    1000+0 records in
-    1000+0 records out
-    512000 bytes (512 kB, 500 KiB) copied, 370.502 s, 1.4 kB/s
-    Total: 512000B.
-    Average: 512B/io.
-    Peak: 1.7391304347826087e+08Bps.
-    Sustained: 1178.3583872590777Bps.
-    Checksum: 0x4f65.
-    Contract: Contract@0xc000056070[112]:{p:(Gcra@0xc000056070[56]:{T:0,i:488282,l:0,x:0,d:0,D:0,f:{0,0,1},e:{1,1,0},a:{0,1}}},s:{Gcra@0xc0000560a8[56]:{T:0,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,1},e:{1,1,0},a:{0,1}}}}.
-    Total: 512000B.
-    Average: 512B/io.
-    Peak: 2046.7165777159112Bps.
-    Sustained: 1023.999176637078Bps.
-    Total: 512000B.
-    Average: 512B/io.
-    Peak: 2047.0570845657073Bps.
-    Sustained: 1023.9976313419271Bps.
-    Checksum: 0x4f65.

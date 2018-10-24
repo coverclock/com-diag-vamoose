@@ -65,7 +65,7 @@ type Contract struct {
 
 // String returns a printable string showing the guts of the gcra.
 func (this * Contract) String() string {
-    return fmt.Sprintf("Contract@%p[%d]:{p:(%s},s:{%s}}",
+    return fmt.Sprintf("Contract@%p[%d]:{p:{%s},s:{%s}}",
         unsafe.Pointer(this), unsafe.Sizeof(*this),
         this.peak.String(), this.sustained.String());
 }
