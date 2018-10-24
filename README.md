@@ -1,6 +1,6 @@
 # com-diag-vamoose
 
-Musings with the Go programming language.
+This is an implementation of the Generic Cell Rate Algorithm in the Go programming language.
 
 ## Copyright
 
@@ -187,6 +187,9 @@ J. Sloan, "ATM Traffic Management", Digital Aggregates Corporation, 2005-08-29,
 N. Giroux et al., "Traffic Management Specification Version 4.1", ATM Forum,
 af-tm-0121.000, 1999-03
 
+Wikipedia, "Generic cell rate algorithm", 2017-08-23,
+<https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm>
+
 ## Miscellaneous
 
 <https://gopherize.me>
@@ -222,7 +225,7 @@ Intel Core i7 @ 2.8GHz x 2
 macOS 10.13.6 "High Sierra"    
 go version go1.11 darwin/amd64    
 
-## Installation
+## Clone
 
 This is a mash-up of the directory structure expected by the standard Go
 toolchain and the directory structure I use for my Digital Aggregates
@@ -235,6 +238,24 @@ projects. Your mileage may vary.
     mkdir -p ${GOPATH}/bin ${GOPATH}/pkg ${GOPATH}/src/github.com/coverclock
     cd ${GOPATH}/src/github.com/coverclock
     ln -s ${HOME}/src/com-diag-vamoose
+
+## Build
+
+    export GOPATH="${HOME}/go"
+    cd ${GOPATH}/src
+    go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch
+    go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/shape
+    
+If I have the Makefile working with the gccgo front-end to the GNU Compiler
+Collection (which is kinda sporadic on my part), you can use gccgo instead. I
+do all my Go development using the standard Google gc compiler, but have
+experimented with gccgo.
+
+    export GOPATH="${HOME}/go"
+    cd ${HOME}/src/com-diag-vamoose/Vamoose
+    make goroot
+    make depend
+    make all
 
 ## Unit Tests
 
@@ -250,20 +271,24 @@ projects. Your mileage may vary.
 
     export GOPATH="${HOME}/go"
     cd ${GOPATH}/src
-    go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/fletch
-    go build github.com/coverclock/com-diag-vamoose/Vamoose/cmd/shape
     dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
 
-Or, if I have the Makefile working with the gccgo front-end to the GNU Compiler
+Valgrind isn't useful with Go. This surprised me. If you want to see what
+kind of violence erupts with Valgrind, try the commands below.
+
+    export GOPATH="${HOME}/go"
+    cd ${GOPATH}/src
+    dd if=/dev/urandom count=1000 > DATA
+    valgrind ./fletch -V -b 512 < DATA > /dev/null
+    valgrind ./shape -V -p 2048 -s 1024 -b 512 < DATA > /dev/null
+    
+If I have the Makefile working with the gccgo front-end to the GNU Compiler
 Collection (which is kinda sporadic on my part), you can use gccgo instead. I
 do all my Go development using the standard Google gc compiler, but have
 experimented with gccgo.
 
     export GOPATH="${HOME}/go"
     cd ${HOME}/src/com-diag-vamoose/Vamoose
-    make goroot
-    make depend
-    make all
     . out/host/bin/setup
     dd if=/dev/urandom count=1000 | fletch -V -b 512 | shape -V -p 2048 -s 1024 -b 512 | fletch -V -b 512 > /dev/null
 
@@ -328,3 +353,26 @@ an order of magnitude) that may run a bit slower, than those produced by gc.
 At least some of both differences are probably due to gccgo by default
 being dynamically linked, while go by default being statically linked. Both
 of course have the overhead of garbage collection.
+
+### Functional Test Output
+
+    $ dd if=/dev/urandom count=1000 | ./fletch -V -b 512 | ./shape -V -p 2048 -s 1024 -b 512 | ./fletch -V -b 512 > /dev/null
+    Contract: Contract@0xc000056070[112]:{p:(Gcra@0xc000056070[56]:{T:488282,i:488282,l:0,x:0,d:0,D:0,f:{0,0,0},e:{1,1,1},a:{0,0}}},s:{Gcra@0xc0000560a8[56]:{T:976563,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,0},e:{1,1,1},a:{0,0}}}}.
+    1000+0 records in
+    1000+0 records out
+    512000 bytes (512 kB, 500 KiB) copied, 370.502 s, 1.4 kB/s
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 1.7391304347826087e+08Bps.
+    Sustained: 1178.3583872590777Bps.
+    Checksum: 0x4f65.
+    Contract: Contract@0xc000056070[112]:{p:(Gcra@0xc000056070[56]:{T:0,i:488282,l:0,x:0,d:0,D:0,f:{0,0,1},e:{1,1,0},a:{0,1}}},s:{Gcra@0xc0000560a8[56]:{T:0,i:976563,l:499023693,x:0,d:0,D:-499023693,f:{0,0,1},e:{1,1,0},a:{0,1}}}}.
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 2046.7165777159112Bps.
+    Sustained: 1023.999176637078Bps.
+    Total: 512000B.
+    Average: 512B/io.
+    Peak: 2047.0570845657073Bps.
+    Sustained: 1023.9976313419271Bps.
+    Checksum: 0x4f65.

@@ -79,7 +79,7 @@ type Throttle interface {
     // marks the passage of time during which the emission stream is idle, which
     // may bring the throttle back into compliance with the traffic contract (and
     // will do so if time has advanced at least as much as the value returned by
-    // GetDeficit).
+    // Expected).
     Update(now ticks.Ticks) bool
 
     /***************************************************************************
