@@ -145,9 +145,14 @@ use of my Diminuto C systems programming library, all or parts of which
 ships in a handful of commercial products from several different clients.
 It remains to be seen if Go will yield the same kind of success for me.
 
+(Since writing this, I have ported most of this code to Rust, as part of
+my Rustler project. It's interesting to compare the two implementations.)
+
 ## Repositories
 
 <https://github.com/coverclock/com-diag-vamoose>
+
+<https://github.com/coverclock/com-diag-rustler>
 
 <https://github.com/coverclock/com-diag-diminuto>
 
@@ -200,7 +205,7 @@ Various versions of this software has at one time or another been installed
 and tested with the following combinations of hardware and software. Your
 mileage may vary.
 
-"Nickel"
+"Nickel"    
 Intel NUC5i7RYH    
 Intel x86_64 64-bit    
 Intel Core i7-5557U @ 3.10GHz x 2 x 2    
