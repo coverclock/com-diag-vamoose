@@ -115,7 +115,7 @@ func SimulatedEventStream(t * testing.T, shape throttle.Throttle, police throttl
 
 var mutex sync.Mutex
 
-func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64, checksump * uint16, done chan<- bool) {
+func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64, checksump * uint16) {
     var total uint64 = 0
     var size int = 0
     var count int = 0
@@ -193,11 +193,9 @@ func producer(t * testing.T, limit uint64, output chan <- byte, totalp * uint64,
     mutex.Lock()
     fmt.Printf("producer: end total=%vB mean=%vB/burst maximum=%vB/burst.\n", total, mean, largest);
     mutex.Unlock()
-
-    done <- true
 }
 
-func shaper(t * testing.T, input <- chan byte, that throttle.Throttle, output net.PacketConn, address net.Addr, done chan<- bool) {
+func shaper(t * testing.T, input <- chan byte, that throttle.Throttle, output net.PacketConn, address net.Addr) {
     var total uint64 = 0
     var datum byte = 0
     var okay bool = true
@@ -359,11 +357,9 @@ func shaper(t * testing.T, input <- chan byte, that throttle.Throttle, output ne
     mutex.Lock()
     fmt.Printf("shaper: end total=%vB mean=%vB/burst maximum=%vB/burst delay=%vs/burst peak=%vB/s sustained=%vB/s.\n", total, mean, largest, average, peak, sustained);
     mutex.Unlock()
-
-    done <- true
 }
 
-func policer(t * testing.T, input net.PacketConn, that throttle.Throttle, output chan<- byte, done chan<- bool) {
+func policer(t * testing.T, input net.PacketConn, that throttle.Throttle, output chan<- byte) {
     var eof bool = false
     var read int = 0
     var failure error
@@ -493,11 +489,9 @@ func policer(t * testing.T, input net.PacketConn, that throttle.Throttle, output
     if policed > 0 { fmt.Printf("policer: POLICED!\n") }
     fmt.Printf("policer: end admitted=%vB policed=%vB total=%vB mean=%vB/burst maximum=%vB/burst peak=%vB/s sustained=%vB/s.\n", admitted, policed, total, mean, largest, peak, sustained)
     mutex.Unlock()
-
-    done <- true
 }
 
-func consumer(t * testing.T, input <-chan byte, totalp * uint64, checksump * uint16, done chan<- bool) {
+func consumer(t * testing.T, input <-chan byte, totalp * uint64, checksump * uint16) {
     var total uint64 = 0
     var buffer [1] byte
     var a uint8 = 0
@@ -530,8 +524,6 @@ func consumer(t * testing.T, input <-chan byte, totalp * uint64, checksump * uin
     mutex.Lock()
     fmt.Printf("consumer: end total=%vB.\n", total);
     mutex.Unlock()
-
-    done <- true
 }
 
 // ActualEventStream provides a real-time test of a GCRA given a GCRA
@@ -549,9 +541,6 @@ func ActualEventStream(t * testing.T, shape throttle.Throttle, police throttle.T
 
     fmt.Printf("Actual: shape=%v.\n", shape);
     fmt.Printf("Actual: police=%v.\n", police);
-
-    done := make(chan bool, 4)
-    defer close(done)
 
     source, failure := net.ListenPacket("udp", ":5555")
     if failure != nil {
@@ -574,20 +563,38 @@ func ActualEventStream(t * testing.T, shape throttle.Throttle, police throttle.T
     fmt.Printf("Actual: destination=%+v.\n", destination);
 
     fmt.Println("Actual: Starting.")
+    
+    var condition sync.WaitGroup
 
-    go consumer(t, demand, &consumertotal, &consumerchecksum, done)
-    go policer(t, source, police, demand, done)
-    go shaper(t, supply, shape, sink, destination, done)
-    go producer(t, total, supply, &producertotal, &producerchecksum, done)
-
+    condition.Add(1)
+    go func() {
+        defer condition.Done()
+        consumer(t, demand, &consumertotal, &consumerchecksum)
+    }()
+ 
+    condition.Add(1)
+    go func() {
+        defer condition.Done()
+        policer(t, source, police, demand)
+    }()
+  
+    condition.Add(1)
+    go func() {
+        defer condition.Done()
+        shaper(t, supply, shape, sink, destination)
+    }()
+    
+    condition.Add(1)
+    go func() {
+        defer condition.Done()
+        producer(t, total, supply, &producertotal, &producerchecksum)
+    }()
+ 
     mutex.Lock()
     fmt.Println("Actual: Waiting.")
     mutex.Unlock()
 
-    <- done
-    <- done
-    <- done
-    <- done
+    condition.Wait()
 
     fmt.Println("Actual: Checking.")
 
